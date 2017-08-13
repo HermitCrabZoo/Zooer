@@ -7,11 +7,6 @@ import java.util.Map;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 
-/**
- * Waiting for Java9
- * @author ZOO
- *
- */
 public final class Bean {
 	private Bean(){}
 	private static Map<String, BeanCopier> copierMap=new HashMap<String, BeanCopier>();

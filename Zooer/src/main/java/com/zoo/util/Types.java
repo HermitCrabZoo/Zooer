@@ -126,4 +126,229 @@ public final class Types {
 	public static boolean[] booleans() {
 		return new boolean[] {};
 	}
+	/**
+	 * int数组转long数组
+	 * @param ints
+	 * @return
+	 */
+	public static long[] longs(int[] ints) {
+		if(ints!=null && ints.length>0) {
+			int len=ints.length;
+			long[] longs=new long[len];
+			for(int i=0;i<len;i++) {
+				longs[i]=ints[i];
+			}
+			return longs;
+		}
+		return longs();
+	}
+	/**
+	 * short数组转long数组
+	 * @param shorts
+	 * @return
+	 */
+	public static long[] longs(short[] shorts) {
+		if(shorts!=null && shorts.length>0) {
+			int len=shorts.length;
+			long[] longs=new long[len];
+			for(int i=0;i<len;i++) {
+				longs[i]=shorts[i];
+			}
+			return longs;
+		}
+		return longs();
+	}
+	/**
+	 * byte数组转long数组
+	 * @param bytes
+	 * @return
+	 */
+	public static long[] longs(byte[] bytes) {
+		if(bytes!=null && bytes.length>0) {
+			int len=bytes.length;
+			long[] longs=new long[len];
+			for(int i=0;i<len;i++) {
+				longs[i]=bytes[i];
+			}
+			return longs;
+		}
+		return longs();
+	}
+	/**
+	 * long数组转int数组
+	 * @param longs
+	 * @return
+	 */
+	public static int[] ints(long[] longs) {
+		if(longs!=null && longs.length>0) {
+			int len=longs.length;
+			int[] ints=new int[len];
+			for(int i=0;i<len;i++) {
+				ints[i]=(int) longs[i];
+			}
+			return ints;
+		}
+		return ints();
+	}
+	/**
+	 * short数组转int数组
+	 * @param shorts
+	 * @return
+	 */
+	public static int[] ints(short[] shorts) {
+		if(shorts!=null && shorts.length>0) {
+			int len=shorts.length;
+			int[] ints=new int[len];
+			for(int i=0;i<len;i++) {
+				ints[i]=shorts[i];
+			}
+			return ints;
+		}
+		return ints();
+	}
+	/**
+	 * byte数组转int数组
+	 * @param bytes
+	 * @return
+	 */
+	public static int[] ints(byte[] bytes) {
+		if(bytes!=null && bytes.length>0) {
+			int len=bytes.length;
+			int[] ints=new int[len];
+			for(int i=0;i<len;i++) {
+				ints[i]=bytes[i];
+			}
+			return ints;
+		}
+		return ints();
+	}
+	/**
+	 * long数组转short数组
+	 * @param longs
+	 * @return
+	 */
+	public static short[] shorts(long[] longs) {
+		if(longs!=null && longs.length>0) {
+			int len=longs.length;
+			short[] shorts=new short[len];
+			for(int i=0;i<len;i++) {
+				shorts[i]=(short) longs[i];
+			}
+			return shorts;
+		}
+		return shorts();
+	}
+	/**
+	 * int数组转short数组
+	 * @param ints
+	 * @return
+	 */
+	public static short[] shorts(int[] ints) {
+		if(ints!=null && ints.length>0) {
+			int len=ints.length;
+			short[] shorts=new short[len];
+			for(int i=0;i<len;i++) {
+				shorts[i]=(short) ints[i];
+			}
+			return shorts;
+		}
+		return shorts();
+	}
+	/**
+	 * byte数组转short数组
+	 * @param bytes
+	 * @return
+	 */
+	public static short[] shorts(byte[] bytes) {
+		if(bytes!=null && bytes.length>0) {
+			int len=bytes.length;
+			short[] shorts=new short[len];
+			for(int i=0;i<len;i++) {
+				shorts[i]=bytes[i];
+			}
+			return shorts;
+		}
+		return shorts();
+	}
+	/**
+	 * long数组转byte数组
+	 * @param longs
+	 * @return
+	 */
+	public static byte[] bytes(long[] longs) {
+		if(longs!=null && longs.length>0) {
+			int len=longs.length;
+			byte[] bytes=new byte[len];
+			for(int i=0;i<len;i++) {
+				bytes[i]=(byte) longs[i];
+			}
+			return bytes;
+		}
+		return bytes();
+	}
+	/**
+	 * int数组转byte数组
+	 * @param ints
+	 * @return
+	 */
+	public static byte[] bytes(int[] ints) {
+		if(ints!=null && ints.length>0) {
+			int len=ints.length;
+			byte[] bytes=new byte[len];
+			for(int i=0;i<len;i++) {
+				bytes[i]=(byte) ints[i];
+			}
+			return bytes;
+		}
+		return bytes();
+	}
+	/**
+	 * short数组转byte数组
+	 * @param shorts
+	 * @return
+	 */
+	public static byte[] bytes(short[] shorts) {
+		if(shorts!=null && shorts.length>0) {
+			int len=shorts.length;
+			byte[] bytes=new byte[len];
+			for(int i=0;i<len;i++) {
+				bytes[i]=(byte) shorts[i];
+			}
+			return bytes;
+		}
+		return bytes();
+	}
+	/**
+	 * float数组转double数组
+	 * @param floats
+	 * @return
+	 */
+	public static double[] doubles(float[] floats) {
+		if(floats!=null && floats.length>0) {
+			int len=floats.length;
+			double[] doubles=new double[len];
+			for(int i=0;i<len;i++) {
+				doubles[i]=floats[i];
+			}
+			return doubles;
+		}
+		return doubles();
+	}
+	/**
+	 * double数组转float数组
+	 * @param doubles
+	 * @return
+	 */
+	public static float[] floats(double[] doubles) {
+		if(doubles!=null && doubles.length>0) {
+			int len=doubles.length;
+			float[] floats=new float[len];
+			for(int i=0;i<len;i++) {
+				floats[i]=(float) doubles[i];
+			}
+			return floats;
+		}
+		return floats();
+	}
+	
 }

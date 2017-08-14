@@ -274,14 +274,29 @@ public final class ArrayUtil {
 	}
 	
 	/**
-	 * 求int型数组的平均值,数组为空则返回0
+	 * 求平均值
 	 * @param ints
 	 * @return
 	 */
 	public static double avg(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().average().orElse(0.0)).orElse(0.0);
 	}
-	
+	/**
+	 * 求平均值
+	 * @param shorts
+	 * @return
+	 */
+	public static double avg(short[] shorts){
+		return Optional.ofNullable(shorts).map(ss->avg(Types.ints(ss))).orElse(0.0);
+	}
+	/**
+	 * 求平均值
+	 * @param bytes
+	 * @return
+	 */
+	public static double avg(byte[] bytes){
+		return Optional.ofNullable(bytes).map(bs->avg(Types.ints(bs))).orElse(0.0);
+	}
 	/**
 	 * 求平均值
 	 * @param doubles
@@ -289,6 +304,14 @@ public final class ArrayUtil {
 	 */
 	public static double avg(double[] doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().average().orElse(0.0)).orElse(0.0);
+	}
+	/**
+	 * 求平均值
+	 * @param floats
+	 * @return
+	 */
+	public static double avg(float[] floats){
+		return Optional.ofNullable(floats).map(fs->avg(Types.doubles(fs))).orElse(0.0);
 	}
 	
 	/**
@@ -344,6 +367,22 @@ public final class ArrayUtil {
 	public static long sum(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().sum()).orElse(0);
 	}
+	/**
+	 * 求和
+	 * @param shorts
+	 * @return
+	 */
+	public static long sum(short[] shorts){
+		return Optional.ofNullable(shorts).map(ss->max(Types.ints(ss))).orElse(0);
+	}
+	/**
+	 * 求和
+	 * @param bytes
+	 * @return
+	 */
+	public static long sum(byte[] bytes){
+		return Optional.ofNullable(bytes).map(bs->max(Types.ints(bs))).orElse(0);
+	}
 	
 	/**
 	 * 求和
@@ -351,7 +390,15 @@ public final class ArrayUtil {
 	 * @return
 	 */
 	public static double sum(double[] doubles){
-		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().sum()).orElse(1.0);
+		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().sum()).orElse(0.0);
+	}
+	/**
+	 * 求和
+	 * @param floats
+	 * @return
+	 */
+	public static double sum(float[] floats){
+		return Optional.ofNullable(floats).map(fs->sum(Types.doubles(fs))).orElse(0.0);
 	}
 	
 	/**
@@ -371,7 +418,22 @@ public final class ArrayUtil {
 	public static int max(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().max().orElse(0)).orElse(0);
 	}
-	
+	/**
+	 * 求最大值
+	 * @param shorts
+	 * @return
+	 */
+	public static short max(short[] shorts){
+		return Optional.ofNullable(shorts).map(ss->(short) max(Types.ints(ss))).orElse((short)0);
+	}
+	/**
+	 * 求最大值
+	 * @param bytes
+	 * @return
+	 */
+	public static byte max(byte[] bytes){
+		return Optional.ofNullable(bytes).map(bs->(byte) max(Types.ints(bs))).orElse((byte)0);
+	}
 	/**
 	 * 求最大值
 	 * @param doubles
@@ -379,7 +441,15 @@ public final class ArrayUtil {
 	 */
 	public static double max(double[] doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().max().orElse(0.0)).orElse(0.0);
-	}	
+	}
+	/**
+	 * 求最大值
+	 * @param floats
+	 * @return
+	 */
+	public static float max(float[] floats){
+		return Optional.ofNullable(floats).map(fs->(float) max(Types.doubles(fs))).orElse(0.0f);
+	}
 	
 	/**
 	 * 求最小值
@@ -398,7 +468,22 @@ public final class ArrayUtil {
 	public static int min(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().min().orElse(0)).orElse(0);
 	}
-	
+	/**
+	 * 求最小值
+	 * @param shorts
+	 * @return
+	 */
+	public static short min(short[] shorts){
+		return Optional.ofNullable(shorts).map(ss->(short) min(Types.ints(ss))).orElse((short)0);
+	}
+	/**
+	 * 求最小值
+	 * @param bytes
+	 * @return
+	 */
+	public static byte min(byte[] bytes){
+		return Optional.ofNullable(bytes).map(bs->(byte) min(Types.ints(bs))).orElse((byte)0);
+	}
 	/**
 	 * 求最小值
 	 * @param doubles
@@ -406,6 +491,14 @@ public final class ArrayUtil {
 	 */
 	public static double min(double[] doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().min().orElse(0.0)).orElse(0.0);
+	}
+	/**
+	 * 求最小值
+	 * @param floats
+	 * @return
+	 */
+	public static float min(float[] floats){
+		return Optional.ofNullable(floats).map(fs->(float) min(Types.doubles(fs))).orElse(0.0f);
 	}
 	
 	/**

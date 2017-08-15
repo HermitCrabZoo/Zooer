@@ -22,23 +22,23 @@ public final class ArrayUtil {
 	 * @return
 	 */
 	public static long[] avgs(long total,int len){
-		if (len<=0) {
-			return null;
-		}
-		long[] avg=new long[len];
-		long unit=total/len;
-		long remain=total%len;
-		long one=remain<0?-1:1;
-		remain=Math.abs(remain);
-		if (total!=0) {
-			for(int i=0;i<len;i++){
-				avg[i]=unit;
+		if (len>0) {
+			long[] avg=new long[len];
+			long unit=total/len;
+			long remain=total%len;
+			long one=remain<0?-1:1;
+			remain=Math.abs(remain);
+			if (total!=0) {
+				for(int i=0;i<len;i++){
+					avg[i]=unit;
+				}
+				for(int i=0;i<remain;i++) {
+					avg[i]+=one;
+				}
 			}
-			for(int i=0;i<remain;i++) {
-				avg[i]+=one;
-			}
+			return avg;
 		}
-		return avg;
+		return Types.longs();
 	}
 	
 	/**
@@ -52,8 +52,9 @@ public final class ArrayUtil {
 			for(int i=0;i<longs.length;i++){
 				longs[i]+=step;
 			}
+			return longs;
 		}
-		return longs;
+		return Types.longs();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -66,8 +67,9 @@ public final class ArrayUtil {
 			for(int i=0;i<ints.length;i++){
 				ints[i]+=step;
 			}
+			return ints;
 		}
-		return ints;
+		return Types.ints();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -80,8 +82,9 @@ public final class ArrayUtil {
 			for(int i=0;i<shorts.length;i++){
 				shorts[i]+=step;
 			}
+			return shorts;
 		}
-		return shorts;
+		return Types.shorts();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -94,8 +97,9 @@ public final class ArrayUtil {
 			for(int i=0;i<bytes.length;i++){
 				bytes[i]+=step;
 			}
+			return bytes;
 		}
-		return bytes;
+		return Types.bytes();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -108,8 +112,9 @@ public final class ArrayUtil {
 			for(int i=0;i<doubles.length;i++){
 				doubles[i]+=step;
 			}
+			return doubles;
 		}
-		return doubles;
+		return Types.doubles();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -122,8 +127,9 @@ public final class ArrayUtil {
 			for(int i=0;i<floats.length;i++){
 				floats[i]+=step;
 			}
+			return floats;
 		}
-		return floats;
+		return Types.floats();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -136,8 +142,9 @@ public final class ArrayUtil {
 			for(int i=0;i<longs.length;i++){
 				longs[i]-=step;
 			}
+			return longs;
 		}
-		return longs;
+		return Types.longs();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -150,8 +157,9 @@ public final class ArrayUtil {
 			for(int i=0;i<ints.length;i++){
 				ints[i]-=step;
 			}
+			return ints;
 		}
-		return ints;
+		return Types.ints();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -164,8 +172,9 @@ public final class ArrayUtil {
 			for(int i=0;i<shorts.length;i++){
 				shorts[i]-=step;
 			}
+			return shorts;
 		}
-		return shorts;
+		return Types.shorts();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -178,8 +187,9 @@ public final class ArrayUtil {
 			for(int i=0;i<bytes.length;i++){
 				bytes[i]-=step;
 			}
+			return bytes;
 		}
-		return bytes;
+		return Types.bytes();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -192,6 +202,7 @@ public final class ArrayUtil {
 			for(int i=0;i<doubles.length;i++){
 				doubles[i]-=step;
 			}
+			return doubles;
 		}
 		return doubles;
 	}
@@ -206,8 +217,9 @@ public final class ArrayUtil {
 			for(int i=0;i<floats.length;i++){
 				floats[i]-=step;
 			}
+			return floats;
 		}
-		return floats;
+		return  Types.floats();
 	}
 	/**
 	 * 为数组中的每个元素增step,返回新数组
@@ -228,6 +240,24 @@ public final class ArrayUtil {
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().map(i->i+step).toArray()).orElse(ints);
 	}
 	/**
+	 * 为数组中的每个元素减step,返回新数组
+	 * @param shorts
+	 * @param step
+	 * @return
+	 */
+	public static short[] raiseNew(short[] shorts,short step){
+		return Optional.ofNullable(shorts).map(ss->Types.shorts(raiseNew(Types.ints(ss), step))).orElse(Types.shorts());
+	}
+	/**
+	 * 为数组中的每个元素减step,返回新数组
+	 * @param bytes
+	 * @param step
+	 * @return
+	 */
+	public static byte[] raiseNew(byte[] bytes,byte step){
+		return Optional.ofNullable(bytes).map(bs->Types.bytes(raiseNew(Types.ints(bs), step))).orElse(Types.bytes());
+	}
+	/**
 	 * 为数组中的每个元素增step,返回新数组
 	 * @param doubles
 	 * @param step
@@ -235,6 +265,15 @@ public final class ArrayUtil {
 	 */
 	public static double[] raiseNew(double[] doubles,double step){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().map(d->d+step).toArray()).orElse(doubles);
+	}
+	/**
+	 * 为数组中的每个元素增step,返回新数组
+	 * @param floats
+	 * @param step
+	 * @return
+	 */
+	public static float[] raiseNew(float[] floats,float step){
+		return Optional.ofNullable(floats).map(fs->Types.floats(raiseNew(Types.doubles(fs), step))).orElse(Types.floats());
 	}
 	/**
 	 * 为数组中的每个元素减step,返回新数组
@@ -256,12 +295,99 @@ public final class ArrayUtil {
 	}
 	/**
 	 * 为数组中的每个元素减step,返回新数组
+	 * @param shorts
+	 * @param step
+	 * @return
+	 */
+	public static short[] reduceNew(short[] shorts,short step){
+		return Optional.ofNullable(shorts).map(ss->Types.shorts(reduceNew(Types.ints(ss), step))).orElse(Types.shorts());
+	}
+	/**
+	 * 为数组中的每个元素减step,返回新数组
+	 * @param bytes
+	 * @param step
+	 * @return
+	 */
+	public static byte[] reduceNew(byte[] bytes,byte step){
+		return Optional.ofNullable(bytes).map(bs->Types.bytes(reduceNew(Types.ints(bs), step))).orElse(Types.bytes());
+	}
+	/**
+	 * 为数组中的每个元素减step,返回新数组
 	 * @param doubles
 	 * @param step
 	 * @return
 	 */
 	public static double[] reduceNew(double[] doubles,double step){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().map(d->d-step).toArray()).orElse(doubles);
+	}
+	/**
+	 * 为数组中的每个元素减step,返回新数组
+	 * @param floats
+	 * @param step
+	 * @return
+	 */
+	public static float[] reduceNew(float[] floats,float step){
+		return Optional.ofNullable(floats).map(fs->Types.floats(reduceNew(Types.doubles(fs), step))).orElse(Types.floats());
+	}
+	
+	/**
+	 * 去重复
+	 * @param longs
+	 * @return
+	 */
+	public static long[] distinct(long[] longs){
+		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().distinct().toArray()).orElse(Types.longs());
+	}
+	
+	/**
+	 * 去重复
+	 * @param ints
+	 * @return
+	 */
+	public static int[] distinct(int[] ints){
+		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().distinct().toArray()).orElse(Types.ints());
+	}
+	/**
+	 * 去重复
+	 * @param shorts
+	 * @return
+	 */
+	public static short[] distinct(short[] shorts){
+		return Optional.ofNullable(shorts).map(ss->Types.shorts(distinct(Types.ints(ss)))).orElse(Types.shorts());
+	}
+	/**
+	 * 去重复
+	 * @param bytes
+	 * @return
+	 */
+	public static byte[] distinct(byte[] bytes){
+		return Optional.ofNullable(bytes).map(bs->Types.bytes(distinct(Types.ints(bs)))).orElse(Types.bytes());
+	}
+	
+	/**
+	 * 去重复
+	 * @param doubles
+	 * @return
+	 */
+	public static double[] distinct(double[] doubles){
+		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().distinct().toArray()).orElse(Types.doubles());
+	}
+	/**
+	 * 去重复
+	 * @param floats
+	 * @return
+	 */
+	public static float[] distinct(float[] floats){
+		return Optional.ofNullable(floats).map(fs->Types.floats(distinct(Types.doubles(fs)))).orElse(Types.floats());
+	}
+	
+	/**
+	 * 去重复
+	 * @param strings
+	 * @return
+	 */
+	public static String[] distinct(String[] strings){
+		return Optional.ofNullable(strings).map(ds->Arrays.stream(ds).parallel().distinct().toArray(String[]::new)).orElse(Types.strings());
 	}
 	
 	/**
@@ -315,42 +441,6 @@ public final class ArrayUtil {
 	}
 	
 	/**
-	 * 去重复
-	 * @param longs
-	 * @return
-	 */
-	public static long[] distinct(long[] longs){
-		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().distinct().toArray()).orElse(Types.longs());
-	}
-	
-	/**
-	 * 去重复
-	 * @param ints
-	 * @return
-	 */
-	public static int[] distinct(int[] ints){
-		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().distinct().toArray()).orElse(Types.ints());
-	}
-	
-	/**
-	 * 去重复
-	 * @param doubles
-	 * @return
-	 */
-	public static double[] distinct(double[] doubles){
-		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().distinct().toArray()).orElse(Types.doubles());
-	}
-	
-	/**
-	 * 去重复
-	 * @param strings
-	 * @return
-	 */
-	public static String[] distinct(String[] strings){
-		return Optional.ofNullable(strings).map(ds->Arrays.stream(ds).parallel().distinct().toArray(String[]::new)).orElse(Types.strings());
-	}
-	
-	/**
 	 * 求和
 	 * @param longs
 	 * @return
@@ -373,7 +463,7 @@ public final class ArrayUtil {
 	 * @return
 	 */
 	public static long sum(short[] shorts){
-		return Optional.ofNullable(shorts).map(ss->max(Types.ints(ss))).orElse(0);
+		return Optional.ofNullable(shorts).map(ss->sum(Types.ints(ss))).orElse(0L);
 	}
 	/**
 	 * 求和
@@ -381,7 +471,7 @@ public final class ArrayUtil {
 	 * @return
 	 */
 	public static long sum(byte[] bytes){
-		return Optional.ofNullable(bytes).map(bs->max(Types.ints(bs))).orElse(0);
+		return Optional.ofNullable(bytes).map(bs->sum(Types.ints(bs))).orElse(0L);
 	}
 	
 	/**
@@ -590,8 +680,8 @@ public final class ArrayUtil {
 			return Strings.empty();
 		}
 		strs=nullToEmpty(strs);
-		StringBuffer stringBuffer=new StringBuffer(strs[0]);
 		int len=strs.length;
+		StringBuffer stringBuffer=new StringBuffer(len).append(strs[0]);
 		for(int i=1;i<len;i++){
 			stringBuffer.append(separator).append(strs[i]);
 		}
@@ -717,7 +807,7 @@ public final class ArrayUtil {
 	 * @return
 	 */
 	public static String[] nullToEmpty(String[] strings) {
-		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().map(s->Strings.nullToEmpty(s)).toArray(String[]::new)).orElse(strings);
+		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().map(s->Strings.nullToEmpty(s)).toArray(String[]::new)).orElse(Strings.emptys());
 	}
 	
 	/**
@@ -726,7 +816,7 @@ public final class ArrayUtil {
 	 * @return
 	 */
 	public static String[] removeNull(String[] strings) {
-		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().filter(s->Objects.nonNull(s)).toArray(String[]::new)).orElse(strings);
+		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().filter(s->Objects.nonNull(s)).toArray(String[]::new)).orElse(Strings.emptys());
 	}
 	
 	/**

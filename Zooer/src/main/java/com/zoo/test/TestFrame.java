@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.zoo.cons.Imagec;
 import com.zoo.util.ArrayUtil;
 import com.zoo.util.Bean;
 import com.zoo.util.Chars;
@@ -25,6 +26,7 @@ import com.zoo.util.Colors;
 import com.zoo.util.Dates;
 import com.zoo.util.Images;
 import com.zoo.util.QRCode;
+import com.zoo.util.Systems;
 
 import net.sf.cglib.beans.BeanCopier;
 
@@ -123,6 +125,7 @@ public class TestFrame{
 				//Images.pileCenter(qrcode, Images.borderCrimp(Images.circle(imageB),1,null));
 				Images.pileCenter(qrcode, Images.borderCrimpRadius(Images.scaleWidth(Images.cutBehind(imageC),40),1,Color.white,40));
 				System.out.println(System.currentTimeMillis());
+				ImageIO.write(Systems.screenCatpure(), Imagec.png, new File("E:\\capture.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

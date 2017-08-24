@@ -1,7 +1,12 @@
 package com.zoo.util;
 
+import java.awt.AWTException;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -36,7 +41,21 @@ public final class Systems {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * 获取屏幕截图
+	 * @return
+	 */
+	public static BufferedImage screenCatpure() {
+		if(!GraphicsEnvironment.isHeadless()) {
+			try {
+				Robot robot=new Robot();
+				return robot.createScreenCapture(new Rectangle(screenWidth(), screenHeight()));
+			} catch (AWTException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 	/**
 	 * 获取屏幕的宽的分辨率
 	 * 

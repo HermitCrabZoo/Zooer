@@ -39,9 +39,19 @@ public class TestFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		Color fg=new Color(0,129,211,255),bg=new Color(174,244,235);
+		testColor(fg);
 //		testBeanCopy();
 //		testAvg(1);
-		testImg();
+//		testImg();
+	}
+	public static void testColor(Color c) {
+		System.out.println(c.getRGB());
+		System.out.println(c.getAlpha());
+		System.out.println(c.getTransparency());
+		System.out.println(c.getRed());
+		System.out.println(c.getGreen());
+		System.out.println(c.getBlue());
 	}
 	public static void testBeanCopy(){
 		
@@ -116,17 +126,17 @@ public class TestFrame{
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			contentPane.setLayout(null);
 			setContentPane(contentPane);
-			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 200, 200,new Color(0,129,211,255),new Color(174,244,235));
+			Color fg=new Color(0,129,211,255),bg=new Color(174,244,235);
+			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 200, 200,fg,bg);
 			try {
-				BufferedImage imageA=ImageIO.read(new File("E:\\130922.jpg"));
+				/*BufferedImage imageA=ImageIO.read(new File("E:\\130922.jpg"));
 				BufferedImage imageB=Images.scaleRatio(imageA, 40, 40);
 				BufferedImage imageC=ImageIO.read(new File("E:\\星北.jpg"));
 				System.out.println(System.currentTimeMillis());
 				//Images.pileCenter(qrcode, Images.borderCrimp(Images.circle(imageB),1,null));
-				Images.pileCenter(qrcode, Images.borderCrimpRadius(Images.scaleWidth(Images.cutBehind(imageC),40),1,Color.white,40));
+				Images.pileCenter(qrcode, Images.borderCrimpRadius(Images.scaleWidth(Images.cutBehind(imageC),40),1,Color.white,40));*/
 				System.out.println(System.currentTimeMillis());
-				ImageIO.write(Systems.screenCatpure(), Imagec.png, new File("E:\\capture.png"));
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			JLabel jlLabel=new JLabel(new ImageIcon(qrcode));

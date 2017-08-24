@@ -811,4 +811,10 @@ public final class Images {
 		BufferedImage image = image(srcImage.getWidth(), srcImage.getHeight(),Optional.ofNullable(borderColor).orElse(Colors.wTransparent));
 		return pile(image, scaleZoom(srcImage, image.getWidth()-w*2, image.getHeight()-w*2), w, w);
 	}
+	
+	public static Color color(BufferedImage image,int x,int y) {
+		Color color=new Color(image.getRGB(x, y));
+		return color;
+	} 
+	
 }

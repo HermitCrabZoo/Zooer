@@ -812,9 +812,16 @@ public final class Images {
 		return pile(image, scaleZoom(srcImage, image.getWidth()-w*2, image.getHeight()-w*2), w, w);
 	}
 	
-	public static Color color(BufferedImage image,int x,int y) {
-		Color color=new Color(image.getRGB(x, y));
-		return color;
+	/**
+	 * 获取图片指定坐标的像素的Red、Green、Blue、Alpha值
+	 * @param image
+	 * @param x
+	 * @param y
+	 * @return 返回长度为4的int数组，分别对应RGBA的值。
+	 */
+	public static int[] rgba(BufferedImage image,int x,int y) {
+		int pixel=image.getRGB(x, y);
+		return new int[]{(pixel>>16)&0xff,(pixel>>8)&0xff,pixel&0xff,(pixel>>24)&0xff};
 	} 
 	
 }

@@ -40,7 +40,11 @@ public class TestFrame{
 	 */
 	public static void main(String[] args) {
 		Color fg=new Color(0,129,211,255),bg=new Color(174,244,235);
-		testColor(fg);
+		BufferedImage image=Images.image(200, 200, fg);
+		BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 200, 200,fg,bg);
+		System.out.println(ArrayUtil.join(",", Images.rgba(qrcode, 0, 0)));
+		System.out.println(ArrayUtil.join(",", Images.rgba(image, 0, 0)));
+		testColor(bg);
 //		testBeanCopy();
 //		testAvg(1);
 //		testImg();
@@ -52,6 +56,10 @@ public class TestFrame{
 		System.out.println(c.getRed());
 		System.out.println(c.getGreen());
 		System.out.println(c.getBlue());
+		System.out.println(Short.MAX_VALUE);
+		System.out.println(Short.MIN_VALUE);
+		System.out.println(Byte.MAX_VALUE);
+		System.out.println(Byte.MIN_VALUE);
 	}
 	public static void testBeanCopy(){
 		

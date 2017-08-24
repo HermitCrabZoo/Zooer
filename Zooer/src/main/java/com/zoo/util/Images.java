@@ -822,6 +822,6 @@ public final class Images {
 	public static int[] rgba(BufferedImage image,int x,int y) {
 		int pixel=image.getRGB(x, y);
 		return new int[]{(pixel>>16)&0xff,(pixel>>8)&0xff,pixel&0xff,(pixel>>24)&0xff};
-	} 
+	}
 	
 }

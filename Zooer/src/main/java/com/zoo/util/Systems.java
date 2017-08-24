@@ -115,6 +115,6 @@ public final class Systems {
 	 */
 	public static String osName(){
 		osName=Optional.ofNullable(osName).orElse(Optional.ofNullable(systemProperties).map(sp->sp.getProperty("os.name")).orElse(null));
-		return Optional.ofNullable(osName).orElse("");
+		return Optional.ofNullable(osName).orElse(Strings.empty());
 	}
 }

@@ -111,7 +111,7 @@ public class TestFrame{
 	public static class TFrame extends JFrame{
 		private JPanel contentPane;
 		public TFrame() {
-			int fw=1200,fh=720;
+			int fw=1216,fh=669;
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setBounds(0, 0, fw, fh);
 			setLocationRelativeTo(null);
@@ -127,8 +127,7 @@ public class TestFrame{
 				for(int j=0;j<7;j++) {
 					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
-						Yuv yuv=Colors.getYuv(color);
-						Images.pile(bgImage,Images.pileCenter(Images.image(100, 90, color), (int)yuv.getY()+","+(int)yuv.getU()+","+(int)yuv.getV()), i*100, j*90);
+						Images.pile(bgImage,Images.borderCrimpOutRadius(Images.pileCenter(Images.image(100, 90, color), color.getRed()+","+color.getGreen()+","+color.getBlue()),1,Color.WHITE,40), i*100, j*90);
 					}
 				}
 				System.out.println(Colors.getYuv(fg));

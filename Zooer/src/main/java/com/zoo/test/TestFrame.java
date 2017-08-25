@@ -125,10 +125,10 @@ public class TestFrame{
 			try {
 				Chroma[] chromas= {Chroma.lightest,Chroma.lighter,Chroma.light,Chroma.middle,Chroma.heavy,Chroma.heavier,Chroma.heaviest};
 				for(int j=0;j<7;j++) {
-					for(int i=0;i<10;i++) {
+					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
 						Yuv yuv=Colors.getYuv(color);
-						Images.pile(bgImage,Images.pileCenter(Images.image(120, 100, color), yuv.getY()+","+yuv.getU()+","+yuv.getV()), i*120, j*100);
+						Images.pile(bgImage,Images.pileCenter(Images.image(100, 90, color), (int)yuv.getY()+","+(int)yuv.getU()+","+(int)yuv.getV()), i*100, j*90);
 					}
 				}
 				System.out.println(Colors.getYuv(fg));

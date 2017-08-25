@@ -44,7 +44,7 @@ public final class Colors {
 	 * @return
 	 */
 	public static boolean isChroma(Color color,Chroma chroma){
-        return color!=null&&chroma!=null?chroma.in(getYuv(color)):false;
+        return color!=null&&chroma!=null?chroma.in(getYuv(color).getY()):false;
 	}
 	/**
 	 * 返回颜色的YUV值的封装对象
@@ -76,7 +76,7 @@ public final class Colors {
 	 * @return
 	 */
 	public static Color getColor(Yuv yuv) {
-		return new Color((float) (yuv.getY()+yuv.getV()*1.140),(float) (yuv.getY()- yuv.getU()*0.394 - yuv.getV()*0.581),(float) (yuv.getY() + yuv.getU()*2.032));
+		return new Color((int) (yuv.getY()+yuv.getV()*1.140),(int) (yuv.getY()- yuv.getU()*0.394 - yuv.getV()*0.581),(int) (yuv.getY() + yuv.getU()*2.032));
 	}
 	/**
 	 * 将颜色的YCbCr值转换为RGB值储存到Color对象中,并返回Color对象
@@ -84,8 +84,8 @@ public final class Colors {
 	 * @return
 	 */
 	public static Color getColor(YCbCr yCbCr) {
-		return new Color((float) (1.164*(yCbCr.getY()-16) + 1.596*(yCbCr.getCr()-128)),
-				(float) (1.164*(yCbCr.getY()-16) - 0.392*(yCbCr.getCb()-128) - 0.813*(yCbCr.getCr()-128)),
-				(float) (1.164*(yCbCr.getY()-16) + 2.017*(yCbCr.getCb()-128)));
+		return new Color((int) (1.164*(yCbCr.getY()-16) + 1.596*(yCbCr.getCr()-128)),
+				(int) (1.164*(yCbCr.getY()-16) - 0.392*(yCbCr.getCb()-128) - 0.813*(yCbCr.getCr()-128)),
+				(int) (1.164*(yCbCr.getY()-16) + 2.017*(yCbCr.getCb()-128)));
 	}
 }

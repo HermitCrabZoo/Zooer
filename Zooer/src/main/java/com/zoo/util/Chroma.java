@@ -53,7 +53,7 @@ public enum Chroma {
 	 * @param value
 	 * @return
 	 */
-	public boolean in(double value) {
-		return value >= this.start && value < end;
+	public boolean in(Yuv yuv) {
+		return yuv.getY() >= this.start && yuv.getY() < end;
 	}
 }

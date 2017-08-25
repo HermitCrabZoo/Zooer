@@ -28,6 +28,7 @@ import com.zoo.util.Dates;
 import com.zoo.util.Images;
 import com.zoo.util.QRCode;
 import com.zoo.util.Systems;
+import com.zoo.util.Yuv;
 
 import net.sf.cglib.beans.BeanCopier;
 
@@ -40,25 +41,9 @@ public class TestFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		try {
-			File file=new File("E:\\BigWallPaper.png");
-			long a=clock.millis();
-			Dimension dimension=Images.imageDimension(file);
-			long b=clock.millis();
-			BufferedImage image=ImageIO.read(file);
-			int w=image.getWidth();
-			int h=image.getHeight();
-			long c=clock.millis();
-			System.out.println(b-a);
-			System.out.println(c-b);
-			System.out.println(ArrayUtil.join(",",dimension.width, dimension.height));
-			System.out.println(ArrayUtil.join(",",w, h));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 //		testBeanCopy();
 //		testAvg(1);
-//		testImg();
+		testImg();
 	}
 	public static void testBeanCopy(){
 		
@@ -126,8 +111,9 @@ public class TestFrame{
 	public static class TFrame extends JFrame{
 		private JPanel contentPane;
 		public TFrame() {
+			int fw=1200,fh=720;
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setBounds(0, 0, 1200, 1000);
+			setBounds(0, 0, fw, fh);
 			setLocationRelativeTo(null);
 			contentPane = new JPanel();
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -135,20 +121,31 @@ public class TestFrame{
 			setContentPane(contentPane);
 			Color fg=new Color(0,129,211,255),bg=new Color(174,244,235);
 			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 200, 200,fg,bg);
+			BufferedImage bgImage=Images.image(fw, fh, Color.WHITE);
 			try {
+				Chroma[] chromas= {Chroma.lightest,Chroma.lighter,Chroma.light,Chroma.middle,Chroma.heavy,Chroma.heavier,Chroma.heaviest};
+				for(int j=0;j<7;j++) {
+					for(int i=0;i<10;i++) {
+						Color color=Colors.randColor(chromas[j]);
+						Yuv yuv=Colors.getYuv(color);
+						Images.pile(bgImage,Images.pileCenter(Images.image(120, 100, color), yuv.getY()+","+yuv.getU()+","+yuv.getV()), i*120, j*100);
+					}
+				}
+				System.out.println(Colors.getYuv(fg));
 				/*BufferedImage imageA=ImageIO.read(new File("E:\\130922.jpg"));
 				BufferedImage imageB=Images.scaleRatio(imageA, 40, 40);
 				BufferedImage imageC=ImageIO.read(new File("E:\\星北.jpg"));
 				System.out.println(System.currentTimeMillis());
 				//Images.pileCenter(qrcode, Images.borderCrimp(Images.circle(imageB),1,null));
 				Images.pileCenter(qrcode, Images.borderCrimpRadius(Images.scaleWidth(Images.cutBehind(imageC),40),1,Color.white,40));*/
-				System.out.println(System.currentTimeMillis());
+//				System.out.println(System.currentTimeMillis());
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			JLabel jlLabel=new JLabel(new ImageIcon(qrcode));
+			JLabel jlLabel=new JLabel(new ImageIcon(bgImage));
 			//JLabel jlLabel=new JLabel(new ImageIcon(image1));
-			jlLabel.setBounds(0, 0, 1200, 1000);
+			jlLabel.setBounds(0, 0, fw, fh);
 			contentPane.add(jlLabel,new Integer(Integer.MAX_VALUE));
 			contentPane.setBackground(Colors.randColor(Chroma.lightest));
 			setVisible(true);

@@ -42,8 +42,8 @@ public class TestFrame{
 	 */
 	public static void main(String[] args) {
 //		testBeanCopy();
-//		testAvg(1);
-		testImg();
+		testAvg(1);
+//		testImg();
 	}
 	public static void testBeanCopy(){
 		
@@ -111,9 +111,9 @@ public class TestFrame{
 	public static class TFrame extends JFrame{
 		private JPanel contentPane;
 		public TFrame() {
-			int fw=1216,fh=669;
+			int fw=1500,fh=980;
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setBounds(0, 0, fw, fh);
+			setBounds(0, 0, fw+16, fh+39);
 			setLocationRelativeTo(null);
 			contentPane = new JPanel();
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -121,13 +121,13 @@ public class TestFrame{
 			setContentPane(contentPane);
 			Color fg=new Color(0,129,211,255),bg=new Color(174,244,235);
 			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 200, 200,fg,bg);
-			BufferedImage bgImage=Images.image(fw, fh, Color.WHITE);
+			BufferedImage bgImage=Images.image(fw, fh, Color.black);
 			try {
 				Chroma[] chromas= {Chroma.lightest,Chroma.lighter,Chroma.light,Chroma.middle,Chroma.heavy,Chroma.heavier,Chroma.heaviest};
 				for(int j=0;j<7;j++) {
 					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
-						Images.pile(bgImage,Images.borderCrimpOutRadius(Images.pileCenter(Images.image(100, 90, color), color.getRed()+","+color.getGreen()+","+color.getBlue()),1,Color.WHITE,40), i*100, j*90);
+						Images.pile(bgImage,Images.pileCenter(Images.borderCrimpRadius(Images.image(150, 140, color),1,Color.WHITE,60), color.getRed()+","+color.getGreen()+","+color.getBlue()), i*150, j*140);
 					}
 				}
 				System.out.println(Colors.getYuv(fg));

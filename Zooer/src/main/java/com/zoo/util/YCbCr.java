@@ -25,5 +25,9 @@ public class YCbCr {
 	public void setCr(double cr) {
 		this.cr = cr;
 	}
+	@Override
+	public String toString() {
+		return "YCbCr [y=" + y + ", cb=" + cb + ", cr=" + cr + "]";
+	}
 	
 }

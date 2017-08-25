@@ -12,11 +12,11 @@ public final class Path {
 		path = Strings.nullToEmpty(path);
 		fileName = Strings.nullToEmpty(fileName);
 		if (path.isEmpty()&&fileName.isEmpty()) {
-			return "";
+			return Strings.empty();
 		}
 		String tempPath = toPath(path);
 		String tempFileName=toPath(fileName);
-		return tempPath + (tempPath.endsWith(Platform.slash()) || tempFileName.startsWith(Platform.slash()) ? "" 
+		return tempPath + (tempPath.endsWith(Platform.slash()) || tempFileName.startsWith(Platform.slash()) ? Strings.empty() 
 				: Platform.slash())+tempFileName;
 	}
 	
@@ -33,7 +33,7 @@ public final class Path {
 			results[0]=fileName.substring(0, fileName.lastIndexOf(Platform.slash()));
 			results[1]=fileName.substring(fileName.lastIndexOf(Platform.slash())+1,fileName.length());
 		}else {
-			results[0]="";
+			results[0]=Strings.empty();
 			results[1]=fileName;
 		}
 		return results;
@@ -49,11 +49,12 @@ public final class Path {
 		String[] results=new String[2];
 		fileName=split(fileName)[1];
 		if (fileName.contains(".")) {
-			results[0]=fileName.substring(0, fileName.lastIndexOf("."));
-			results[1]=fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+			int i=fileName.lastIndexOf(".");
+			results[0]=fileName.substring(0, i);
+			results[1]=fileName.substring(i+1,fileName.length());
 		}else {
 			results[0]=fileName;
-			results[1]="";
+			results[1]=Strings.empty();
 		}
 		return results;
 	}
@@ -77,6 +78,7 @@ public final class Path {
 	 * @return
 	 */
 	public static String toPath(String path){
+		path=Strings.nullToEmpty(path);
 		return Systems.isWindows() ? path.replace(Platform.SLASH, Platform.BACKSLASH).trim()
 				:path.replace(Platform.BACKSLASH, Platform.SLASH).trim();
 	}

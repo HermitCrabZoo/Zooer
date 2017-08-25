@@ -1,6 +1,7 @@
 package com.zoo.test;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -39,6 +40,22 @@ public class TestFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		try {
+			File file=new File("E:\\BigWallPaper.png");
+			long a=clock.millis();
+			Dimension dimension=Images.imageDimension(file);
+			long b=clock.millis();
+			BufferedImage image=ImageIO.read(file);
+			int w=image.getWidth();
+			int h=image.getHeight();
+			long c=clock.millis();
+			System.out.println(b-a);
+			System.out.println(c-b);
+			System.out.println(ArrayUtil.join(",",dimension.width, dimension.height));
+			System.out.println(ArrayUtil.join(",",w, h));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 //		testBeanCopy();
 //		testAvg(1);
 //		testImg();

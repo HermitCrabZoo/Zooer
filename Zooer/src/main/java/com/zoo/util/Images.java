@@ -13,9 +13,14 @@ import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Optional;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import sun.font.FontDesignMetrics;
 
 @SuppressWarnings("restriction")
@@ -824,4 +829,26 @@ public final class Images {
 		return new int[]{(pixel>>16)&0xff,(pixel>>8)&0xff,pixel&0xff,(pixel>>24)&0xff};
 	}
 	
+	/**
+	 * 获取图片文件的分辨率
+	 * @param file
+	 * @return
+	 */
+	public static Dimension imageDimension(File file) {
+		Dimension dimension=new Dimension();
+		if(Files.isReadableFile(file)) {
+			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Path.splitText(file.getAbsolutePath())[1]);
+			if (it.hasNext()) {
+				ImageReader imageReader=it.next();
+				try (ImageInputStream iis = ImageIO.createImageInputStream(file)){
+					imageReader.setInput(iis, true);
+					dimension.width=imageReader.getWidth(0);
+					dimension.height=imageReader.getHeight(0);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return dimension;
+	}
 }

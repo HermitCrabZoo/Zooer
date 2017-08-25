@@ -597,7 +597,7 @@ public final class ArrayUtil {
 	 * @param ints
 	 * @return
 	 */
-	public static String join(String separator,int[] ints){
+	public static String join(String separator,int... ints){
 		return join(separator, toStrings(ints));
 	}
 	
@@ -607,7 +607,7 @@ public final class ArrayUtil {
 	 * @param longs
 	 * @return
 	 */
-	public static String join(String separator,long[] longs){
+	public static String join(String separator,long... longs){
 		return join(separator, toStrings(longs));
 	}
 	
@@ -617,7 +617,7 @@ public final class ArrayUtil {
 	 * @param shorts
 	 * @return
 	 */
-	public static String join(String separator,short[] shorts){
+	public static String join(String separator,short... shorts){
 		return join(separator, toStrings(shorts));
 	}
 	
@@ -627,7 +627,7 @@ public final class ArrayUtil {
 	 * @param bytes
 	 * @return
 	 */
-	public static String join(String separator,byte[] bytes){
+	public static String join(String separator,byte... bytes){
 		return join(separator, toStrings( bytes));
 	}
 	
@@ -637,7 +637,7 @@ public final class ArrayUtil {
 	 * @param chars
 	 * @return
 	 */
-	public static String join(String separator,char[] chars){
+	public static String join(String separator,char... chars){
 		return join(separator, toStrings(chars));
 	}
 	
@@ -647,7 +647,7 @@ public final class ArrayUtil {
 	 * @param booleans
 	 * @return
 	 */
-	public static String join(String separator,boolean[] booleans){
+	public static String join(String separator,boolean... booleans){
 		return join(separator, toStrings(booleans));
 	}
 	/**
@@ -656,7 +656,7 @@ public final class ArrayUtil {
 	 * @param doubles
 	 * @return
 	 */
-	public static String join(String separator,double[] doubles){
+	public static String join(String separator,double... doubles){
 		return join(separator, toStrings(doubles));
 	}
 	/**
@@ -665,7 +665,7 @@ public final class ArrayUtil {
 	 * @param floats
 	 * @return
 	 */
-	public static String join(String separator,float[] floats){
+	public static String join(String separator,float... floats){
 		return join(separator, toStrings(floats));
 	}
 	
@@ -675,7 +675,7 @@ public final class ArrayUtil {
 	 * @param strs
 	 * @return
 	 */
-	public static String join(String separator,String[] strs){
+	public static String join(String separator,String... strs){
 		if (separator==null || strs==null || strs.length<1) {
 			return Strings.empty();
 		}
@@ -693,7 +693,8 @@ public final class ArrayUtil {
 	 * @param array
 	 * @return
 	 */
-	public static <T>String join(String separator,T[] array){
+	@SuppressWarnings("unchecked")
+	public static <T>String join(String separator,T... array){
 		return join(separator, toStrings(array));
 	}
 	/**

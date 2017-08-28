@@ -836,8 +836,8 @@ public final class Images {
 	 */
 	public static Dimension imageDimension(File file) {
 		Dimension dimension=new Dimension();
-		if(Files.isReadableFile(file)) {
-			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Path.splitText(file.getAbsolutePath())[1]);
+		if(Filer.isReadableFile(file)) {
+			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Pather.splitText(file.getAbsolutePath())[1]);
 			if (it.hasNext()) {
 				ImageReader imageReader=it.next();
 				try (ImageInputStream iis = ImageIO.createImageInputStream(file)){

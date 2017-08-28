@@ -224,7 +224,7 @@ public final class QRCode {
 	 * @return
 	 */
 	public static String distinguish(File file) {
-        if (Files.isReadableFile(file)) {
+        if (Filer.isReadableFile(file)) {
 	        try {
 				return distinguish(ImageIO.read(file));
 			} catch (IOException e) {

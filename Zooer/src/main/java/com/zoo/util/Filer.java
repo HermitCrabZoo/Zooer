@@ -7,11 +7,17 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-public final class Files {
+public final class Filer {
 
-	private Files() {}
+	private Filer() {}
 	/**
 	 * 文件或目录、存在
 	 * @param file
@@ -109,6 +115,22 @@ public final class Files {
 		return isReadableDir(file)&&file.canWrite();
 	}
 	/**
+	 * 判断是否是一个根目录
+	 * @param file
+	 * @return
+	 */
+	public static boolean isRoot(File file){
+		if(isDir(file)) {
+			File[] roots=File.listRoots();
+			for(int i=0,size=roots.length;i<size;i++) {
+				if (roots[i].equals(file)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	/**
 	 * 文件拷贝
 	 * @param source
 	 * @param target
@@ -116,14 +138,43 @@ public final class Files {
 	 */
 	public static boolean copy(File source,File target){
 		if(isReadable(source)&&target!=null) {
-			try (FileInputStream fis=new FileInputStream(source);
-					FileOutputStream fos=new FileOutputStream(target);
-					FileChannel in = fis.getChannel();
-					FileChannel out = fos.getChannel();){
-				in.transferTo(0, in.size(), out);
-				return true;
+			if (!target.exists()) {
+				target.mkdirs();
+			}
+			Path origin=source.toPath();
+			Path to=target.toPath();
+			String parent=origin.getParent().toString();
+			String toParent=to.getParent().toString();
+			try(Stream<Path> pathStream = Files.walk(origin, FileVisitOption.FOLLOW_LINKS)) {
+				pathStream.filter(Funcs.pathTrue).forEach(p->{
+					System.out.println(p.toAbsolutePath());
+					Path targetPath=Paths.get(toParent, p.getFileName().toString());
+					if (!Files.exists(targetPath)) {
+						try {
+							Files.createDirectories(targetPath);
+							Files.createFile(targetPath);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				});
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				e.printStackTrace();
+			}
+			
+			boolean isDir=source.isDirectory();
+			
+			if (isDir) {
+			}else {
+				try (FileInputStream fis=new FileInputStream(source);
+						FileOutputStream fos=new FileOutputStream(target);
+						FileChannel in = fis.getChannel();
+						FileChannel out = fos.getChannel();){
+					in.transferTo(0, in.size(), out);
+					return true;
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		}
 		return false;

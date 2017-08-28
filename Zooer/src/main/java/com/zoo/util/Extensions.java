@@ -26,7 +26,7 @@ public final class Extensions {
 				extensions.addAll(extensionNames(f, filter));
 			}
 		}else if(filter==null || filter.accept(file.getParentFile(), file.getName())){//通过过滤器
-			String extensionName=Path.splitText(file.getName())[1];//获取扩展名
+			String extensionName=Pather.splitText(file.getName())[1];//获取扩展名
 			if (!extensions.contains(extensionName)){
 				extensions.add(extensionName);
 			}

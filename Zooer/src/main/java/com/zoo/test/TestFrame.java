@@ -6,12 +6,18 @@ import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,6 +31,8 @@ import com.zoo.util.Chars;
 import com.zoo.util.Chroma;
 import com.zoo.util.Colors;
 import com.zoo.util.Dates;
+import com.zoo.util.Filer;
+import com.zoo.util.Funcs;
 import com.zoo.util.Images;
 import com.zoo.util.QRCode;
 import com.zoo.util.Systems;
@@ -42,60 +50,9 @@ public class TestFrame{
 	 */
 	public static void main(String[] args) {
 //		testBeanCopy();
-		testAvg(1);
+//		testAvg(1);
 //		testImg();
-	}
-	public static void testBeanCopy(){
-		
-		List<KV> kvf=new ArrayList<KV>();
-		List<KV> kvt1=new ArrayList<KV>();
-		List<KV> kvt2=new ArrayList<KV>();
-		int size=100000;
-		for(int i=0;i<size;i++) {
-			kvf.add(new KV("key"+i,"value"+i));
-			kvt1.add(new KV());
-			kvt2.add(new KV());
-		}
-		
-		System.out.println("starting");
-		BeanCopier bCopier=BeanCopier.create(KV.class,KV.class, false);
-		long a=clock.millis();
-		for(int i=0;i<size;i++) {
-//			bCopier.copy(kvf.get(i), kvt1.get(i), null);
-			Bean.copy(kvf.get(i), kvt1.get(i));
-		}
-		long b=clock.millis();
-		for(int i=0;i<size;i++) {
-			KV kv=kvf.get(i);
-			KV kk=kvt2.get(i);
-			kk.setKey(kv.getKey());
-			kk.setValue(kk.getValue());
-		}
-		long c=clock.millis();
-		System.out.println(b-a);
-		System.out.println(c-b);
-		System.out.println("end");
-	}
-	public static void testAvg(int times){
-		Random random =new Random();
-		long[] ss=new long[times];
-		long s=0L,e=0L;
-		long[] cc=random.longs(100000).toArray();
-		String[] strings=new String[]{Chars.randChar(),null,Chars.randChar()};
-		double[] doubles=new double[] {};
-		System.out.println(ArrayUtil.join(",", ArrayUtil.distinct(strings)));
-		System.out.println(ArrayUtil.join(",", ArrayUtil.distinct(doubles)));
-		System.out.println(ArrayUtil.avg(doubles));
-		System.out.println(Dates.format(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss.SHSS"));
-		for(int j=0;j<times;j++){
-			s=System.currentTimeMillis();
-			for(int i=0;i<10000;i++){
-				ArrayUtil.max(cc);
-			}
-			e=System.currentTimeMillis();
-			ss[j]=e-s;
-		}
-		System.out.println("duration avg:"+ArrayUtil.avg(ss));
+		testFileCopy();
 	}
 	public static void testImg() {
 		EventQueue.invokeLater(new Runnable() {
@@ -149,6 +106,81 @@ public class TestFrame{
 			contentPane.setBackground(Colors.randColor(Chroma.lightest));
 			setVisible(true);
 		}
+	}
+	public static void testFileCopy() {
+		File file=new File("E:\\130922.jpg");
+		File dir=new File("E:\\ffmpeg-win64-static");
+		File cFile=new File("F:\\IDE\\plugins_components_librarys\\ffmpeg-3.3");
+		File gFile=new File("E:\\ffmpeg-3.3\\bb");
+		Path pp=cFile.toPath();
+		System.out.println(pp.toString());
+		System.out.println(pp.getFileName().toString());
+		System.out.println(pp.getParent().toString());
+		System.out.println(pp.getRoot().toString());
+		/*try(Stream<Path> pathStream = Files.walk(dir.toPath(), FileVisitOption.FOLLOW_LINKS).parallel()) {
+			pathStream.filter(Funcs.pathTrue).forEach(p->System.out.println(p.toAbsolutePath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
+		long a=clock.millis();
+		//Filer.copy(cFile, dir);
+		long b=clock.millis();
+		long c=clock.millis();
+		System.out.println(b-a);
+		System.out.println(c-b);
+		
+	}
+	public static void testBeanCopy(){
+		
+		List<KV> kvf=new ArrayList<KV>();
+		List<KV> kvt1=new ArrayList<KV>();
+		List<KV> kvt2=new ArrayList<KV>();
+		int size=100000;
+		for(int i=0;i<size;i++) {
+			kvf.add(new KV("key"+i,"value"+i));
+			kvt1.add(new KV());
+			kvt2.add(new KV());
+		}
+		
+		System.out.println("starting");
+		BeanCopier bCopier=BeanCopier.create(KV.class,KV.class, false);
+		long a=clock.millis();
+		for(int i=0;i<size;i++) {
+//			bCopier.copy(kvf.get(i), kvt1.get(i), null);
+			Bean.copy(kvf.get(i), kvt1.get(i));
+		}
+		long b=clock.millis();
+		for(int i=0;i<size;i++) {
+			KV kv=kvf.get(i);
+			KV kk=kvt2.get(i);
+			kk.setKey(kv.getKey());
+			kk.setValue(kk.getValue());
+		}
+		long c=clock.millis();
+		System.out.println(b-a);
+		System.out.println(c-b);
+		System.out.println("end");
+	}
+	public static void testAvg(int times){
+		Random random =new Random();
+		long[] ss=new long[times];
+		long s=0L,e=0L;
+		long[] cc=random.longs(100000).toArray();
+		String[] strings=new String[]{Chars.randChar(),null,Chars.randChar()};
+		double[] doubles=new double[] {};
+		System.out.println(ArrayUtil.join(",", ArrayUtil.distinct(strings)));
+		System.out.println(ArrayUtil.join(",", ArrayUtil.distinct(doubles)));
+		System.out.println(ArrayUtil.avg(doubles));
+		System.out.println(Dates.format(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss.SHSS"));
+		for(int j=0;j<times;j++){
+			s=System.currentTimeMillis();
+			for(int i=0;i<10000;i++){
+				ArrayUtil.max(cc);
+			}
+			e=System.currentTimeMillis();
+			ss[j]=e-s;
+		}
+		System.out.println("duration avg:"+ArrayUtil.avg(ss));
 	}
 	public static class KV{
 		private String key;

@@ -1,7 +1,7 @@
 package com.zoo.util;
 
-public final class Path {
-	private Path(){}
+public final class Pather {
+	private Pather(){}
 	/**
 	 * 组合路径和文件名组合成文件路径
 	 * @param path

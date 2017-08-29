@@ -109,21 +109,23 @@ public class TestFrame{
 	}
 	public static void testFileCopy() {
 		File file=new File("E:\\130922.jpg");
-		File dir=new File("E:\\ffmpeg-win64-static");
-		File cFile=new File("F:\\IDE\\plugins_components_librarys\\ffmpeg-3.3");
-		File gFile=new File("E:\\ffmpeg-3.3\\bb");
-		Path pp=cFile.toPath();
-		System.out.println(pp.toString());
-		System.out.println(pp.getFileName().toString());
-		System.out.println(pp.getParent().toString());
-		System.out.println(pp.getRoot().toString());
-		/*try(Stream<Path> pathStream = Files.walk(dir.toPath(), FileVisitOption.FOLLOW_LINKS).parallel()) {
-			pathStream.filter(Funcs.pathTrue).forEach(p->System.out.println(p.toAbsolutePath()));
+		Path dir=Paths.get("E:\\ffmpeg-win64-static");
+		Path cFile=Paths.get("E:\\testJavacv\\javacvContent");
+		Path gFile=Paths.get("E:\\TestResource\\ccd");
+//		System.out.println(pp.toString());
+//		System.out.println(pp.getFileName().toString());
+//		System.out.println(pp.getParent().toString());
+//		System.out.println(pp.getRoot().toString());
+		try(Stream<Path> pathStream = Files.walk(cFile, FileVisitOption.FOLLOW_LINKS).parallel()) {
+//			pathStream.filter(Funcs.pathTrue).forEach(p->System.out.println(p.toAbsolutePath()));
+			Path path=Paths.get("E:\\TestResource\\nobb\\ccd\\cmos.pp");
+//			Files.createDirectories(path.getParent());
+//			Files.createFile(path);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
 		long a=clock.millis();
-		//Filer.copy(cFile, dir);
+		Filer.copy(cFile, gFile);
 		long b=clock.millis();
 		long c=clock.millis();
 		System.out.println(b-a);

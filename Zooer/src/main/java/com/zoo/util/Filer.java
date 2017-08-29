@@ -11,7 +11,7 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -136,45 +136,32 @@ public final class Filer {
 	 * @param target
 	 * @return 拷贝成功返回true，否则返回false。
 	 */
-	public static boolean copy(File source,File target){
-		if(isReadable(source)&&target!=null) {
-			if (!target.exists()) {
-				target.mkdirs();
+	public static boolean copy(Path source,Path target){
+		if(Files.isReadable(source)&&target!=null) {
+			File tFile=target.toFile();
+			if (!tFile.exists()){
+				tFile.mkdirs();
 			}
-			Path origin=source.toPath();
-			Path to=target.toPath();
-			String parent=origin.getParent().toString();
-			String toParent=to.getParent().toString();
-			try(Stream<Path> pathStream = Files.walk(origin, FileVisitOption.FOLLOW_LINKS)) {
-				pathStream.filter(Funcs.pathTrue).forEach(p->{
-					System.out.println(p.toAbsolutePath());
-					Path targetPath=Paths.get(toParent, p.getFileName().toString());
-					if (!Files.exists(targetPath)) {
-						try {
-							Files.createDirectories(targetPath);
-							Files.createFile(targetPath);
-						} catch (IOException e) {
-							e.printStackTrace();
+			String inParent=source.getParent().toString();
+			String toParent=target.toString();
+			try(Stream<Path> pathStream = Files.walk(source, FileVisitOption.FOLLOW_LINKS)) {
+				pathStream.filter(Funcs.pathTrue).forEach(p->{//遍历
+					Path t=Paths.get(toParent, Strings.removeStart(p.toAbsolutePath().toString(),inParent));
+					try {
+						if (!Files.exists(t)) {
+							if (Files.isDirectory(p)) {
+								Files.createDirectories(t);
+							}
 						}
+						if (!Files.isDirectory(p)&&!Files.isDirectory(t)) {
+							transfer(p.toFile(), t.toFile());
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				});
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			
-			boolean isDir=source.isDirectory();
-			
-			if (isDir) {
-			}else {
-				try (FileInputStream fis=new FileInputStream(source);
-						FileOutputStream fos=new FileOutputStream(target);
-						FileChannel in = fis.getChannel();
-						FileChannel out = fos.getChannel();){
-					in.transferTo(0, in.size(), out);
-					return true;
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
 			}
 		}
 		return false;
@@ -215,5 +202,21 @@ public final class Filer {
 			}
 		}
 		return false;
+	}
+	/**
+	 * 通道传送文件
+	 * @param in
+	 * @param out
+	 * @throws IOException
+	 */
+	private static void transfer(File in,File out) throws IOException {
+		try (FileInputStream fis=new FileInputStream(in);
+				FileOutputStream fos=new FileOutputStream(out);
+				FileChannel ic = fis.getChannel();
+				FileChannel oc = fos.getChannel();){
+			ic.transferTo(0, ic.size(), oc);
+		} catch (IOException e) {
+			throw e;
+		}
 	}
 }

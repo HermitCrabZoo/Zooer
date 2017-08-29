@@ -10,9 +10,11 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.color.ColorSpace;
 import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -851,4 +853,13 @@ public final class Images {
 		}
 		return dimension;
 	}
+	/**
+	 * 将图片转为黑白色
+	 * @param image
+	 * @return
+	 */
+	public static BufferedImage gray(BufferedImage image) {
+		return Optional.ofNullable(image).map(i->new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null).filter(image, null)).orElse(image);
+	}
+	
 }

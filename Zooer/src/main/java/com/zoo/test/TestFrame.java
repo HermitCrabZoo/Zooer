@@ -87,7 +87,7 @@ public class TestFrame{
 					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
 						String surface=color.getRed()+","+color.getGreen()+","+color.getBlue();
-						BufferedImage ii=Imger.ofNew(w, h).borderCrimpRadius(1,Color.WHITE,r).pile(surface).get();
+						BufferedImage ii=Imger.ofNew(w, h).borderDropRadius(1,Color.WHITE,r).pile(surface).get();
 						bgImage=Imger.of(bgImage).pile(ii, i*w, j*h).get();
 //						Images.pile(bgImage,Images.pile(Images.borderCrimpInRadius(Images.image(w, h, color),1,Color.WHITE,r), surface), i*w, j*h);
 					}

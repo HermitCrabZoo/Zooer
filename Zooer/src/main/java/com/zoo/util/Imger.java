@@ -674,8 +674,8 @@ public final class Imger {
 	 * @param radius 内外圆角直径
 	 * @return
 	 */
-	public Imger borderBraceRadius(int w,Color borderColor,int radius){
-		return borderBraceRadius(w, borderColor, radius, radius);
+	public Imger borderRiseRadius(int w,Color borderColor,int radius){
+		return borderRiseRadius(w, borderColor, radius, radius);
 	}
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)，并将图片边框的内角和外角变成圆角
@@ -684,8 +684,8 @@ public final class Imger {
 	 * @param radius 内外圆角直径
 	 * @return
 	 */
-	public Imger borderCrimpRadius(int w,Color borderColor,int radius){
-		return borderCrimpRadius(w, borderColor, radius, radius);
+	public Imger borderDropRadius(int w,Color borderColor,int radius){
+		return borderDropRadius(w, borderColor, radius, radius);
 	}
 	/**
 	 * 在图片外围上加边框(图片尺寸将变大)，并将图片边框的内角和外角变成圆角
@@ -695,8 +695,8 @@ public final class Imger {
 	 * @param outRadius 外圆角直径
 	 * @return
 	 */
-	public Imger borderBraceRadius(int w,Color borderColor,int inRadius,int outRadius){
-		return radius(inRadius).borderBrace(w, borderColor).radius(outRadius);
+	public Imger borderRiseRadius(int w,Color borderColor,int inRadius,int outRadius){
+		return radius(inRadius).borderRise(w, borderColor).radius(outRadius);
 	}
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)，并将图片边框的内角和外角变成圆角
@@ -706,8 +706,8 @@ public final class Imger {
 	 * @param outRadius 外圆角直径
 	 * @return
 	 */
-	public Imger borderCrimpRadius(int w,Color borderColor,int inRadius,int outRadius){
-		return radius(inRadius).borderCrimp(w, borderColor).radius(outRadius);
+	public Imger borderDropRadius(int w,Color borderColor,int inRadius,int outRadius){
+		return radius(inRadius).borderDrop(w, borderColor).radius(outRadius);
 	}
 	/**
 	 * 在图片外围上加边框(图片尺寸将变大)，并将图片边框外角变成圆角
@@ -716,8 +716,8 @@ public final class Imger {
 	 * @param outRadius 圆角直径
 	 * @return
 	 */
-	public Imger borderBraceOutRadius(int w,Color borderColor,int outRadius){
-		return borderBrace(w, borderColor).radius(outRadius);
+	public Imger borderRiseRadiusOut(int w,Color borderColor,int outRadius){
+		return borderRise(w, borderColor).radius(outRadius);
 	}
 	/**
 	 * 在图片外围上加边框(图片尺寸将变大)，并将图片边框的内角变成圆角
@@ -726,8 +726,8 @@ public final class Imger {
 	 * @param inRadius 圆角直径
 	 * @return
 	 */
-	public Imger borderBraceInRadius(int w,Color borderColor,int inRadius){
-		return radius(inRadius).borderBrace(w, borderColor);
+	public Imger borderRiseRadiusIn(int w,Color borderColor,int inRadius){
+		return radius(inRadius).borderRise(w, borderColor);
 	}
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)，并将图片边框外角变成圆角
@@ -736,8 +736,8 @@ public final class Imger {
 	 * @param outRadius 圆角直径
 	 * @return
 	 */
-	public Imger borderCrimpOutRadius(int w,Color borderColor,int outRadius){
-		return borderCrimp(w, borderColor).radius(outRadius);
+	public Imger borderDropRadiusOut(int w,Color borderColor,int outRadius){
+		return borderDrop(w, borderColor).radius(outRadius);
 	}
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)，并将图片边框内角变成圆角
@@ -746,8 +746,8 @@ public final class Imger {
 	 * @param inRadius 圆角直径
 	 * @return
 	 */
-	public Imger borderCrimpInRadius(int w,Color borderColor,int inRadius){
-		return radius(inRadius).borderCrimp(w, borderColor);
+	public Imger borderDropRadiusIn(int w,Color borderColor,int inRadius){
+		return radius(inRadius).borderDrop(w, borderColor);
 	}
 	/**
 	 * 将图片变成圆形,原图片不变,返回新图片.若原图片宽高不相同,那么将按原图片宽高值中较小的一个值为宽高,从原图片中间部位裁剪出宽高相等的图片,再将裁剪出来的图片变成圆形.
@@ -795,7 +795,7 @@ public final class Imger {
 	 * @param borderColor 边框颜色
 	 * @return
 	 */
-	public Imger borderBrace(int w,Color borderColor){
+	public Imger borderRise(int w,Color borderColor){
 		return image(image.getWidth()+w*2, image.getHeight()+w*2, Optional.ofNullable(borderColor).orElse(Colors.wTransparent)).pile(oldImage, w, w);
 	}
 	/**
@@ -804,7 +804,7 @@ public final class Imger {
 	 * @param borderColor 边框颜色
 	 * @return
 	 */
-	public Imger borderCrimp(int w,Color borderColor){
+	public Imger borderDrop(int w,Color borderColor){
 		return scaleZoom(image.getWidth()-w*2, image.getHeight()-w*2).image(oldImage.getWidth(), oldImage.getHeight(),Optional.ofNullable(borderColor).orElse(Colors.wTransparent)).pile(oldImage,w, w);
 	}
 	/**

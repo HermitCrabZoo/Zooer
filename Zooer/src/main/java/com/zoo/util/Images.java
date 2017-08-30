@@ -103,7 +103,7 @@ public final class Images {
 	 * @param surface
 	 * @return
 	 */
-	public static BufferedImage pileCenter(BufferedImage base,String surface){
+	public static BufferedImage pile(BufferedImage base,String surface){
 		return pile(base, surface, null,null);
 	}
 	/**
@@ -836,7 +836,7 @@ public final class Images {
 	 * @param file
 	 * @return
 	 */
-	public static Dimension imageDimension(File file) {
+	public static Dimension dimen(File file) {
 		Dimension dimension=new Dimension();
 		if(Filer.isReadableFile(file)) {
 			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Pather.splitText(file.getAbsolutePath())[1]);

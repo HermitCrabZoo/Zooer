@@ -34,6 +34,7 @@ import com.zoo.util.Dates;
 import com.zoo.util.Filer;
 import com.zoo.util.Funcs;
 import com.zoo.util.Images;
+import com.zoo.util.Imger;
 import com.zoo.util.QRCode;
 import com.zoo.util.Systems;
 import com.zoo.util.Yuv;
@@ -51,8 +52,8 @@ public class TestFrame{
 	public static void main(String[] args) {
 //		testBeanCopy();
 //		testAvg(1);
-//		testImg();
-		testFileCopy();
+		testImg();
+//		testFileCopy();
 	}
 	public static void testImg() {
 		EventQueue.invokeLater(new Runnable() {
@@ -85,7 +86,10 @@ public class TestFrame{
 				for(int j=0;j<7;j++) {
 					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
-						Images.pile(bgImage,Images.pileCenter(Images.borderCrimpRadius(Images.image(w, h, color),1,Color.WHITE,r), color.getRed()+","+color.getGreen()+","+color.getBlue()), i*w, j*h);
+						String surface=color.getRed()+","+color.getGreen()+","+color.getBlue();
+						BufferedImage ii=Imger.of(Images.image(w, h, color)).borderCrimpOutRadius(1,Color.WHITE,r).pile(surface).get();
+						bgImage=Imger.of(bgImage).pile(ii, i*w, j*h).get();
+//						Images.pile(bgImage,Images.pile(Images.borderCrimpInRadius(Images.image(w, h, color),1,Color.WHITE,r), surface), i*w, j*h);
 					}
 				}
 				System.out.println(Colors.getYuv(fg));

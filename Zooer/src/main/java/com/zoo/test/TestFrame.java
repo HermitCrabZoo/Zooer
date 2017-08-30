@@ -69,6 +69,7 @@ public class TestFrame{
 		private JPanel contentPane;
 		public TFrame() {
 			int fw=1500,fh=980;
+			int w=fw/10,h=fh/7,r=40;
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setBounds(0, 0, fw+16, fh+39);
 			setLocationRelativeTo(null);
@@ -84,7 +85,7 @@ public class TestFrame{
 				for(int j=0;j<7;j++) {
 					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
-						Images.pile(bgImage,Images.pileCenter(Images.borderCrimpRadius(Images.image(150, 140, color),1,Color.WHITE,60), color.getRed()+","+color.getGreen()+","+color.getBlue()), i*150, j*140);
+						Images.pile(bgImage,Images.pileCenter(Images.borderCrimpRadius(Images.image(w, h, color),1,Color.WHITE,r), color.getRed()+","+color.getGreen()+","+color.getBlue()), i*w, j*h);
 					}
 				}
 				System.out.println(Colors.getYuv(fg));
@@ -125,7 +126,7 @@ public class TestFrame{
 			e.printStackTrace();
 		}
 		long a=clock.millis();
-		Filer.copy(cFile, gFile);
+//		Filer.copy(cFile, gFile);
 		long b=clock.millis();
 		long c=clock.millis();
 		System.out.println(b-a);

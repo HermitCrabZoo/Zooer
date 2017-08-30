@@ -91,4 +91,38 @@ public final class Strings {
 	public static String empty() {
 		return "";
 	}
+	/**
+	 * 判断字符串长度是否大于len，str为null或长度小于len都会返回false
+	 * @param str
+	 * @param len
+	 * @return
+	 */
+	public static boolean lenGt(String str,int len) {
+		return Optional.ofNullable(str).map(s->s.length()>len).orElse(false);
+	}
+	/**
+	 * 判断字符串长度是否小于len，str为null或长度大于len都会返回false
+	 * @param str
+	 * @param len
+	 * @return
+	 */
+	public static boolean lenLt(String str,int len) {
+		return Optional.ofNullable(str).map(s->s.length()<len).orElse(false);
+	}
+	/**
+	 * 传入开始索引startIndex和截取的长度len，获取str的子串
+	 * @param str 
+	 * @param startIndex 开始索引
+	 * @param len 截取的长度
+	 * @return 若str为null，则返回null。若startIndex大于等于str的长度或startIndex小于0或len小于1，则返回空的(empty)字符串，若从startIndex开始，后面没有len长度的字符串，那么将尽量截取接近len长度的字符串(除了传入str为null外，其他条件下都不会返回null)。
+	 */
+	public static String sub(String str,int startIndex,int len) {
+		return Optional.ofNullable(str).map(
+				s->{
+					int l=str.length();
+					int ei=startIndex+len;
+					return startIndex>=l||startIndex<0||len<1?empty():str.substring(startIndex,ei>l?l:ei);
+				}
+		).orElse(str);
+	}
 }

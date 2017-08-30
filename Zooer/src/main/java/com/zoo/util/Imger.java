@@ -31,7 +31,7 @@ public final class Imger {
 		this.image=image;
 	}
 	/**
-	 * 构造一个Imger对象
+	 * 根据给定的BufferedImage对象构造一个Imger对象
 	 * @param image
 	 * @throws NullPointerException 如果image参数为空，则此方法将抛出此异常
 	 * @return
@@ -41,6 +41,26 @@ public final class Imger {
 			throw new NullPointerException("Argument image cant not be null!");
 		}
 		return new Imger(image);
+	}
+	/**
+	 * 根据给定大小构造一个Imger对象,该对象绑定的BufferedImage对象的颜色随机。
+	 * @param width
+	 * @param height
+	 * @param color
+	 * @return
+	 */
+	public static Imger ofNew(int width,int height){
+		return Imger.of(newImg(0, 0, width, height, Colors.randColor()));
+	}
+	/**
+	 * 根据给定大小、颜色构造一个Imger对象
+	 * @param width
+	 * @param height
+	 * @param color
+	 * @return
+	 */
+	public static Imger ofNew(int width,int height,Color color){
+		return Imger.of(newImg(0, 0, width, height, color));
 	}
 	/**
 	 * 返回当前对象关联的BufferedImage实例
@@ -62,6 +82,7 @@ public final class Imger {
 	 * 根据给定大小和色系该色系内的颜色的图片
 	 * @param width
 	 * @param height
+	 * @param chroma 色系
 	 * @return
 	 */
 	public Imger randImage(int width,int height,Chroma chroma){
@@ -69,7 +90,8 @@ public final class Imger {
 	}
 	/**
 	 * 根据给定大小、颜色生成图片
-	 * @param rect
+	 * @param width
+	 * @param height
 	 * @param color
 	 * @return
 	 */
@@ -105,18 +127,34 @@ public final class Imger {
 	}
 	/**
 	 * 根据给定大小、坐标、颜色生成图片，若color为null那么将随机产生一种颜色
-	 * @param rect
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
 	 * @param color
 	 * @return
 	 */
 	public Imger image(int x,int y,int width,int height,Color color){
 		this.oldImage=image;
-		image =new BufferedImage(width, height,BufferedImage.TYPE_INT_ARGB);
+		image =newImg(x, y, width, height, color);
+		return this;
+	}
+	/**
+	 * 生成新的BufferedImage对象
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param color
+	 * @return
+	 */
+	private static BufferedImage newImg(int x,int y,int width,int height,Color color) {
+		BufferedImage image =new BufferedImage(width, height,BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 		g.setColor(Optional.ofNullable(color).orElse(Colors.randColor()));
 		g.fillRect(x, y, width, height);
 		g.dispose();
-		return this;
+		return image;
 	}
 	/**
 	 * 在图片上写字,默认字体、颜色,位置居中

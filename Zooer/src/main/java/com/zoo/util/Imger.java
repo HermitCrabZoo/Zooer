@@ -50,7 +50,17 @@ public final class Imger {
 	 * @return
 	 */
 	public static Imger ofNew(int width,int height){
-		return Imger.of(newImg(0, 0, width, height, Colors.randColor()));
+		return ofNew(width, height, Colors.randColor());
+	}
+	/**
+	 * 根据给定大小、色系构造一个Imger对象
+	 * @param width
+	 * @param height
+	 * @param chroma
+	 * @return
+	 */
+	public static Imger ofNew(int width,int height,Chroma chroma){
+		return ofNew(width, height, Colors.randColor(chroma));
 	}
 	/**
 	 * 根据给定大小、颜色构造一个Imger对象

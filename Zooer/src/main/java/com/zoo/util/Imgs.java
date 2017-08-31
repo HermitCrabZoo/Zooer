@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import sun.font.FontDesignMetrics;
 
@@ -27,11 +28,12 @@ public final class Imgs {
 	private BufferedImage oldImage;
 	private static ColorConvertOp colorConvertOp=new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
 	
+	private Imgs() {}
 	private Imgs(BufferedImage image) {
 		this.image=image;
 	}
 	/**
-	 * 根据给定的BufferedImage对象构造一个Imger对象
+	 * 根据给定的BufferedImage对象构造一个Imgs对象
 	 * @param image
 	 * @throws NullPointerException 如果image参数为空，则此方法将抛出此异常
 	 * @return
@@ -43,7 +45,14 @@ public final class Imgs {
 		return new Imgs(image);
 	}
 	/**
-	 * 根据给定大小构造一个Imger对象,该对象绑定的BufferedImage对象的颜色随机。
+	 * 构造一个空的Imgs对象
+	 * @return
+	 */
+	public static Imgs ofNull() {
+		return new Imgs();
+	}
+	/**
+	 * 根据给定大小构造一个Imgs对象,该对象绑定的BufferedImage对象的颜色随机。
 	 * @param width
 	 * @param height
 	 * @param color
@@ -53,7 +62,7 @@ public final class Imgs {
 		return ofNew(width, height, Colors.randColor());
 	}
 	/**
-	 * 根据给定大小、色系构造一个Imger对象
+	 * 根据给定大小、色系构造一个Imgs对象
 	 * @param width
 	 * @param height
 	 * @param chroma
@@ -63,7 +72,7 @@ public final class Imgs {
 		return ofNew(width, height, Colors.randColor(chroma));
 	}
 	/**
-	 * 根据给定大小、颜色构造一个Imger对象
+	 * 根据给定大小、颜色构造一个Imgs对象
 	 * @param width
 	 * @param height
 	 * @param color
@@ -78,6 +87,29 @@ public final class Imgs {
 	 */
 	public BufferedImage get() {
 		return image;
+	}
+	/**
+     * Return the image if present, otherwise return {@code other}.
+     *
+     * @param other the image to be returned if there is no value present, may
+     * be null
+     * @return the image, if present, otherwise {@code other}
+     */
+    public BufferedImage orElse(BufferedImage other) {
+        return image != null ? image : other;
+    }
+	/**
+     * Return the image if present, otherwise invoke {@code other} and return
+     * the result of that invocation.
+     *
+     * @param other a {@code Supplier} whose result is returned if no image
+     * is present
+     * @return the image if present otherwise the result of {@code other.get()}
+     * @throws NullPointerException if image is not present and {@code other} is
+     * null
+     */
+	public BufferedImage orElseGet(Supplier<? extends BufferedImage> other) {
+		return image!=null?image:other.get();
 	}
 	/**
 	 * 根据给定大小生成随机颜色的图片

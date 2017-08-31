@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -51,7 +52,7 @@ public class TestFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		System.out.println(Strs.sub("0123456789", 0, 100));
+		System.out.println(Strs.sub("0123456789", 9, 100));
 //		testBeanCopy();
 //		testAvg(1);
 //		testImg();
@@ -83,6 +84,7 @@ public class TestFrame{
 			Color fg=new Color(0,129,211,255),bg=new Color(174,244,235);
 			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 200, 200,fg,bg);
 			BufferedImage bgImage=Imager.image(fw, fh, Color.black);
+			Optional.ofNullable(qrcode).orElseGet(null);
 			try {
 				Chroma[] chromas= {Chroma.lightest,Chroma.lighter,Chroma.light,Chroma.middle,Chroma.heavy,Chroma.heavier,Chroma.heaviest};
 				for(int j=0;j<7;j++) {

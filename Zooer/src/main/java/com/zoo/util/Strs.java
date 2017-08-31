@@ -124,4 +124,20 @@ public final class Strs {
 				}
 		).orElse(str);
 	}
+	/**
+	 * 传入开始索引startIndex和截取的长度len，获取str的子串，
+	 * @param str
+	 * @param startIndex
+	 * @param len
+	 * @param addition
+	 * @return 若str为null，则返回null。若startIndex大于等于str的长度或startIndex小于0或len小于1，则返回空的(empty)字符串<br>
+	 * 若从startIndex开始，后面没有len长度的字符串，那么将尽量截取接近len长度的字符串(除了传入str为null外，其他条件下都不会返回null)。<br>
+	 * 若str的长度大于len，那么返回的字符串是str的子串+addition
+	 */
+	public static String subIf(String str,int startIndex,int len,String addition) {
+		return Optional.ofNullable(str).map(s->{
+			String sub=sub(str, startIndex, len);
+			return str.length()>len?sub+addition:sub;
+		}).orElse(str);
+	}
 }

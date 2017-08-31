@@ -137,7 +137,15 @@ public final class Strs {
 	public static String subIf(String str,int startIndex,int len,String addition) {
 		return Optional.ofNullable(str).map(s->{
 			String sub=sub(str, startIndex, len);
-			return str.length()>len?sub+addition:sub;
+			return s.length()>len?sub+addition:sub;
 		}).orElse(str);
+	}
+	/**
+	 * 将对象转换为字符串，若对象为null则返回空(empty)字符串。
+	 * @param t
+	 * @return
+	 */
+	public static <T>String toStr(T t) {
+		return Optional.ofNullable(t).map(s->String.valueOf(s)).orElse(empty());
 	}
 }

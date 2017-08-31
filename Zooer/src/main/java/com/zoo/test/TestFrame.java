@@ -44,6 +44,7 @@ import com.zoo.util.Yuv;
 import net.sf.cglib.beans.BeanCopier;
 
 import javax.imageio.ImageIO;
+import javax.print.attribute.HashAttributeSet;
 import javax.swing.ImageIcon;
 
 public class TestFrame{
@@ -52,7 +53,19 @@ public class TestFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		System.out.println(Strs.sub("0123456789", 9, 100));
+		Path path=Paths.get("E:\\ffmpeg-3.3");
+		Path fPath=Paths.get("E:\\ffmpeg-3.3\\新建文本文档.txt");
+		Path npath=Paths.get("E:\\ffmpeg-3.300");
+		Filer.paths(path, null).stream().forEach(System.out::println);
+		Filer.suffixs(path, null).stream().forEach(System.out::println);
+		Arrs.removeNull(Arrays.asList(1,null,3,5,8)).stream().forEach(System.out::println);
+		
+		System.out.println(Funcs.onlyDir.test(path));
+		System.out.println(Funcs.onlyFile.test(path));
+		System.out.println(Funcs.onlyDir.test(fPath));
+		System.out.println(Funcs.onlyFile.test(fPath));
+		System.out.println(Funcs.onlyDir.test(npath));
+		System.out.println(Funcs.onlyFile.test(npath));
 //		testBeanCopy();
 //		testAvg(1);
 //		testImg();
@@ -91,7 +104,7 @@ public class TestFrame{
 					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
 						String surface=color.getRed()+","+color.getGreen()+","+color.getBlue();
-						BufferedImage ii=Imgs.ofNew(w, h,color).borderDropRadius(1,Color.WHITE,r).pile(surface).get();
+						BufferedImage ii=Imgs.ofNew(w, h,color).borderDropRadius(3,Color.WHITE,r).pile(surface).get();
 						bgImage=Imgs.of(bgImage).pile(ii, i*w, j*h).get();
 //						Images.pile(bgImage,Images.pile(Images.borderCrimpInRadius(Images.image(w, h, color),1,Color.WHITE,r), surface), i*w, j*h);
 					}

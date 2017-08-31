@@ -812,12 +812,20 @@ public final class Arrs {
 	}
 	
 	/**
-	 * 将String型字符串中的null去除，返回新生成的String数组
+	 * 将String型字符串数组中的null去除，返回新生成的String数组
 	 * @param strings
 	 * @return
 	 */
 	public static String[] removeNull(String[] strings) {
 		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().filter(s->Objects.nonNull(s)).toArray(String[]::new)).orElse(Strs.emptys());
+	}
+	/**
+	 * 将List对象里的null元素去除，返回新生成的List对象
+	 * @param strings
+	 * @return
+	 */
+	public static <T>List<T> removeNull(List<T> list) {
+		return Optional.ofNullable(list).map(ss->ss.parallelStream().filter(i->Objects.nonNull(i)).collect(Collectors.toList())).orElse(Collections.emptyList());
 	}
 	
 	/**
@@ -843,5 +851,61 @@ public final class Arrs {
 	 */
 	public static <T>boolean notEmpty(T[] arr) {
 		return !(arr==null||arr.length==0);
+	}
+	/**
+	 * 判断longs是否不为null并且长度大于0，为null或长度小于0都会返回false。
+	 * @param longs
+	 * @return
+	 */
+	public static boolean notEmpty(long[] longs) {
+		return !(longs==null||longs.length==0);
+	}
+	/**
+	 * 判断ints是否不为null并且长度大于0，为null或长度小于0都会返回false。
+	 * @param ints
+	 * @return
+	 */
+	public static boolean notEmpty(int[] ints) {
+		return !(ints==null||ints.length==0);
+	}
+	/**
+	 * 判断shorts是否不为null并且长度大于0，为null或长度小于0都会返回false。
+	 * @param shorts
+	 * @return
+	 */
+	public static boolean notEmpty(short[] shorts) {
+		return !(shorts==null||shorts.length==0);
+	}
+	/**
+	 * 判断bytes是否不为null并且长度大于0，为null或长度小于0都会返回false。
+	 * @param bytes
+	 * @return
+	 */
+	public static boolean notEmpty(byte[] bytes) {
+		return !(bytes==null||bytes.length==0);
+	}
+	/**
+	 * 判断doubles是否不为null并且长度大于0，为null或长度小于0都会返回false。
+	 * @param doubles
+	 * @return
+	 */
+	public static boolean notEmpty(double[] doubles) {
+		return !(doubles==null||doubles.length==0);
+	}
+	/**
+	 * 判断floats是否不为null并且长度大于0，为null或长度小于0都会返回false。
+	 * @param floats
+	 * @return
+	 */
+	public static boolean notEmpty(float[] floats) {
+		return !(floats==null||floats.length==0);
+	}
+	/**
+	 * 判断chars是否不为null并且长度大于0，为null或长度小于0都会返回false。
+	 * @param chars
+	 * @return
+	 */
+	public static boolean notEmpty(char[] chars) {
+		return !(chars==null||chars.length==0);
 	}
 }

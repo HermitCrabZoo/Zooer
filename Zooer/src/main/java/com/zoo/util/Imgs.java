@@ -117,7 +117,7 @@ public final class Imgs {
 	 * @param height
 	 * @return
 	 */
-	public Imgs randImage(int width,int height){
+	public Imgs image(int width,int height){
 		return image(0,0,width,height,Colors.randColor());
 	}
 	/**
@@ -127,7 +127,7 @@ public final class Imgs {
 	 * @param chroma 色系
 	 * @return
 	 */
-	public Imgs randImage(int width,int height,Chroma chroma){
+	public Imgs image(int width,int height,Chroma chroma){
 		return image(0,0,width,height,Colors.randColor(chroma));
 	}
 	/**

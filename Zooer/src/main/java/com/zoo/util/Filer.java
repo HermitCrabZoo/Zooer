@@ -11,7 +11,11 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Filer {
@@ -147,13 +151,13 @@ public final class Filer {
 				pathStream.filter(Funcs.pathTrue).forEach(p->{//遍历
 					Path t=Paths.get(toParent, Strs.removeStart(p.toAbsolutePath().toString(),inParent));
 					try {
-						if (!Files.exists(t)) {
-							if (Files.isDirectory(p)) {
+						if (!Files.exists(t)) {//目标不存在
+							if (Files.isDirectory(p)) {//原path是目录则创建
 								Files.createDirectories(t);
 							}
 						}
-						if (!Files.isDirectory(p)&&!Files.isDirectory(t)) {
-							transfer(p.toFile(), t.toFile());
+						if (!Files.isDirectory(p)&&!Files.isDirectory(t)) {//文件对文件拷贝
+							transfer(p, t);
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -208,14 +212,44 @@ public final class Filer {
 	 * @param out
 	 * @throws IOException
 	 */
-	private static void transfer(File in,File out) throws IOException {
-		try (FileInputStream fis=new FileInputStream(in);
-				FileOutputStream fos=new FileOutputStream(out);
-				FileChannel ic = fis.getChannel();
-				FileChannel oc = fos.getChannel();){
+	private static void transfer(Path in,Path out) throws IOException {
+		try(FileChannel ic = FileChannel.open(in);
+			FileChannel oc = FileChannel.open(out);)
+		{
 			ic.transferTo(0, ic.size(), oc);
 		} catch (IOException e) {
 			throw e;
 		}
+	}
+	
+	/**
+	 * 获取目录下的文件后缀
+	 * @param directory
+	 * @param filter
+	 * @return
+	 */
+	public static List<String> suffixs(Path directory,Predicate<? super Path> filter){
+		return paths(directory, filter).stream().filter(Funcs.onlyFile).map(p->Pather.suffix(p.toString())).distinct().collect(Collectors.toList());
+	}
+	/**
+	 * 获取目录下的所有目录和文件(包含当前传入目录)。
+	 * @param directory
+	 * @param filter
+	 * @return
+	 */
+	public static List<Path> paths(Path directory,Predicate<? super Path> filter){
+		List<Path> paths=new ArrayList<Path>();
+		if (directory!=null) {
+			try(Stream<Path> pathStream = Files.walk(directory, FileVisitOption.FOLLOW_LINKS)) {
+				if (filter!=null) {
+					pathStream.filter(filter).forEachOrdered(paths::add);
+				}else {
+					pathStream.forEachOrdered(paths::add);
+				}
+			}catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return paths;
 	}
 }

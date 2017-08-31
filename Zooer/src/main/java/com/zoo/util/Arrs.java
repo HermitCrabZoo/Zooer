@@ -828,4 +828,20 @@ public final class Arrs {
 	public static <T>List<T> toList(T[] array){
 		return Optional.ofNullable(array).map(arr->Arrays.stream(arr).parallel().collect(Collectors.toList())).orElse(Collections.emptyList());
 	}
+	/**
+	 * 判断list是否不为null并且不为empty(有元素)，为null或没有元素都会返回false。
+	 * @param list
+	 * @return
+	 */
+	public static <T>boolean notEmpty(List<T> list) {
+		return !(list==null||list.isEmpty());
+	}
+	/**
+	 * 判断arr是否不为null并且长度大于0，为null或长度小于0都会返回false。
+	 * @param arr
+	 * @return
+	 */
+	public static <T>boolean notEmpty(T[] arr) {
+		return !(arr==null||arr.length==0);
+	}
 }

@@ -839,7 +839,7 @@ public final class Imager {
 	public static Dimension dimen(File file) {
 		Dimension dimension=new Dimension();
 		if(Filer.isReadableFile(file)) {
-			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Pather.splitText(file.getAbsolutePath())[1]);
+			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Pather.suffix(file.getAbsolutePath()));
 			if (it.hasNext()) {
 				ImageReader imageReader=it.next();
 				try (ImageInputStream iis = ImageIO.createImageInputStream(file)){

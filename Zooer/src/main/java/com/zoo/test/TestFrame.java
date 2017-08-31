@@ -36,6 +36,7 @@ import com.zoo.util.Filer;
 import com.zoo.util.Funcs;
 import com.zoo.util.Imager;
 import com.zoo.util.Imgs;
+import com.zoo.util.Pather;
 import com.zoo.util.QRCode;
 import com.zoo.util.Strs;
 import com.zoo.util.Syss;
@@ -59,7 +60,9 @@ public class TestFrame{
 		Filer.paths(path, null).stream().forEach(System.out::println);
 		Filer.suffixs(path, null).stream().forEach(System.out::println);
 		Arrs.removeNull(Arrays.asList(1,null,3,5,8)).stream().forEach(System.out::println);
-		
+		System.out.println(Pather.parent(npath.toString()));
+		System.out.println(Pather.name(npath.toString()));
+		System.out.println(Pather.suffix(npath.toString()));
 		System.out.println(Funcs.onlyDir.test(path));
 		System.out.println(Funcs.onlyFile.test(path));
 		System.out.println(Funcs.onlyDir.test(fPath));

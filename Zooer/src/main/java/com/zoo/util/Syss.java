@@ -15,8 +15,8 @@ import java.util.Properties;
  * @author ZOO
  *
  */
-public final class Systems {
-	private Systems(){}
+public final class Syss {
+	private Syss(){}
 
 	private static Properties systemProperties;
 	private static Toolkit defaultToolKit;
@@ -134,6 +134,6 @@ public final class Systems {
 	 */
 	public static String osName(){
 		osName=Optional.ofNullable(osName).orElse(Optional.ofNullable(systemProperties).map(sp->sp.getProperty("os.name")).orElse(null));
-		return Optional.ofNullable(osName).orElse(Strings.empty());
+		return Optional.ofNullable(osName).orElse(Strs.empty());
 	}
 }

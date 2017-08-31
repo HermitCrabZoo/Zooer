@@ -145,7 +145,7 @@ public final class Filer {
 			String toParent=target.toString();
 			try(Stream<Path> pathStream = Files.walk(source, FileVisitOption.FOLLOW_LINKS)) {
 				pathStream.filter(Funcs.pathTrue).forEach(p->{//遍历
-					Path t=Paths.get(toParent, Strings.removeStart(p.toAbsolutePath().toString(),inParent));
+					Path t=Paths.get(toParent, Strs.removeStart(p.toAbsolutePath().toString(),inParent));
 					try {
 						if (!Files.exists(t)) {
 							if (Files.isDirectory(p)) {

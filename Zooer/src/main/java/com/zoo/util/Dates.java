@@ -213,7 +213,7 @@ public final class Dates {
 	public static String format(TemporalAccessor temporal, String pattern) {
 		return Optional.ofNullable(pattern)
 				.flatMap(p -> Optional.ofNullable(temporal).map(t -> DateTimeFormatter.ofPattern(p).format(t)))
-				.orElse(Strings.empty());
+				.orElse(Strs.empty());
 	}
 	/**
 	 * 将时间按pattern格式化输出
@@ -224,6 +224,6 @@ public final class Dates {
 	public static String format(Date date, String pattern) {
 		return Optional.ofNullable(pattern)
 				.flatMap(p -> Optional.ofNullable(date).map(t -> new SimpleDateFormat(p).format(t)))
-				.orElse(Strings.empty());
+				.orElse(Strs.empty());
 	}
 }

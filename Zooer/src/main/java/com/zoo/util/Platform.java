@@ -15,7 +15,7 @@ public final class Platform {
 	 */
 	static String slash(){
 		if (CERTAIN_SLASH.isEmpty()) {
-			CERTAIN_SLASH=Systems.isWindows()?BACKSLASH:SLASH;
+			CERTAIN_SLASH=Syss.isWindows()?BACKSLASH:SLASH;
 		}
 		return CERTAIN_SLASH;
 	}

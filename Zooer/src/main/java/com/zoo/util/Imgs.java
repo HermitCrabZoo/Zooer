@@ -21,13 +21,13 @@ import java.util.Optional;
 import sun.font.FontDesignMetrics;
 
 @SuppressWarnings("restriction")
-public final class Imger {
+public final class Imgs {
 	
 	private BufferedImage image;
 	private BufferedImage oldImage;
 	private static ColorConvertOp colorConvertOp=new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
 	
-	private Imger(BufferedImage image) {
+	private Imgs(BufferedImage image) {
 		this.image=image;
 	}
 	/**
@@ -36,11 +36,11 @@ public final class Imger {
 	 * @throws NullPointerException 如果image参数为空，则此方法将抛出此异常
 	 * @return
 	 */
-	public static Imger of(BufferedImage image) {
+	public static Imgs of(BufferedImage image) {
 		if (image==null) {
 			throw new NullPointerException("Argument image cant not be null!");
 		}
-		return new Imger(image);
+		return new Imgs(image);
 	}
 	/**
 	 * 根据给定大小构造一个Imger对象,该对象绑定的BufferedImage对象的颜色随机。
@@ -49,7 +49,7 @@ public final class Imger {
 	 * @param color
 	 * @return
 	 */
-	public static Imger ofNew(int width,int height){
+	public static Imgs ofNew(int width,int height){
 		return ofNew(width, height, Colors.randColor());
 	}
 	/**
@@ -59,7 +59,7 @@ public final class Imger {
 	 * @param chroma
 	 * @return
 	 */
-	public static Imger ofNew(int width,int height,Chroma chroma){
+	public static Imgs ofNew(int width,int height,Chroma chroma){
 		return ofNew(width, height, Colors.randColor(chroma));
 	}
 	/**
@@ -69,8 +69,8 @@ public final class Imger {
 	 * @param color
 	 * @return
 	 */
-	public static Imger ofNew(int width,int height,Color color){
-		return Imger.of(newImg(0, 0, width, height, color));
+	public static Imgs ofNew(int width,int height,Color color){
+		return Imgs.of(newImg(0, 0, width, height, color));
 	}
 	/**
 	 * 返回当前对象关联的BufferedImage实例
@@ -85,7 +85,7 @@ public final class Imger {
 	 * @param height
 	 * @return
 	 */
-	public Imger randImage(int width,int height){
+	public Imgs randImage(int width,int height){
 		return image(0,0,width,height,Colors.randColor());
 	}
 	/**
@@ -95,7 +95,7 @@ public final class Imger {
 	 * @param chroma 色系
 	 * @return
 	 */
-	public Imger randImage(int width,int height,Chroma chroma){
+	public Imgs randImage(int width,int height,Chroma chroma){
 		return image(0,0,width,height,Colors.randColor(chroma));
 	}
 	/**
@@ -105,7 +105,7 @@ public final class Imger {
 	 * @param color
 	 * @return
 	 */
-	public Imger image(int width,int height,Color color){
+	public Imgs image(int width,int height,Color color){
 		return image(0,0,width,height,color);
 	}
 	/**
@@ -114,7 +114,7 @@ public final class Imger {
 	 * @param color
 	 * @return
 	 */
-	public Imger image(Dimension dimen,Color color){
+	public Imgs image(Dimension dimen,Color color){
 		return image(0,0,dimen.width,dimen.height,color);
 	}
 	/**
@@ -123,7 +123,7 @@ public final class Imger {
 	 * @param color
 	 * @return
 	 */
-	public Imger image(Point point,Dimension dimen,Color color){
+	public Imgs image(Point point,Dimension dimen,Color color){
 		return image(point.x,point.y,dimen.width,dimen.height,color);
 	}
 	/**
@@ -132,7 +132,7 @@ public final class Imger {
 	 * @param color
 	 * @return
 	 */
-	public Imger image(Rectangle rect,Color color){
+	public Imgs image(Rectangle rect,Color color){
 		return image(rect.x, rect.y, rect.width, rect.height, color);
 	}
 	/**
@@ -144,7 +144,7 @@ public final class Imger {
 	 * @param color
 	 * @return
 	 */
-	public Imger image(int x,int y,int width,int height,Color color){
+	public Imgs image(int x,int y,int width,int height,Color color){
 		this.oldImage=image;
 		image =newImg(x, y, width, height, color);
 		return this;
@@ -171,7 +171,7 @@ public final class Imger {
 	 * @param surface
 	 * @return
 	 */
-	public Imger pile(String surface){
+	public Imgs pile(String surface){
 		return pile(surface, null,null);
 	}
 	/**
@@ -179,7 +179,7 @@ public final class Imger {
 	 * @param surface
 	 * @return
 	 */
-	public Imger pile(String surface,Font font){
+	public Imgs pile(String surface,Font font){
 		return pile(surface,null,font);
 	}
 	/**
@@ -187,7 +187,7 @@ public final class Imger {
 	 * @param surface
 	 * @return
 	 */
-	public Imger pile(String surface,Color color){
+	public Imgs pile(String surface,Color color){
 		return pile(surface,color,null);
 	}
 	/**
@@ -197,8 +197,8 @@ public final class Imger {
 	 * @param font 字体类型
 	 * @return
 	 */
-	public Imger pile(String surface,Color color,Font font){
-		if (Strings.notEmpty(surface)) {
+	public Imgs pile(String surface,Color color,Font font){
+		if (Strs.notEmpty(surface)) {
 			FontMetrics fm=FontDesignMetrics.getMetrics(Optional.ofNullable(font).orElse(image.getGraphics().getFont()));
 			pile(surface, (image.getWidth()-fm.stringWidth(surface))/2,(image.getHeight()+fm.getAscent()-fm.getDescent())/2,color, font);
 		}
@@ -212,7 +212,7 @@ public final class Imger {
 	 * @param font 字体类型
 	 * @return
 	 */
-	public Imger pile(String surface,Point point,Color color,Font font) {
+	public Imgs pile(String surface,Point point,Color color,Font font) {
 		point=Optional.ofNullable(point).orElse(new Point(0, 0));
 		return pile(surface, point.x, point.y, color, font);
 	}
@@ -225,8 +225,8 @@ public final class Imger {
 	 * @param font 字体类型
 	 * @return
 	 */
-	public Imger pile(String surface,int x,int y,Color color,Font font){
-		if(Strings.notEmpty(surface)) {
+	public Imgs pile(String surface,int x,int y,Color color,Font font){
+		if(Strs.notEmpty(surface)) {
 			Graphics2D g=image.createGraphics();
 			g.setColor(Optional.ofNullable(color).orElse(g.getColor()));
 			g.setFont(Optional.ofNullable(font).orElse(g.getFont()));
@@ -241,7 +241,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileLeftTop(Image cover){
+	public Imgs pileLeftTop(Image cover){
 		return pile(cover,0, 0);
 	}
 	/**
@@ -249,7 +249,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileLeft(Image cover){
+	public Imgs pileLeft(Image cover){
 		if (cover!=null) {
 			pile(cover,0, (image.getHeight()-cover.getHeight(null))/2);
 		}
@@ -260,7 +260,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileLeftBottom(Image cover){
+	public Imgs pileLeftBottom(Image cover){
 		if (cover!=null) {
 			pile(cover,0,image.getHeight()-cover.getHeight(null));
 		}
@@ -271,7 +271,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileRightTop(Image cover){
+	public Imgs pileRightTop(Image cover){
 		if (cover!=null) {
 			pile(cover,image.getWidth()-cover.getWidth(null), 0);
 		}
@@ -282,7 +282,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileRight(Image cover){
+	public Imgs pileRight(Image cover){
 		if (cover!=null) {
 			pile(cover,image.getWidth()-cover.getWidth(null), (image.getHeight()-cover.getHeight(null))/2);
 		}
@@ -293,7 +293,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileRightBottom(Image cover){
+	public Imgs pileRightBottom(Image cover){
 		if (cover!=null) {
 			pile(cover,image.getWidth()-cover.getWidth(null),image.getHeight()-cover.getHeight(null));
 		}
@@ -304,7 +304,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileTop(Image cover){
+	public Imgs pileTop(Image cover){
 		if (cover!=null) {
 			pile(cover,(image.getWidth()-cover.getWidth(null))/2, 0);
 		}
@@ -315,7 +315,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileCenter(Image cover){
+	public Imgs pileCenter(Image cover){
 		if (cover!=null) {
 			pile(cover,(image.getWidth()-cover.getWidth(null))/2, (image.getHeight()-cover.getHeight(null))/2);
 		}
@@ -326,7 +326,7 @@ public final class Imger {
 	 * @param cover
 	 * @return
 	 */
-	public Imger pileBottom(Image cover){
+	public Imgs pileBottom(Image cover){
 		if (cover!=null) {
 			pile(cover,(image.getWidth()-cover.getWidth(null))/2,image.getHeight()-cover.getHeight(null));
 		}
@@ -339,7 +339,7 @@ public final class Imger {
 	 * @param y
 	 * @return
 	 */
-	public Imger pile(Image cover,int x,int y){
+	public Imgs pile(Image cover,int x,int y){
 		if (cover!=null) {
 			pile(cover, x, y,cover.getWidth(null),cover.getHeight(null));
 		}
@@ -351,7 +351,7 @@ public final class Imger {
 	 * @param point
 	 * @return
 	 */
-	public Imger pile(Image cover,Point point){
+	public Imgs pile(Image cover,Point point){
 		if (cover!=null) {
 			point=Optional.ofNullable(point).orElse(new Point(0, 0));
 			pile(cover, point.x, point.y, cover.getWidth(null), cover.getHeight(null));
@@ -364,7 +364,7 @@ public final class Imger {
 	 * @param rect 表面层图片的坐标、大小
 	 * @return 修改后的base对象
 	 */
-	public Imger pile(Image cover,Rectangle rect){
+	public Imgs pile(Image cover,Rectangle rect){
 		if (cover!=null) {
 			rect=Optional.ofNullable(rect).orElse(new Rectangle(0, 0, cover.getWidth(null), cover.getHeight(null)));
 			pile(cover, rect.x, rect.y, rect.width, rect.height);
@@ -380,7 +380,7 @@ public final class Imger {
 	 * @param h 高
 	 * @return 修改后的base对象
 	 */
-	public Imger pile(Image cover,int x,int y,int w,int h){
+	public Imgs pile(Image cover,int x,int y,int w,int h){
 		if(cover!=null) {
 			Graphics2D g=image.createGraphics();
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -394,7 +394,7 @@ public final class Imger {
 	 * @param ratio 缩放率
 	 * @return 若基于缩放率为ratio下计算到的宽或高小于1,那么此方法将返回null
 	 */
-	public Imger scale(double ratio){
+	public Imgs scale(double ratio){
 		int width=(int) Math.round(image.getWidth()*ratio),height=(int) Math.round(image.getHeight()*ratio);
 		return scaleZoom(width, height);
 	}
@@ -403,7 +403,7 @@ public final class Imger {
 	 * @param w 输出图片的宽度
 	 * @return 若高w小于1或在宽为w下计算出来的高小于1,那么此方法将返回null
 	 */
-	public Imger scaleWidth(int w){
+	public Imgs scaleWidth(int w){
 		int h=(int) Math.round(w*1.0/image.getWidth()*image.getHeight());
 		return scaleZoom(w, h);
     }
@@ -412,7 +412,7 @@ public final class Imger {
 	 * @param h 输出图片的高度
 	 * @return 若高h小于1或在高为h下计算出来的宽小于1,那么此方法将返回null
 	 */
-	public Imger scaleHeight(int h){
+	public Imgs scaleHeight(int h){
 		int w=(int) Math.round(h*1.0/image.getHeight()*image.getWidth());
 		return scaleZoom(w, h);
 	}
@@ -422,7 +422,7 @@ public final class Imger {
 	 * @param w 输出图片的宽
 	 * @return 若w或h小于1,那么此方法将返回null
 	 */
-	public Imger scaleZoom(int w, int h){
+	public Imgs scaleZoom(int w, int h){
 		if (w>0&&h>0) {
 			Image cover=scale(w, h);
 			image(w, h, Colors.wTransparent).pileLeftTop(cover);
@@ -436,7 +436,7 @@ public final class Imger {
 	 * @return
 	 * @throws IOException
 	 */
-	public Imger scaleRatioBox(int w, int h){
+	public Imgs scaleRatioBox(int w, int h){
 		return scaleRatioBox(w, h, Colors.wTransparent);
 	}
 	/**
@@ -446,7 +446,7 @@ public final class Imger {
 	 * @param bgColor 背景ARGB
 	 * @return
 	 */
-	public Imger scaleRatioBox(int w, int h,Color bgColor){
+	public Imgs scaleRatioBox(int w, int h,Color bgColor){
 		Image cover=scaleRatio(w, h).image;
 		return image(w, h, Optional.ofNullable(bgColor).orElse(Colors.wTransparent)).pileCenter(cover);
 	}
@@ -456,7 +456,7 @@ public final class Imger {
 	 * @param h
 	 * @return 若图片无法缩放到能放到宽为w高为h的容器中,那么此方法将返回null
 	 */
-	public Imger scaleRatio(int w, int h) {
+	public Imgs scaleRatio(int w, int h) {
 		double ratioX=w*1.0/image.getWidth();
 		double ratioY=h*1.0/image.getHeight();
 		if (ratioX<ratioY) {
@@ -483,21 +483,21 @@ public final class Imger {
 	 * 裁剪图片的前面部分，裁剪的图片宽高值为原图片宽高值中较小的一个值。
 	 * @return 返回宽高值相同的图片
 	 */
-	public Imger cutFront(){
+	public Imgs cutFront(){
 		return cutLeftTop(Math.min(image.getWidth(), image.getHeight()));
 	}
 	/**
 	 * 裁剪图片的中间部分，裁剪的图片宽高值为原图片宽高值中较小的一个值。
 	 * @return 返回宽高值相同的图片
 	 */
-	public Imger cutCenter(){
+	public Imgs cutCenter(){
 		return cutCenter(Math.min(image.getWidth(), image.getHeight()));
 	}
 	/**
 	 * 裁剪图片的后面部分，裁剪的图片宽高值为原图片宽高值中较小的一个值。
 	 * @return 返回宽高值相同的图片
 	 */
-	public Imger cutBehind(){
+	public Imgs cutBehind(){
 		return cutRightBottom(Math.min(image.getWidth(), image.getHeight()));
 	}
 	/**
@@ -505,7 +505,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutLeftTop(int w){
+	public Imgs cutLeftTop(int w){
 		return cutLeftTop(w, w);
 	}
 	/**
@@ -513,7 +513,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutLeft(int w){
+	public Imgs cutLeft(int w){
 		return cutLeft(w, w);
 	}
 	/**
@@ -521,7 +521,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutLeftBottom(int w){
+	public Imgs cutLeftBottom(int w){
 		return cutLeftBottom(w, w);
 	}
 	/**
@@ -529,7 +529,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutRightTop(int w){
+	public Imgs cutRightTop(int w){
 		return cutRightTop(w, w);
 	}
 	/**
@@ -537,7 +537,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutRight(int w){
+	public Imgs cutRight(int w){
 		return cutRight(w, w);
 	}
 	/**
@@ -545,7 +545,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutRightBottom(int w){
+	public Imgs cutRightBottom(int w){
 		return cutRightBottom(w, w);
 	}
 	/**
@@ -553,7 +553,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutTop(int w){
+	public Imgs cutTop(int w){
 		return cutTop(w, w);
 	}
 	/**
@@ -561,7 +561,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutCenter(int w){
+	public Imgs cutCenter(int w){
 		return cutCenter( w, w);
 	}
 	/**
@@ -569,7 +569,7 @@ public final class Imger {
 	 * @param w
 	 * @return 返回宽高相同的图片
 	 */
-	public Imger cutBottom(int w){
+	public Imgs cutBottom(int w){
 		return cutBottom(w, w);
 	}
 	/**
@@ -578,7 +578,7 @@ public final class Imger {
 	 * @param h
 	 * @return 
 	 */
-	public Imger cutLeftTop(int w,int h){
+	public Imgs cutLeftTop(int w,int h){
 		return cut(0,0, w, h);
 	}
 	/**
@@ -587,7 +587,7 @@ public final class Imger {
 	 * @param h
 	 * @return 
 	 */
-	public Imger cutLeft(int w,int h){
+	public Imgs cutLeft(int w,int h){
 		return cut(0,(image.getHeight()-h)/2, w, h);
 	}
 	/**
@@ -596,7 +596,7 @@ public final class Imger {
 	 * @param h
 	 * @return 
 	 */
-	public Imger cutLeftBottom(int w,int h){
+	public Imgs cutLeftBottom(int w,int h){
 		return cut(0,image.getHeight()-h, w, h);
 	}
 	/**
@@ -605,7 +605,7 @@ public final class Imger {
 	 * @param h
 	 * @return 
 	 */
-	public Imger cutRightTop(int w,int h){
+	public Imgs cutRightTop(int w,int h){
 		return cut(image.getWidth()-w,0, w, h);
 	}
 	/**
@@ -614,7 +614,7 @@ public final class Imger {
 	 * @param h
 	 * @return 
 	 */
-	public Imger cutRight(int w,int h){
+	public Imgs cutRight(int w,int h){
 		return cut(image.getWidth()-w,(image.getHeight()-h)/2, w, h);
 	}
 	/**
@@ -623,7 +623,7 @@ public final class Imger {
 	 * @param h
 	 * @return 
 	 */
-	public Imger cutRightBottom(int w,int h){
+	public Imgs cutRightBottom(int w,int h){
 		return cut(image.getWidth()-w,image.getHeight()-h, w, h);
 	}
 	/**
@@ -632,7 +632,7 @@ public final class Imger {
 	 * @param h
 	 * @return 
 	 */
-	public Imger cutTop(int w,int h){
+	public Imgs cutTop(int w,int h){
 		return cut((image.getWidth()-w)/2,0, w, h);
 	}
 	/**
@@ -641,7 +641,7 @@ public final class Imger {
 	 * @param h
 	 * @return 
 	 */
-	public Imger cutCenter(int w,int h){
+	public Imgs cutCenter(int w,int h){
 		return cut((image.getWidth()-w)/2,(image.getHeight()-h)/2, w, h);
 	}
 	/**
@@ -650,7 +650,7 @@ public final class Imger {
 	 * @param h 输出图片的高
 	 * @return 
 	 */
-	public Imger cutBottom(int w,int h){
+	public Imgs cutBottom(int w,int h){
 		return cut((image.getWidth()-w)/2,image.getHeight()-h, w, h);
 	}
 	
@@ -662,7 +662,7 @@ public final class Imger {
 	 * @param h 图片高
 	 * @return 
 	 */
-	public Imger cut(int x,int y,int w, int h){
+	public Imgs cut(int x,int y,int w, int h){
 		if (w>0 && h>0) {
 			int width=image.getWidth();
 			int height=image.getHeight();
@@ -684,7 +684,7 @@ public final class Imger {
 	 * @param radius 内外圆角直径
 	 * @return
 	 */
-	public Imger borderRiseRadius(int w,Color borderColor,int radius){
+	public Imgs borderRiseRadius(int w,Color borderColor,int radius){
 		return borderRiseRadius(w, borderColor, radius, radius);
 	}
 	/**
@@ -694,7 +694,7 @@ public final class Imger {
 	 * @param radius 内外圆角直径
 	 * @return
 	 */
-	public Imger borderDropRadius(int w,Color borderColor,int radius){
+	public Imgs borderDropRadius(int w,Color borderColor,int radius){
 		return borderDropRadius(w, borderColor, radius, radius);
 	}
 	/**
@@ -705,7 +705,7 @@ public final class Imger {
 	 * @param outRadius 外圆角直径
 	 * @return
 	 */
-	public Imger borderRiseRadius(int w,Color borderColor,int inRadius,int outRadius){
+	public Imgs borderRiseRadius(int w,Color borderColor,int inRadius,int outRadius){
 		return radius(inRadius).borderRise(w, borderColor).radius(outRadius);
 	}
 	/**
@@ -716,7 +716,7 @@ public final class Imger {
 	 * @param outRadius 外圆角直径
 	 * @return
 	 */
-	public Imger borderDropRadius(int w,Color borderColor,int inRadius,int outRadius){
+	public Imgs borderDropRadius(int w,Color borderColor,int inRadius,int outRadius){
 		return radius(inRadius).borderDrop(w, borderColor).radius(outRadius);
 	}
 	/**
@@ -726,7 +726,7 @@ public final class Imger {
 	 * @param outRadius 圆角直径
 	 * @return
 	 */
-	public Imger borderRiseRadiusOut(int w,Color borderColor,int outRadius){
+	public Imgs borderRiseRadiusOut(int w,Color borderColor,int outRadius){
 		return borderRise(w, borderColor).radius(outRadius);
 	}
 	/**
@@ -736,7 +736,7 @@ public final class Imger {
 	 * @param inRadius 圆角直径
 	 * @return
 	 */
-	public Imger borderRiseRadiusIn(int w,Color borderColor,int inRadius){
+	public Imgs borderRiseRadiusIn(int w,Color borderColor,int inRadius){
 		return radius(inRadius).borderRise(w, borderColor);
 	}
 	/**
@@ -746,7 +746,7 @@ public final class Imger {
 	 * @param outRadius 圆角直径
 	 * @return
 	 */
-	public Imger borderDropRadiusOut(int w,Color borderColor,int outRadius){
+	public Imgs borderDropRadiusOut(int w,Color borderColor,int outRadius){
 		return borderDrop(w, borderColor).radius(outRadius);
 	}
 	/**
@@ -756,14 +756,14 @@ public final class Imger {
 	 * @param inRadius 圆角直径
 	 * @return
 	 */
-	public Imger borderDropRadiusIn(int w,Color borderColor,int inRadius){
+	public Imgs borderDropRadiusIn(int w,Color borderColor,int inRadius){
 		return radius(inRadius).borderDrop(w, borderColor);
 	}
 	/**
 	 * 将图片变成圆形,原图片不变,返回新图片.若原图片宽高不相同,那么将按原图片宽高值中较小的一个值为宽高,从原图片中间部位裁剪出宽高相等的图片,再将裁剪出来的图片变成圆形.
 	 * @return
 	 */
-	public Imger circle() {
+	public Imgs circle() {
 		if (image.getWidth()==image.getHeight()) {
 			return radius(image.getWidth(), null);
 		}else {
@@ -775,7 +775,7 @@ public final class Imger {
 	 * @param radius 圆角直径
 	 * @return
 	 */
-	public Imger radius(int radius) {
+	public Imgs radius(int radius) {
 		return radius(radius, null);
 	}
 	/**
@@ -784,7 +784,7 @@ public final class Imger {
 	 * @param bgColor 圆角外的背景色
 	 * @return
 	 */
-	public Imger radius(int radius,Color bgColor) {
+	public Imgs radius(int radius,Color bgColor) {
 		image(image.getWidth(), image.getHeight(), Optional.ofNullable(bgColor).orElse(Colors.wTransparent));
 		Graphics2D g=image.createGraphics();
 		g.drawImage(oldImage, 0, 0, null);
@@ -805,7 +805,7 @@ public final class Imger {
 	 * @param borderColor 边框颜色
 	 * @return
 	 */
-	public Imger borderRise(int w,Color borderColor){
+	public Imgs borderRise(int w,Color borderColor){
 		return image(image.getWidth()+w*2, image.getHeight()+w*2, Optional.ofNullable(borderColor).orElse(Colors.wTransparent)).pile(oldImage, w, w);
 	}
 	/**
@@ -814,7 +814,7 @@ public final class Imger {
 	 * @param borderColor 边框颜色
 	 * @return
 	 */
-	public Imger borderDrop(int w,Color borderColor){
+	public Imgs borderDrop(int w,Color borderColor){
 		return scaleZoom(image.getWidth()-w*2, image.getHeight()-w*2).image(oldImage.getWidth(), oldImage.getHeight(),Optional.ofNullable(borderColor).orElse(Colors.wTransparent)).pile(oldImage,w, w);
 	}
 	/**
@@ -822,7 +822,7 @@ public final class Imger {
 	 * @param image
 	 * @return
 	 */
-	public Imger gray() {
+	public Imgs gray() {
 		this.image=colorConvertOp.filter(image, null);
 		return this;
 	}

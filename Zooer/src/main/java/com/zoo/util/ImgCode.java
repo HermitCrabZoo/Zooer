@@ -147,7 +147,7 @@ public final class ImgCode {
 	 * @return
 	 */
 	public static BufferedImage imgCode(int w,int h,String surface,Chroma bgChroma,Chroma fgChroma,Font font){
-		BufferedImage image=Images.image(w,h, Colors.randColor(bgChroma));
+		BufferedImage image=Imager.image(w,h, Colors.randColor(bgChroma));
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
 			FontMetrics fm=FontDesignMetrics.getMetrics(font);
@@ -155,7 +155,7 @@ public final class ImgCode {
 			int x=0,y=(image.getHeight()+fm.getAscent()-fm.getDescent())/2;
 			for(int i=0;i<units.length;i++){
 				x+=units[i];
-				image=Images.pile(image, surface.charAt(i)+"",x,y, Colors.randColor(fgChroma), font);
+				image=Imager.pile(image, surface.charAt(i)+"",x,y, Colors.randColor(fgChroma), font);
 			}
 		}
 		return image;
@@ -206,7 +206,7 @@ public final class ImgCode {
 	 * @return
 	 */
 	public static BufferedImage imgCode(int w,int h,String surface,Color bgColor,Color fgColor,Font font){
-		BufferedImage image=Images.image(w,h, bgColor);
+		BufferedImage image=Imager.image(w,h, bgColor);
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
 			FontMetrics fm=FontDesignMetrics.getMetrics(font);
@@ -214,7 +214,7 @@ public final class ImgCode {
 			int x=0,y=(image.getHeight()+fm.getAscent()-fm.getDescent())/2;
 			for(int i=0;i<units.length;i++){
 				x+=units[i];
-				image=Images.pile(image, surface.charAt(i)+"",x,y, fgColor, font);
+				image=Imager.pile(image, surface.charAt(i)+"",x,y, fgColor, font);
 			}
 		}
 		return image;
@@ -231,14 +231,14 @@ public final class ImgCode {
 		int any=total/len;
 		long[] units=new long[len];
 		if (width>total*2) {
-			units=ArrayUtil.avgs(total*2,len);
+			units=Arrs.avgs(total*2,len);
 			units[0]=(width-total*2)/2+any/2;
 		}else if(width>total){
-			units=ArrayUtil.avgs(width, len);
+			units=Arrs.avgs(width, len);
 			units[0]=(units[0]-any)/2;
 		}else {
 			if (len>1) {
-				System.arraycopy(ArrayUtil.raise(ArrayUtil.avgs(width-total, len-1), any), 0, units, 1, len-1);
+				System.arraycopy(Arrs.raise(Arrs.avgs(width-total, len-1), any), 0, units, 1, len-1);
 			}
 		}
 		return units;

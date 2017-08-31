@@ -26,8 +26,8 @@ import javax.imageio.stream.ImageInputStream;
 import sun.font.FontDesignMetrics;
 
 @SuppressWarnings("restriction")
-public final class Images {
-	private Images(){}
+public final class Imager {
+	private Imager(){}
 	/**
 	 * 根据给定大小生成随机颜色的图片
 	 * @param width

@@ -15,5 +15,5 @@ public interface Processor<T> {
 			return Dates.format((Date) o, Dates.allFormat);
 		}
 		return o;
-	}).orElse(Strings.empty());
+	}).orElse(Strs.empty());
 }

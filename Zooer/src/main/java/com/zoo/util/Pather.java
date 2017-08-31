@@ -9,14 +9,14 @@ public final class Pather {
 	 * @return
 	 */
 	public static String join(String path, String fileName) {
-		path = Strings.nullToEmpty(path);
-		fileName = Strings.nullToEmpty(fileName);
+		path = Strs.nullToEmpty(path);
+		fileName = Strs.nullToEmpty(fileName);
 		if (path.isEmpty()&&fileName.isEmpty()) {
-			return Strings.empty();
+			return Strs.empty();
 		}
 		String tempPath = toPath(path);
 		String tempFileName=toPath(fileName);
-		return tempPath + (tempPath.endsWith(Platform.slash()) || tempFileName.startsWith(Platform.slash()) ? Strings.empty() 
+		return tempPath + (tempPath.endsWith(Platform.slash()) || tempFileName.startsWith(Platform.slash()) ? Strs.empty() 
 				: Platform.slash())+tempFileName;
 	}
 	
@@ -28,12 +28,12 @@ public final class Pather {
 	 */
 	public static String[] split(String fileName){
 		String[] results=new String[2];
-		fileName=toPath(Strings.nullToEmpty(fileName));
+		fileName=toPath(Strs.nullToEmpty(fileName));
 		if(fileName.contains(Platform.slash())){
 			results[0]=fileName.substring(0, fileName.lastIndexOf(Platform.slash()));
 			results[1]=fileName.substring(fileName.lastIndexOf(Platform.slash())+1,fileName.length());
 		}else {
-			results[0]=Strings.empty();
+			results[0]=Strs.empty();
 			results[1]=fileName;
 		}
 		return results;
@@ -54,7 +54,7 @@ public final class Pather {
 			results[1]=fileName.substring(i+1,fileName.length());
 		}else {
 			results[0]=fileName;
-			results[1]=Strings.empty();
+			results[1]=Strs.empty();
 		}
 		return results;
 	}
@@ -65,7 +65,7 @@ public final class Pather {
 	 * @return
 	 */
 	public static String removeEndSlash(String str){
-		StringBuffer stringBuffer=new StringBuffer(Strings.nullToEmpty(str));
+		StringBuffer stringBuffer=new StringBuffer(Strs.nullToEmpty(str));
 		while(stringBuffer.length()>1 && Platform.slash().equals(String.valueOf(stringBuffer.charAt(stringBuffer.length()-1)))){
 			stringBuffer.deleteCharAt(stringBuffer.length()-1);
 		}
@@ -78,8 +78,8 @@ public final class Pather {
 	 * @return
 	 */
 	public static String toPath(String path){
-		path=Strings.nullToEmpty(path);
-		return Systems.isWindows() ? path.replace(Platform.SLASH, Platform.BACKSLASH).trim()
+		path=Strs.nullToEmpty(path);
+		return Syss.isWindows() ? path.replace(Platform.SLASH, Platform.BACKSLASH).trim()
 				:path.replace(Platform.BACKSLASH, Platform.SLASH).trim();
 	}
 }

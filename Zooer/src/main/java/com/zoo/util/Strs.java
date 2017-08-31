@@ -6,8 +6,8 @@ import java.util.Optional;
  * @author ZOO
  *
  */
-public final class Strings {
-	private Strings(){}
+public final class Strs {
+	private Strs(){}
 	/**
 	 * 生成随机字符串,由大写字母、小写字母、数字组成
 	 * @param len 字符串长度
@@ -119,9 +119,8 @@ public final class Strings {
 	public static String sub(String str,int startIndex,int len) {
 		return Optional.ofNullable(str).map(
 				s->{
-					int l=str.length();
-					int ei=startIndex+len;
-					return startIndex>=l||startIndex<0||len<1?empty():str.substring(startIndex,ei>l?l:ei);
+					int l=str.length(),ei=startIndex+len;
+					return startIndex>=l||startIndex<0||len<1?empty():str.substring(startIndex,(ei>l||ei<startIndex?l:ei));
 				}
 		).orElse(str);
 	}

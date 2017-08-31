@@ -68,7 +68,7 @@ public final class Types {
 	 * @return
 	 */
 	public static String[] strings() {
-		return Strings.emptys();
+		return Strs.emptys();
 	}
 	/**
 	 * 0个元素的单精度浮点数组

@@ -25,7 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.zoo.cons.Imagec;
-import com.zoo.util.ArrayUtil;
+import com.zoo.util.Arrs;
 import com.zoo.util.Bean;
 import com.zoo.util.Chars;
 import com.zoo.util.Chroma;
@@ -33,10 +33,11 @@ import com.zoo.util.Colors;
 import com.zoo.util.Dates;
 import com.zoo.util.Filer;
 import com.zoo.util.Funcs;
-import com.zoo.util.Images;
-import com.zoo.util.Imger;
+import com.zoo.util.Imager;
+import com.zoo.util.Imgs;
 import com.zoo.util.QRCode;
-import com.zoo.util.Systems;
+import com.zoo.util.Strs;
+import com.zoo.util.Syss;
 import com.zoo.util.Yuv;
 
 import net.sf.cglib.beans.BeanCopier;
@@ -50,9 +51,10 @@ public class TestFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		System.out.println(Strs.sub("0123456789", 0, 100));
 //		testBeanCopy();
 //		testAvg(1);
-		testImg();
+//		testImg();
 //		testFileCopy();
 	}
 	public static void testImg() {
@@ -80,15 +82,15 @@ public class TestFrame{
 			setContentPane(contentPane);
 			Color fg=new Color(0,129,211,255),bg=new Color(174,244,235);
 			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 200, 200,fg,bg);
-			BufferedImage bgImage=Images.image(fw, fh, Color.black);
+			BufferedImage bgImage=Imager.image(fw, fh, Color.black);
 			try {
 				Chroma[] chromas= {Chroma.lightest,Chroma.lighter,Chroma.light,Chroma.middle,Chroma.heavy,Chroma.heavier,Chroma.heaviest};
 				for(int j=0;j<7;j++) {
 					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
 						String surface=color.getRed()+","+color.getGreen()+","+color.getBlue();
-						BufferedImage ii=Imger.ofNew(w, h,color).borderDropRadius(1,Color.WHITE,r).pile(surface).get();
-						bgImage=Imger.of(bgImage).pile(ii, i*w, j*h).get();
+						BufferedImage ii=Imgs.ofNew(w, h,color).borderDropRadius(1,Color.WHITE,r).pile(surface).get();
+						bgImage=Imgs.of(bgImage).pile(ii, i*w, j*h).get();
 //						Images.pile(bgImage,Images.pile(Images.borderCrimpInRadius(Images.image(w, h, color),1,Color.WHITE,r), surface), i*w, j*h);
 					}
 				}
@@ -175,19 +177,19 @@ public class TestFrame{
 		long[] cc=random.longs(100000).toArray();
 		String[] strings=new String[]{Chars.randChar(),null,Chars.randChar()};
 		double[] doubles=new double[] {};
-		System.out.println(ArrayUtil.join(",", ArrayUtil.distinct(strings)));
-		System.out.println(ArrayUtil.join(",", ArrayUtil.distinct(doubles)));
-		System.out.println(ArrayUtil.avg(doubles));
+		System.out.println(Arrs.join(",", Arrs.distinct(strings)));
+		System.out.println(Arrs.join(",", Arrs.distinct(doubles)));
+		System.out.println(Arrs.avg(doubles));
 		System.out.println(Dates.format(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss.SHSS"));
 		for(int j=0;j<times;j++){
 			s=System.currentTimeMillis();
 			for(int i=0;i<10000;i++){
-				ArrayUtil.max(cc);
+				Arrs.max(cc);
 			}
 			e=System.currentTimeMillis();
 			ss[j]=e-s;
 		}
-		System.out.println("duration avg:"+ArrayUtil.avg(ss));
+		System.out.println("duration avg:"+Arrs.avg(ss));
 	}
 	public static class KV{
 		private String key;

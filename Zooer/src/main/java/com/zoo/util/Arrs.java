@@ -11,8 +11,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class ArrayUtil {
-	private ArrayUtil(){}
+public final class Arrs {
+	private Arrs(){}
 	
 	/**
 	 * 将total平均分成len份的数组返回,若total不是len的整数倍,
@@ -677,7 +677,7 @@ public final class ArrayUtil {
 	 */
 	public static String join(String separator,String... strs){
 		if (separator==null || strs==null || strs.length<1) {
-			return Strings.empty();
+			return Strs.empty();
 		}
 		strs=nullToEmpty(strs);
 		int len=strs.length;
@@ -705,7 +705,7 @@ public final class ArrayUtil {
 	 */
 	public static <T>String join(String separator,List<T> list){
 		if (list==null) {
-			return Strings.empty();
+			return Strs.empty();
 		}
 		int len=list.size();
 		String[] strings=new String[len];
@@ -808,7 +808,7 @@ public final class ArrayUtil {
 	 * @return
 	 */
 	public static String[] nullToEmpty(String[] strings) {
-		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().map(s->Strings.nullToEmpty(s)).toArray(String[]::new)).orElse(Strings.emptys());
+		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().map(s->Strs.nullToEmpty(s)).toArray(String[]::new)).orElse(Strs.emptys());
 	}
 	
 	/**
@@ -817,7 +817,7 @@ public final class ArrayUtil {
 	 * @return
 	 */
 	public static String[] removeNull(String[] strings) {
-		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().filter(s->Objects.nonNull(s)).toArray(String[]::new)).orElse(Strings.emptys());
+		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().filter(s->Objects.nonNull(s)).toArray(String[]::new)).orElse(Strs.emptys());
 	}
 	
 	/**

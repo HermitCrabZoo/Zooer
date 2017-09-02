@@ -105,6 +105,14 @@ public final class Dates {
 	public static String monthDay(){
 		return dateTime("MMdd");
 	}
+
+	/**
+	 * 获取当前日期的"时分秒"字符串(无格式HHmmss)
+	 * @return 当前"时分秒"字符串
+	 */
+	public static String time(){
+		return dateTime("HHmmss");
+	}
 	
 	/**
 	 * 获取当前日期的"时分"字符串(无格式HHmm)

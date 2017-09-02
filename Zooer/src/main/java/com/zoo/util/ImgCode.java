@@ -5,9 +5,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
@@ -29,17 +29,18 @@ public final class ImgCode {
 	 * @param width
 	 * @param height
 	 * @param surface
-	 * @param file
+	 * @param path
 	 * @return
 	 * @throws IOException 当输出失败时
 	 */
-	public static BufferedImage imgCodeToFile(int width,int height,String surface,File file) throws IOException{
+	public static BufferedImage imgCodeToPath(int width,int height,String surface,Path path) throws IOException{
 		BufferedImage image=imgCode(width, height, surface);
-		if(ImageIO.write(image, Imagec.JPEG, file)){
-			return image;
-		}else{
-			throw new IOException("Could not write an image of format JPEG to "+file);
+		if (path!=null) {
+			if(!ImageIO.write(image, Imagec.JPEG, path.toFile())){
+				throw new IOException("Could not write an image of format JPEG to "+path);
+			}
 		}
+		return image;
 	}
 	/**
 	 * 生成验证码图像输出到输出流，并返回图像

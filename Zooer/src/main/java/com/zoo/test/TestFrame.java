@@ -34,6 +34,7 @@ import com.zoo.util.Chars;
 import com.zoo.util.Charsetor;
 import com.zoo.util.Chroma;
 import com.zoo.util.Colors;
+import com.zoo.util.CopyResult;
 import com.zoo.util.Dates;
 import com.zoo.util.Filer;
 import com.zoo.util.Funcs;
@@ -61,10 +62,17 @@ public class TestFrame{
 		Path path=Paths.get("E:\\ffmpeg-3.3");
 		Path fPath=Paths.get("E:\\ffmpeg-3.3\\新建文本文档.txt");
 		Path npath=Paths.get("E:\\ffmpeg-3.300");
-		Path in=Paths.get("E:\\"),to=Paths.get("E:\\CBD\\..\\");
+		Path in=Paths.get("E:\\Arrs.java"),to=Paths.get("E:\\CBD\\Arrs.java");
 		long a=clock.millis();
-		System.out.println(Filer.isExists(Resource.bins("lib\\antlr-2.7.7.jar")));
-//		Filer.copy(in,to, null, Charsetor.GBK);
+//		CopyResult cr=Filer.copy(in,to, null, Charsetor.GBK);
+//		System.out.println(cr.size());
+//		System.out.println(cr.successful());
+//		System.out.println(cr.failed());
+//		cr.forEach((i,t,e)->{
+//			System.out.println(i);
+//			System.out.println(t);
+//			System.out.println(e);
+//		});
 		long b=clock.millis();
 		System.out.println(b-a);
 //		testBeanCopy();

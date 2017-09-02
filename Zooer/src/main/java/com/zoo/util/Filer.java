@@ -171,7 +171,7 @@ public final class Filer {
 	 * @return
 	 * @see #copy(Path, Path, Predicate, Charset)
 	 */
-	public static boolean copy(Path source,Path target) {
+	public static CopyResult copy(Path source,Path target) {
 		return copy(source, target, null, null);
 	}
 	/**
@@ -182,7 +182,7 @@ public final class Filer {
 	 * @return
 	 * @see #copy(Path, Path, Predicate, Charset)
 	 */
-	public static boolean copy(Path source,Path target,Charset destCharset) {
+	public static CopyResult copy(Path source,Path target,Charset destCharset) {
 		return copy(source, target, null, destCharset);
 	}
 	/**
@@ -192,7 +192,7 @@ public final class Filer {
 	 * @param filter
 	 * @see #copy(Path, Path, Predicate, Charset)
 	 */
-	public static boolean copy(Path source,Path target,Predicate<? super Path> filter) {
+	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter) {
 		return copy(source, target, filter, null);
 	}
 	/**
@@ -203,13 +203,15 @@ public final class Filer {
 	 * @param destCharset
 	 * @return
 	 */
-	public static boolean copy(Path source,Path target,Predicate<? super Path> filter,Charset destCharset){
+	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter,Charset destCharset){
+		CopyResult cr=CopyResult.instance();
 		//被拷贝的目录或文件要有可读属性，目录无法拷贝到文件，两个不相同的目录或文件才能对考
 		if(isReadable(source) && target!=null && !(isDir(source)&&isFile(target)) && !isSame(source, target) && !isSame(source.getParent(), target)) {
 			String inParent=isFile(target)?source.normalize().toString():source.normalize().getParent().toString();
 			String toParent=target.normalize().toString();
 			paths(source, filter).forEach(p->{//遍历
 				Path t=Paths.get(toParent, Strs.removeStart(p.toAbsolutePath().toString(),inParent));
+				cr.add(p,t);
 				try {
 					if (!Files.exists(t)) {//不存在则创建
 						if (Files.isRegularFile(p)) {
@@ -227,12 +229,11 @@ public final class Filer {
 						}
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					cr.addException(e);
 				}
 			});
-			return true;
 		}
-		return false;
+		return cr;
 	}
 	/**
 	 * 通道传送文件，in与out必须是存在的文件

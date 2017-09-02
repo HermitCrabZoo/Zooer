@@ -1,7 +1,7 @@
 package com.zoo.cons;
 
-public final class Imagec {
-	private Imagec(){}
+public final class Images {
+	private Images(){}
 	public static final String JPEG="JPEG";
 	public static final String PNG="PNG";
 	public static final String BMP="BMP";

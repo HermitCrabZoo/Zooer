@@ -1,6 +1,7 @@
 package com.zoo.util;
 
 import java.text.SimpleDateFormat;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 public final class Dates {
 	private Dates(){}
+	private static final Clock clock=Clock.systemUTC();
 	public static final String allFormat="yyyy-MM-dd HH:mm:ss";
 	/**
 	 * 获取当前日期的"年月日时分秒"字符串(yyyy-MM-dd HH:mm:ss)
@@ -233,5 +235,9 @@ public final class Dates {
 		return Optional.ofNullable(pattern)
 				.flatMap(p -> Optional.ofNullable(date).map(t -> new SimpleDateFormat(p).format(t)))
 				.orElse(Strs.empty());
+	}
+	
+	public static long millis() {
+		return clock.millis();
 	}
 }

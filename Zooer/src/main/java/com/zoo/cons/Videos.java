@@ -1,7 +1,7 @@
 package com.zoo.cons;
 
-public final class Videoc {
-	private Videoc(){}
+public final class Videos {
+	private Videos(){}
 	public static final String MPEG1="MPEG-1";
 	public static final String MPEG2="MPEG-2";
 	public static final String MPEG4="MPEG-4";

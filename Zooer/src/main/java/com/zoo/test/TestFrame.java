@@ -26,10 +26,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import com.zoo.cons.Charsetc;
-import com.zoo.cons.Imagec;
+import com.zoo.cons.Charsets;
+import com.zoo.cons.Images;
 import com.zoo.util.Arrs;
-import com.zoo.util.Bean;
+import com.zoo.util.Beaner;
 import com.zoo.util.Chars;
 import com.zoo.util.Charsetor;
 import com.zoo.util.Chroma;
@@ -180,7 +180,7 @@ public class TestFrame{
 		long a=clock.millis();
 		for(int i=0;i<size;i++) {
 //			bCopier.copy(kvf.get(i), kvt1.get(i), null);
-			Bean.copy(kvf.get(i), kvt1.get(i));
+			Beaner.copy(kvf.get(i), kvt1.get(i));
 		}
 		long b=clock.millis();
 		for(int i=0;i<size;i++) {

@@ -13,12 +13,12 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
-import com.zoo.cons.Imagec;
+import com.zoo.cons.Images;
 
 import org.bytedeco.javacv.FrameGrabber.Exception;
 
-public final class Videos {
-	private Videos(){}
+public final class Videor {
+	private Videor(){}
 	
 	private static final Java2DFrameConverter frameConverter=new Java2DFrameConverter();
 	
@@ -32,7 +32,7 @@ public final class Videos {
 	 */
 	public static BufferedImage imageToFile(File videoFile,int position,File file) throws IOException{
 		BufferedImage image=image(videoFile, position);
-		if (ImageIO.write(image, Imagec.JPEG, file)) {
+		if (ImageIO.write(image, Images.JPEG, file)) {
 			return image;
 		}else {
 			throw new IOException("Could not write an image of format JPEG to "+file);
@@ -48,7 +48,7 @@ public final class Videos {
 	 */
 	public static BufferedImage imageToStream(File videoFile,int position,OutputStream ops) throws IOException{
 		BufferedImage image=image(videoFile, position);
-		if (ImageIO.write(image, Imagec.JPEG, ops)) {
+		if (ImageIO.write(image, Images.JPEG, ops)) {
 			return image;
 		}else {
 			throw new IOException("Could not write an image of format JPEG to "+ops);

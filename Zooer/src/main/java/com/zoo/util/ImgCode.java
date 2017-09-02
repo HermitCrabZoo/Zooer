@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
-import com.zoo.cons.Imagec;
+import com.zoo.cons.Images;
 
 import sun.font.FontDesignMetrics;
 
@@ -36,7 +36,7 @@ public final class ImgCode {
 	public static BufferedImage imgCodeToPath(int width,int height,String surface,Path path) throws IOException{
 		BufferedImage image=imgCode(width, height, surface);
 		if (path!=null) {
-			if(!ImageIO.write(image, Imagec.JPEG, path.toFile())){
+			if(!ImageIO.write(image, Images.JPEG, path.toFile())){
 				throw new IOException("Could not write an image of format JPEG to "+path);
 			}
 		}
@@ -53,7 +53,7 @@ public final class ImgCode {
 	 */
 	public static BufferedImage imgCodeOutput(int width,int height,String surface,OutputStream ops) throws IOException{
 		BufferedImage image=imgCode(width, height, surface);
-		if(ImageIO.write(image, Imagec.JPEG, ops)){
+		if(ImageIO.write(image, Images.JPEG, ops)){
 			return image;
 		}else{
 			throw new IOException("Could not write an image of format JPEG to "+ops);

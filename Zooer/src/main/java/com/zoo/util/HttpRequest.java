@@ -11,7 +11,7 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
-import com.zoo.cons.Charsetc;
+import com.zoo.cons.Charsets;
 
 public final class HttpRequest {
 	private HttpRequest(){}
@@ -155,7 +155,7 @@ public final class HttpRequest {
 	    	}
 	    	sb.deleteCharAt(sb.length()-1);
 	    	try {
-	    		return URLEncoder.encode(sb.toString(), Charsetc.UTF8);
+	    		return URLEncoder.encode(sb.toString(), Charsets.UTF8);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}

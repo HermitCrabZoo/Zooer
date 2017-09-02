@@ -1,7 +1,7 @@
 package com.zoo.cons;
 
-public final class Charsetc {
-	private Charsetc(){}
+public final class Charsets {
+	private Charsets(){}
 	public static final String ASCII="ASCII";
 	public static final String UNICODE="UNICODE";
 	public static final String UTF8="UTF-8";

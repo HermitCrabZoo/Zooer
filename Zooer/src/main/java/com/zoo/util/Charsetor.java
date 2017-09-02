@@ -5,7 +5,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
-import com.zoo.cons.Charsetc;
+import com.zoo.cons.Charsets;
 
 import info.monitorenter.cpdetector.io.ASCIIDetector;
 import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
@@ -17,8 +17,8 @@ public final class Charsetor {
 
 	private Charsetor() {}
 	
-	public static final Charset UTF8=Charset.forName(Charsetc.UTF8);
-	public static final Charset GBK=Charset.forName(Charsetc.GBK);
+	public static final Charset UTF8=Charset.forName(Charsets.UTF8);
+	public static final Charset GBK=Charset.forName(Charsets.GBK);
 	/**
 	 * 初始化文件字符集识别对象
 	 */

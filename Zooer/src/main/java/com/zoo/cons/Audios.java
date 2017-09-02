@@ -1,7 +1,7 @@
 package com.zoo.cons;
 
-public final class Audioc {
-	private Audioc(){}
+public final class Audios {
+	private Audios(){}
 	public static final String MPEG3="MPEG3";
 	public static final String CD="CD";
 	public static final String WAVE="WAVE";

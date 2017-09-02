@@ -24,8 +24,8 @@ import com.google.zxing.Result;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.zoo.cons.Charsetc;
-import com.zoo.cons.Imagec;
+import com.zoo.cons.Charsets;
+import com.zoo.cons.Images;
 /**
  * quick response code process tool
  * @author ZOO
@@ -41,14 +41,14 @@ public final class QRCode {
 	private static final Map<EncodeHintType, Object> enHints=new HashMap<EncodeHintType,Object>(){
 		private static final long serialVersionUID = 1L;
 	{
-		put(EncodeHintType.CHARACTER_SET, Charsetc.UTF8);
+		put(EncodeHintType.CHARACTER_SET, Charsets.UTF8);
 		put(EncodeHintType.MARGIN, 0);
 		put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
 	}};
 	private static final Map<DecodeHintType, Object> deHints=new HashMap<DecodeHintType,Object>(){
 		private static final long serialVersionUID = 1L;
 	{
-		put(DecodeHintType.CHARACTER_SET, Charsetc.UTF8);
+		put(DecodeHintType.CHARACTER_SET, Charsets.UTF8);
 	}};
 	
 	/**
@@ -153,7 +153,7 @@ public final class QRCode {
 	 */
 	public static BufferedImage writeToFile(String content,Dimension dimension,Path path) throws Exception{
 		BufferedImage image =qrCode(content, dimension);
-		if (ImageIO.write(image, Imagec.JPEG, path.toFile())) {
+		if (ImageIO.write(image, Images.JPEG, path.toFile())) {
 			return image;
 		}else{
 			throw new IOException("Could not write an image of format JPEG to " + path);
@@ -181,7 +181,7 @@ public final class QRCode {
 	 */
 	public static BufferedImage writeToStream(String content,Dimension dimension, OutputStream stream) throws Exception {
 		BufferedImage image = qrCode(content,dimension);
-		if (ImageIO.write(image, Imagec.JPEG, stream)) {
+		if (ImageIO.write(image, Images.JPEG, stream)) {
 			return image;
 		}else {
 			throw new IOException("Could not write an image of format JPEG");

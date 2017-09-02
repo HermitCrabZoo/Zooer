@@ -7,8 +7,8 @@ import java.util.Map;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 
-public final class Bean {
-	private Bean(){}
+public final class Beaner {
+	private Beaner(){}
 	private static Map<String, BeanCopier> copierMap=new HashMap<String, BeanCopier>();
 	private static List<String> keys=new ArrayList<String>();
 	/**

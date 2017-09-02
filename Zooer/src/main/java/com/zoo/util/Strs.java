@@ -155,7 +155,7 @@ public final class Strs {
 	 * @return
 	 */
 	public static boolean startsWith(String str,String prefix) {
-		return str!=null && str.startsWith(prefix);
+		return Optional.ofNullable(str).map(s->s.startsWith(prefix)).orElse(false);
 	}
 	/**
 	 * str不为null并且以suffix结尾则返回true
@@ -164,6 +164,6 @@ public final class Strs {
 	 * @return
 	 */
 	public static boolean endsWith(String str,String suffix) {
-		return str!=null && str.endsWith(suffix);
+		return Optional.ofNullable(str).map(s->s.endsWith(suffix)).orElse(false);
 	}
 }

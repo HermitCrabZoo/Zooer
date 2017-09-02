@@ -15,7 +15,7 @@ public final class Resource
 {
 	private Resource(){}
     /**
-	 * 传入图片名,默认去classpath下的'res'文件夹获取文件
+	 * 传入图片名
 	 * @param imageName
 	 * @return
 	 */
@@ -25,7 +25,7 @@ public final class Resource
     }
     
     /**
-	 * 传入目录和图片名,若folder为空则默认去classpath下的'res'文件夹获取文件
+	 * 传入目录和图片名
 	 * @param folder
 	 * @param imageName
 	 * @return

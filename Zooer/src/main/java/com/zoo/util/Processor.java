@@ -10,9 +10,9 @@ public interface Processor<T> {
 
 	Processor<?> dateProcessor = obj -> Optional.ofNullable(obj).map(o -> {
 		if (TemporalAccessor.class.isAssignableFrom(o.getClass())) {
-			return Dates.format((TemporalAccessor) o, Dates.allFormat);
+			return Dater.format((TemporalAccessor) o, Dater.allFormat);
 		} else if (Date.class.isAssignableFrom(o.getClass())) {
-			return Dates.format((Date) o, Dates.allFormat);
+			return Dater.format((Date) o, Dater.allFormat);
 		}
 		return o;
 	}).orElse(Strs.empty());

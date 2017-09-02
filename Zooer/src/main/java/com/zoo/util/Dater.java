@@ -10,8 +10,8 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Optional;
 
-public final class Dates {
-	private Dates(){}
+public final class Dater {
+	private Dater(){}
 	private static final Clock clock=Clock.systemUTC();
 	public static final String allFormat="yyyy-MM-dd HH:mm:ss";
 	/**
@@ -236,7 +236,10 @@ public final class Dates {
 				.flatMap(p -> Optional.ofNullable(date).map(t -> new SimpleDateFormat(p).format(t)))
 				.orElse(Strs.empty());
 	}
-	
+	/**
+	 * 自1970-01-01T00:00Z (UTC)以来的毫秒数。
+	 * @return
+	 */
 	public static long millis() {
 		return clock.millis();
 	}

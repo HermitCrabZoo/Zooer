@@ -5,8 +5,8 @@ import java.util.Optional;
  * 基本类型工具
  *
  */
-public final class Types {
-	private  Types(){}
+public final class Typer {
+	private  Typer(){}
 	/**
 	 * 验证字符串的有效性(不为null并且不为空字符串)
 	 * @param s 验证字符串

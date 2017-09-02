@@ -35,7 +35,7 @@ import com.zoo.util.Charsetor;
 import com.zoo.util.Chroma;
 import com.zoo.util.Colors;
 import com.zoo.util.CopyResult;
-import com.zoo.util.Dates;
+import com.zoo.util.Dater;
 import com.zoo.util.Filer;
 import com.zoo.util.Funcs;
 import com.zoo.util.Imager;
@@ -204,7 +204,7 @@ public class TestFrame{
 		System.out.println(Arrs.join(",", Arrs.distinct(strings)));
 		System.out.println(Arrs.join(",", Arrs.distinct(doubles)));
 		System.out.println(Arrs.avg(doubles));
-		System.out.println(Dates.format(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss.SHSS"));
+		System.out.println(Dater.format(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss.SHSS"));
 		for(int j=0;j<times;j++){
 			s=System.currentTimeMillis();
 			for(int i=0;i<10000;i++){

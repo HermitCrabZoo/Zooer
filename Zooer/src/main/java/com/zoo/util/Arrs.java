@@ -38,7 +38,7 @@ public final class Arrs {
 			}
 			return avg;
 		}
-		return Types.longs();
+		return Typer.longs();
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public final class Arrs {
 			}
 			return longs;
 		}
-		return Types.longs();
+		return Typer.longs();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -69,7 +69,7 @@ public final class Arrs {
 			}
 			return ints;
 		}
-		return Types.ints();
+		return Typer.ints();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -84,7 +84,7 @@ public final class Arrs {
 			}
 			return shorts;
 		}
-		return Types.shorts();
+		return Typer.shorts();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -99,7 +99,7 @@ public final class Arrs {
 			}
 			return bytes;
 		}
-		return Types.bytes();
+		return Typer.bytes();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -114,7 +114,7 @@ public final class Arrs {
 			}
 			return doubles;
 		}
-		return Types.doubles();
+		return Typer.doubles();
 	}
 	/**
 	 * 为数组中的每个元素增step
@@ -129,7 +129,7 @@ public final class Arrs {
 			}
 			return floats;
 		}
-		return Types.floats();
+		return Typer.floats();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -144,7 +144,7 @@ public final class Arrs {
 			}
 			return longs;
 		}
-		return Types.longs();
+		return Typer.longs();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -159,7 +159,7 @@ public final class Arrs {
 			}
 			return ints;
 		}
-		return Types.ints();
+		return Typer.ints();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -174,7 +174,7 @@ public final class Arrs {
 			}
 			return shorts;
 		}
-		return Types.shorts();
+		return Typer.shorts();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -189,7 +189,7 @@ public final class Arrs {
 			}
 			return bytes;
 		}
-		return Types.bytes();
+		return Typer.bytes();
 	}
 	/**
 	 * 为数组中的每个元素减step
@@ -219,7 +219,7 @@ public final class Arrs {
 			}
 			return floats;
 		}
-		return  Types.floats();
+		return  Typer.floats();
 	}
 	/**
 	 * 为数组中的每个元素增step,返回新数组
@@ -246,7 +246,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static short[] raiseNew(short[] shorts,short step){
-		return Optional.ofNullable(shorts).map(ss->Types.shorts(raiseNew(Types.ints(ss), step))).orElse(Types.shorts());
+		return Optional.ofNullable(shorts).map(ss->Typer.shorts(raiseNew(Typer.ints(ss), step))).orElse(Typer.shorts());
 	}
 	/**
 	 * 为数组中的每个元素减step,返回新数组
@@ -255,7 +255,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static byte[] raiseNew(byte[] bytes,byte step){
-		return Optional.ofNullable(bytes).map(bs->Types.bytes(raiseNew(Types.ints(bs), step))).orElse(Types.bytes());
+		return Optional.ofNullable(bytes).map(bs->Typer.bytes(raiseNew(Typer.ints(bs), step))).orElse(Typer.bytes());
 	}
 	/**
 	 * 为数组中的每个元素增step,返回新数组
@@ -273,7 +273,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static float[] raiseNew(float[] floats,float step){
-		return Optional.ofNullable(floats).map(fs->Types.floats(raiseNew(Types.doubles(fs), step))).orElse(Types.floats());
+		return Optional.ofNullable(floats).map(fs->Typer.floats(raiseNew(Typer.doubles(fs), step))).orElse(Typer.floats());
 	}
 	/**
 	 * 为数组中的每个元素减step,返回新数组
@@ -300,7 +300,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static short[] reduceNew(short[] shorts,short step){
-		return Optional.ofNullable(shorts).map(ss->Types.shorts(reduceNew(Types.ints(ss), step))).orElse(Types.shorts());
+		return Optional.ofNullable(shorts).map(ss->Typer.shorts(reduceNew(Typer.ints(ss), step))).orElse(Typer.shorts());
 	}
 	/**
 	 * 为数组中的每个元素减step,返回新数组
@@ -309,7 +309,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static byte[] reduceNew(byte[] bytes,byte step){
-		return Optional.ofNullable(bytes).map(bs->Types.bytes(reduceNew(Types.ints(bs), step))).orElse(Types.bytes());
+		return Optional.ofNullable(bytes).map(bs->Typer.bytes(reduceNew(Typer.ints(bs), step))).orElse(Typer.bytes());
 	}
 	/**
 	 * 为数组中的每个元素减step,返回新数组
@@ -327,7 +327,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static float[] reduceNew(float[] floats,float step){
-		return Optional.ofNullable(floats).map(fs->Types.floats(reduceNew(Types.doubles(fs), step))).orElse(Types.floats());
+		return Optional.ofNullable(floats).map(fs->Typer.floats(reduceNew(Typer.doubles(fs), step))).orElse(Typer.floats());
 	}
 	
 	/**
@@ -336,7 +336,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static long[] distinct(long[] longs){
-		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().distinct().toArray()).orElse(Types.longs());
+		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().distinct().toArray()).orElse(Typer.longs());
 	}
 	
 	/**
@@ -345,7 +345,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static int[] distinct(int[] ints){
-		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().distinct().toArray()).orElse(Types.ints());
+		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().distinct().toArray()).orElse(Typer.ints());
 	}
 	/**
 	 * 去重复
@@ -353,7 +353,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static short[] distinct(short[] shorts){
-		return Optional.ofNullable(shorts).map(ss->Types.shorts(distinct(Types.ints(ss)))).orElse(Types.shorts());
+		return Optional.ofNullable(shorts).map(ss->Typer.shorts(distinct(Typer.ints(ss)))).orElse(Typer.shorts());
 	}
 	/**
 	 * 去重复
@@ -361,7 +361,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static byte[] distinct(byte[] bytes){
-		return Optional.ofNullable(bytes).map(bs->Types.bytes(distinct(Types.ints(bs)))).orElse(Types.bytes());
+		return Optional.ofNullable(bytes).map(bs->Typer.bytes(distinct(Typer.ints(bs)))).orElse(Typer.bytes());
 	}
 	
 	/**
@@ -370,7 +370,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static double[] distinct(double[] doubles){
-		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().distinct().toArray()).orElse(Types.doubles());
+		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().distinct().toArray()).orElse(Typer.doubles());
 	}
 	/**
 	 * 去重复
@@ -378,7 +378,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static float[] distinct(float[] floats){
-		return Optional.ofNullable(floats).map(fs->Types.floats(distinct(Types.doubles(fs)))).orElse(Types.floats());
+		return Optional.ofNullable(floats).map(fs->Typer.floats(distinct(Typer.doubles(fs)))).orElse(Typer.floats());
 	}
 	
 	/**
@@ -387,7 +387,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static String[] distinct(String[] strings){
-		return Optional.ofNullable(strings).map(ds->Arrays.stream(ds).parallel().distinct().toArray(String[]::new)).orElse(Types.strings());
+		return Optional.ofNullable(strings).map(ds->Arrays.stream(ds).parallel().distinct().toArray(String[]::new)).orElse(Typer.strings());
 	}
 	
 	/**
@@ -413,7 +413,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static double avg(short[] shorts){
-		return Optional.ofNullable(shorts).map(ss->avg(Types.ints(ss))).orElse(0.0);
+		return Optional.ofNullable(shorts).map(ss->avg(Typer.ints(ss))).orElse(0.0);
 	}
 	/**
 	 * 求平均值
@@ -421,7 +421,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static double avg(byte[] bytes){
-		return Optional.ofNullable(bytes).map(bs->avg(Types.ints(bs))).orElse(0.0);
+		return Optional.ofNullable(bytes).map(bs->avg(Typer.ints(bs))).orElse(0.0);
 	}
 	/**
 	 * 求平均值
@@ -437,7 +437,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static double avg(float[] floats){
-		return Optional.ofNullable(floats).map(fs->avg(Types.doubles(fs))).orElse(0.0);
+		return Optional.ofNullable(floats).map(fs->avg(Typer.doubles(fs))).orElse(0.0);
 	}
 	
 	/**
@@ -463,7 +463,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static long sum(short[] shorts){
-		return Optional.ofNullable(shorts).map(ss->sum(Types.ints(ss))).orElse(0L);
+		return Optional.ofNullable(shorts).map(ss->sum(Typer.ints(ss))).orElse(0L);
 	}
 	/**
 	 * 求和
@@ -471,7 +471,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static long sum(byte[] bytes){
-		return Optional.ofNullable(bytes).map(bs->sum(Types.ints(bs))).orElse(0L);
+		return Optional.ofNullable(bytes).map(bs->sum(Typer.ints(bs))).orElse(0L);
 	}
 	
 	/**
@@ -488,7 +488,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static double sum(float[] floats){
-		return Optional.ofNullable(floats).map(fs->sum(Types.doubles(fs))).orElse(0.0);
+		return Optional.ofNullable(floats).map(fs->sum(Typer.doubles(fs))).orElse(0.0);
 	}
 	
 	/**
@@ -514,7 +514,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static short max(short[] shorts){
-		return Optional.ofNullable(shorts).map(ss->(short) max(Types.ints(ss))).orElse((short)0);
+		return Optional.ofNullable(shorts).map(ss->(short) max(Typer.ints(ss))).orElse((short)0);
 	}
 	/**
 	 * 求最大值
@@ -522,7 +522,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static byte max(byte[] bytes){
-		return Optional.ofNullable(bytes).map(bs->(byte) max(Types.ints(bs))).orElse((byte)0);
+		return Optional.ofNullable(bytes).map(bs->(byte) max(Typer.ints(bs))).orElse((byte)0);
 	}
 	/**
 	 * 求最大值
@@ -538,7 +538,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static float max(float[] floats){
-		return Optional.ofNullable(floats).map(fs->(float) max(Types.doubles(fs))).orElse(0.0f);
+		return Optional.ofNullable(floats).map(fs->(float) max(Typer.doubles(fs))).orElse(0.0f);
 	}
 	
 	/**
@@ -564,7 +564,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static short min(short[] shorts){
-		return Optional.ofNullable(shorts).map(ss->(short) min(Types.ints(ss))).orElse((short)0);
+		return Optional.ofNullable(shorts).map(ss->(short) min(Typer.ints(ss))).orElse((short)0);
 	}
 	/**
 	 * 求最小值
@@ -572,7 +572,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static byte min(byte[] bytes){
-		return Optional.ofNullable(bytes).map(bs->(byte) min(Types.ints(bs))).orElse((byte)0);
+		return Optional.ofNullable(bytes).map(bs->(byte) min(Typer.ints(bs))).orElse((byte)0);
 	}
 	/**
 	 * 求最小值
@@ -588,7 +588,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static float min(float[] floats){
-		return Optional.ofNullable(floats).map(fs->(float) min(Types.doubles(fs))).orElse(0.0f);
+		return Optional.ofNullable(floats).map(fs->(float) min(Typer.doubles(fs))).orElse(0.0f);
 	}
 	
 	/**

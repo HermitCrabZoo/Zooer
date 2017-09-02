@@ -9,15 +9,18 @@ public final class Pather {
 	 * @return
 	 */
 	public static String join(String path, String fileName) {
-		path = Strs.nullToEmpty(path);
-		fileName = Strs.nullToEmpty(fileName);
-		if (path.isEmpty()&&fileName.isEmpty()) {
-			return Strs.empty();
+		if (Strs.notEmpty(path)||Strs.notEmpty(fileName)) {
+			String tempPath = toPath(path);
+			String tempFileName=toPath(fileName);
+			StringBuilder sb=new StringBuilder(3).append(tempPath);
+			if (!tempPath.isEmpty() && !tempFileName.isEmpty()) {
+				if (!tempPath.endsWith(Platform.slash()) && !tempFileName.startsWith(Platform.slash())) {
+					sb.append(Platform.slash());
+				}
+			}
+			return sb.append(tempFileName).toString();
 		}
-		String tempPath = toPath(path);
-		String tempFileName=toPath(fileName);
-		return tempPath + (tempPath.endsWith(Platform.slash()) || tempFileName.startsWith(Platform.slash()) ? Strs.empty() 
-				: Platform.slash())+tempFileName;
+		return Strs.empty();
 	}
 	/**
 	 * 获取父级目录

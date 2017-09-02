@@ -2,11 +2,11 @@ package com.zoo.util;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -136,27 +136,27 @@ public final class QRCode {
 	 * @param content 非空字符串
 	 * @param width 图片宽
 	 * @param height 图片高
-	 * @param file 目标图片文件
+	 * @param path 目标图片文件
 	 * @return 返回图片
 	 * @throws Exception 若写入失败则抛异常
 	 */
-	public static BufferedImage writeToFile(String content,int width,int height,File file) throws Exception{
-		return writeToFile(content, new Dimension(width, height), file);
+	public static BufferedImage writeToFile(String content,int width,int height,Path path) throws Exception{
+		return writeToFile(content, new Dimension(width, height), path);
 	}
 	/**
 	 * 通过任何非空字符串生成Quick Response Code 图片返回，并将图片写入文件中
 	 * @param content 非空字符串
 	 * @param dimension 图片大小
-	 * @param file 目标图片文件
+	 * @param path 目标图片文件
 	 * @return 返回图片
 	 * @throws Exception 若写入失败则抛异常
 	 */
-	public static BufferedImage writeToFile(String content,Dimension dimension,File file) throws Exception{
+	public static BufferedImage writeToFile(String content,Dimension dimension,Path path) throws Exception{
 		BufferedImage image =qrCode(content, dimension);
-		if (ImageIO.write(image, Imagec.JPEG, file)) {
+		if (ImageIO.write(image, Imagec.JPEG, path.toFile())) {
 			return image;
 		}else{
-			throw new IOException("Could not write an image of format JPEG to " + file);
+			throw new IOException("Could not write an image of format JPEG to " + path);
 		}
 	}
 	/**
@@ -220,13 +220,13 @@ public final class QRCode {
 	}
 	/**
 	 * 从文件处读取Quick Response Code 并解析成字符串返回,若解析失败将返回空字符串
-	 * @param file
+	 * @param path
 	 * @return
 	 */
-	public static String distinguish(File file) {
-        if (Filer.isReadableFile(file)) {
+	public static String distinguish(Path path) {
+        if (Filer.isReadableFile(path)) {
 	        try {
-				return distinguish(ImageIO.read(file));
+				return distinguish(ImageIO.read(path.toFile()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

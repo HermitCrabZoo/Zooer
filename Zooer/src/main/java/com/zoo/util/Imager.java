@@ -15,8 +15,8 @@ import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -833,16 +833,16 @@ public final class Imager {
 	
 	/**
 	 * 获取图片文件的分辨率
-	 * @param file
+	 * @param path
 	 * @return
 	 */
-	public static Dimension dimen(File file) {
+	public static Dimension dimen(Path path) {
 		Dimension dimension=new Dimension();
-		if(Filer.isReadableFile(file)) {
-			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Pather.suffix(file.getAbsolutePath()));
+		if(Filer.isReadableFile(path)) {
+			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Pather.suffix(path.normalize().toString()));
 			if (it.hasNext()) {
 				ImageReader imageReader=it.next();
-				try (ImageInputStream iis = ImageIO.createImageInputStream(file)){
+				try (ImageInputStream iis = ImageIO.createImageInputStream(path)){
 					imageReader.setInput(iis, true);
 					dimension.width=imageReader.getWidth(0);
 					dimension.height=imageReader.getHeight(0);

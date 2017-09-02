@@ -1,12 +1,10 @@
 package com.zoo.util;
 
-import java.io.File;
 import java.net.URL;
-import java.net.URLDecoder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.ImageIcon;
-
-import com.zoo.cons.Charsetc;
 
 /**
  * 获取项目资源类
@@ -35,37 +33,32 @@ public final class Resource
     public static ImageIcon getIcon(String folder,String imageName) {
     	ImageIcon icon=null;
     	try{
-        	URL url=Resource.class.getClassLoader().getResource((folder==null?"res"+Platform.SLASH:folder+Platform.SLASH)+imageName);
+        	URL url=Resource.class.getClassLoader().getResource(Pather.join(folder, imageName));
         	icon = new ImageIcon(url);// 创建图标
-    	}catch(Exception e)
-    	{	System.out.println("获取图标资源出错!");
+    	}catch(Exception e){	
     		e.printStackTrace();
     	}
     	return icon;
 	}
     
     /**
-     * 传入文件名，文件存在返回文件，否则返回null
+     * 获取项目的bin目录或jar文件所在目录下的名为fileName的目录或文件，若获取失败则返回null。
      * @param fileName
      * @return
      */
-    public static File getFile(String fileName)
-    {
-    	URL url = Resource.class.getProtectionDomain().getCodeSource().getLocation();  
-        String filePath = null;  
-        try
-        {
-            filePath = URLDecoder.decode(url.getPath(), Charsetc.UTF8);// 转化为utf-8编码  
-        } catch (Exception e)
-        {  
-            e.printStackTrace();  
+    public static Path bins(String fileName){
+    	URL url = Resource.class.getProtectionDomain().getCodeSource().getLocation();
+    	Path path=null;
+        try{
+        	path=Paths.get(url.toURI());
+        	if (Filer.isFile(path)) {
+				path=path.getParent();
+			}else {
+				path=Paths.get(path.toString(), fileName);
+			}
+        } catch (Exception e){  
+            e.printStackTrace();
         }  
-        if (filePath.endsWith(".jar"))// 可执行jar包运行的结果里包含".jar" 
-        { 
-            // 截取路径中的jar包名  
-            filePath = filePath.substring(0, filePath.lastIndexOf(Platform.slash()) + 1);  
-        }
-		File file=new File(filePath+fileName);
-		return file.exists()?file:null;
+		return path;
     }
 }

@@ -148,4 +148,22 @@ public final class Strs {
 	public static <T>String toStr(T t) {
 		return Optional.ofNullable(t).map(s->String.valueOf(s)).orElse(empty());
 	}
+	/**
+	 * str不为null并且以prefix开头则返回true
+	 * @param str
+	 * @param prefix
+	 * @return
+	 */
+	public static boolean startsWith(String str,String prefix) {
+		return str!=null && str.startsWith(prefix);
+	}
+	/**
+	 * str不为null并且以suffix结尾则返回true
+	 * @param str
+	 * @param suffix
+	 * @return
+	 */
+	public static boolean endsWith(String str,String suffix) {
+		return str!=null && str.endsWith(suffix);
+	}
 }

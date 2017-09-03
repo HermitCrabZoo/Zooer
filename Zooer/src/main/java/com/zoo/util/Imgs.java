@@ -15,7 +15,6 @@ import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -35,7 +34,7 @@ public final class Imgs {
 	/**
 	 * 根据给定的BufferedImage对象构造一个Imgs对象
 	 * @param image
-	 * @throws NullPointerException 如果image参数为空，则此方法将抛出此异常
+	 * @throws NullPointerException 如果image参数为null，则抛出此异常
 	 * @return
 	 */
 	public static Imgs of(BufferedImage image) {
@@ -80,6 +79,19 @@ public final class Imgs {
 	 */
 	public static Imgs ofNew(int width,int height,Color color){
 		return Imgs.of(newImg(0, 0, width, height, color));
+	}
+	/**
+	 * 设置新的图像(替换当前的)
+	 * @param image
+	 * @throws NullPointerException 如果image参数为null，则抛出此异常
+	 * @return
+	 */
+	public Imgs setNew(BufferedImage image) {
+		if (image==null) {
+			throw new NullPointerException("Argument image cant not be null!");
+		}
+		this.image=image;
+		return this;
 	}
 	/**
 	 * 返回当前对象关联的BufferedImage实例
@@ -424,7 +436,7 @@ public final class Imgs {
 	/**
 	 * 将原始图片按比例缩放输出(输出图片不变形)
 	 * @param ratio 缩放率
-	 * @return 若基于缩放率为ratio下计算到的宽或高小于1,那么此方法将返回null
+	 * @return 若基于缩放率为ratio下计算到的宽或高小于1,那么将不缩放
 	 */
 	public Imgs scale(double ratio){
 		int width=(int) Math.round(image.getWidth()*ratio),height=(int) Math.round(image.getHeight()*ratio);
@@ -433,7 +445,7 @@ public final class Imgs {
 	/**
 	 * 基于宽的按比例缩放,输出图片宽高比不变(输出图片不变形)
 	 * @param w 输出图片的宽度
-	 * @return 若高w小于1或在宽为w下计算出来的高小于1,那么此方法将返回null
+	 * @return 若高w小于1或在宽为w下计算出来的高小于1,那么将不缩放
 	 */
 	public Imgs scaleWidth(int w){
 		int h=(int) Math.round(w*1.0/image.getWidth()*image.getHeight());
@@ -442,7 +454,7 @@ public final class Imgs {
 	/**
 	 * 基于高的按比例缩放,输出图片宽高比不变(输出图片不变形)
 	 * @param h 输出图片的高度
-	 * @return 若高h小于1或在高为h下计算出来的宽小于1,那么此方法将返回null
+	 * @return 若高h小于1或在高为h下计算出来的宽小于1,那么将不缩放
 	 */
 	public Imgs scaleHeight(int h){
 		int w=(int) Math.round(h*1.0/image.getHeight()*image.getWidth());
@@ -452,7 +464,7 @@ public final class Imgs {
 	 * 图片缩放,输出图片将按输入的宽高比进行缩放输出(输出宽高比与原始图片宽高比不一致可能导致输出图片效果变形)
 	 * @param h 输出图片的高
 	 * @param w 输出图片的宽
-	 * @return 若w或h小于1,那么此方法将返回null
+	 * @return 若w或h小于1,那么将不缩放
 	 */
 	public Imgs scaleZoom(int w, int h){
 		if (w>0&&h>0) {
@@ -466,7 +478,6 @@ public final class Imgs {
 	 * @param h 输出图片的高
 	 * @param w 输出图片的宽
 	 * @return
-	 * @throws IOException
 	 */
 	public Imgs scaleRatioBox(int w, int h){
 		return scaleRatioBox(w, h, Colors.wTransparent);
@@ -486,7 +497,7 @@ public final class Imgs {
 	 * 图片缩放,图片将按原始比例缩放到刚好可以放入宽为w高为h的容器中的大小(输出图片不变形).
 	 * @param w
 	 * @param h
-	 * @return 若图片无法缩放到能放到宽为w高为h的容器中,那么此方法将返回null
+	 * @return 若图片无法缩放到能放到宽为w高为h的容器中,那么将不缩放
 	 */
 	public Imgs scaleRatio(int w, int h) {
 		double ratioX=w*1.0/image.getWidth();

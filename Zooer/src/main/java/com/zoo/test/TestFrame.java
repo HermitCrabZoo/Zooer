@@ -83,7 +83,7 @@ public class TestFrame{
 		System.out.println("时长:"+(b-a));
 //		testBeanCopy();
 //		testAvg(1);
-//		testImg();
+		testImg();
 //		testFileCopy();
 	}
 	public static void testImg() {
@@ -110,33 +110,49 @@ public class TestFrame{
 			contentPane.setLayout(null);
 			setContentPane(contentPane);
 			Color fg=new Color(0,129,211,255),bg=new Color(174,244,235);
-			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 200, 200,fg,bg);
-			BufferedImage bgImage=Imager.image(fw, fh, Color.black);
+			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 800, 800,fg,bg);
 			Optional.ofNullable(qrcode).orElseGet(null);
 			try {
 				Chroma[] chromas= {Chroma.lightest,Chroma.lighter,Chroma.light,Chroma.middle,Chroma.heavy,Chroma.heavier,Chroma.heaviest};
+				/*Imgs imgs=Imgs.ofNull();
+				Imgs imgs2=Imgs.of(bgImage);
 				for(int j=0;j<7;j++) {
 					for(int i=0;i<12;i++) {
 						Color color=Colors.randColor(chromas[j]);
 						String surface=color.getRed()+","+color.getGreen()+","+color.getBlue();
-						BufferedImage ii=Imgs.ofNew(w, h,color).borderDropRadius(3,Color.WHITE,r).pile(surface).get();
-						bgImage=Imgs.of(bgImage).pile(ii, i*w, j*h).get();
-//						Images.pile(bgImage,Images.pile(Images.borderCrimpInRadius(Images.image(w, h, color),1,Color.WHITE,r), surface), i*w, j*h);
+						BufferedImage ii=imgs.image(w, h,color).borderDropRadius(3,Color.WHITE,r).pile(surface).get();
+						imgs2.pile(ii, i*w, j*h);
 					}
-				}
-				System.out.println(Colors.getYuv(fg));
-				/*BufferedImage imageA=ImageIO.read(new File("E:\\130922.jpg"));
-				BufferedImage imageB=Images.scaleRatio(imageA, 40, 40);
+				}*/
+				BufferedImage imageA=ImageIO.read(new File("E:\\130922.jpg"));
 				BufferedImage imageC=ImageIO.read(new File("E:\\星北.jpg"));
 				System.out.println(System.currentTimeMillis());
-				//Images.pileCenter(qrcode, Images.borderCrimp(Images.circle(imageB),1,null));
-				Images.pileCenter(qrcode, Images.borderCrimpRadius(Images.scaleWidth(Images.cutBehind(imageC),40),1,Color.white,40));*/
-//				System.out.println(System.currentTimeMillis());
+				Imgs imgs=Imgs.ofNull();
+				BufferedImage circle=imgs.setNew(imageC).cutBehind().scaleWidth(40).borderDropRadius(1,Color.white,40).get();
+				BufferedImage scale=imgs.setNew(imageC).scale(0.5).get();
+				BufferedImage scaleWidth=imgs.setNew(imageC).scaleWidth(200).get();
+				BufferedImage scaleHeight=imgs.setNew(imageC).scaleHeight(100).get();
+				BufferedImage scaleRatio=imgs.setNew(imageC).scaleRatio(400, 130).get();
+				BufferedImage scaleRatioBox=imgs.setNew(imageC).scaleRatioBox(200, 300).get();
+				BufferedImage scaleRatioBoxColor=imgs.setNew(imageC).scaleRatioBox(200, 300,Colors.randColor()).get();
+				BufferedImage scaleZoom=imgs.setNew(imageC).scaleZoom(200,200).get();
+				imgs.setNew(qrcode).pileLeftTop(scaleZoom).pileCenter(circle).pileRightTop(scale).pileRight(scaleWidth).pileRightBottom(scaleHeight).pileBottom(scaleRatio).pileLeftBottom(scaleRatioBox).pileLeft(scaleRatioBoxColor);
+				double rat=imageC.getWidth()/(double)imageC.getHeight();
+				System.out.println(rat);
+				System.out.println(circle.getWidth()+"-"+circle.getHeight()+" r:"+circle.getWidth()/(double)circle.getHeight());
+				System.out.println(scale.getWidth()+"-"+scale.getHeight()+" r:"+scale.getWidth()/(double)scale.getHeight());
+				System.out.println(scaleWidth.getWidth()+"-"+scaleWidth.getHeight()+" r:"+scaleWidth.getWidth()/(double)scaleWidth.getHeight());
+				System.out.println(scaleHeight.getWidth()+"-"+scaleHeight.getHeight()+" r:"+scaleHeight.getWidth()/(double)scaleHeight.getHeight());
+				System.out.println(scaleRatio.getWidth()+"-"+scaleRatio.getHeight()+" r:"+scaleRatio.getWidth()/(double)scaleRatio.getHeight());
+				System.out.println(scaleRatioBox.getWidth()+"-"+scaleRatioBox.getHeight()+" r:"+scaleRatioBox.getWidth()/(double)scaleRatioBox.getHeight());
+				System.out.println(scaleRatioBoxColor.getWidth()+"-"+scaleRatioBoxColor.getHeight()+" r:"+scaleRatioBoxColor.getWidth()/(double)scaleRatioBoxColor.getHeight());
+				System.out.println(scaleZoom.getWidth()+"-"+scaleZoom.getHeight()+" r:"+scaleZoom.getWidth()/(double)scaleZoom.getHeight());
+				System.out.println(System.currentTimeMillis());
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			JLabel jlLabel=new JLabel(new ImageIcon(bgImage));
+			JLabel jlLabel=new JLabel(new ImageIcon(qrcode));
 			//JLabel jlLabel=new JLabel(new ImageIcon(image1));
 			jlLabel.setBounds(0, 0, fw, fh);
 			contentPane.add(jlLabel,new Integer(Integer.MAX_VALUE));

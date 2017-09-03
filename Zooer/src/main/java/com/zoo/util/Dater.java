@@ -2,10 +2,12 @@ package com.zoo.util;
 
 import java.text.SimpleDateFormat;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Optional;
@@ -14,6 +16,7 @@ public final class Dater {
 	private Dater(){}
 	private static final Clock clock=Clock.systemUTC();
 	public static final String allFormat="yyyy-MM-dd HH:mm:ss";
+	private static final LocalDate start=LocalDate.of(0, 1, 1);
 	/**
 	 * 获取当前日期的"年月日时分秒"字符串(yyyy-MM-dd HH:mm:ss)
 	 * @param date
@@ -242,5 +245,140 @@ public final class Dater {
 	 */
 	public static long millis() {
 		return clock.millis();
+	}
+	/**
+	 * 获取两个时间之间相差的年数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long years(Temporal startInclusive, Temporal endExclusive) {
+		return months(startInclusive, endExclusive)/12;
+	}
+	/**
+	 * 获取两个时间之间相差的月数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long months(Temporal startInclusive, Temporal endExclusive) {
+		LocalDateTime incDt=getDateTime(startInclusive);
+		LocalDateTime excDt=getDateTime(endExclusive);
+		int y=excDt.getYear()-incDt.getYear();
+		if (y>0&&excDt.minusYears(y).isBefore(incDt)) {
+			y--;
+		}else if(y<0&&excDt.minusYears(y).isAfter(incDt)) {
+			y++;
+		}
+		LocalDateTime temp=incDt.plusYears(y);
+		int m=(excDt.getYear()-temp.getYear())*12+excDt.getMonthValue()-temp.getMonthValue();
+		temp=temp.plusMonths(m);
+		//由于闰年2月29号转到非闰年的2月28号所以需要补足天数
+		if (incDt.toLocalDate().isLeapYear()&&incDt.getMonthValue()==2&&incDt.getDayOfMonth()==29&&!excDt.toLocalDate().isLeapYear()) {
+			temp=temp.plusDays(1);
+		}
+		if (m>0&&excDt.isBefore(temp)) {
+			m--;
+		}else if(m<0&&excDt.isAfter(temp)){
+			m++;
+		}
+		return y*12+m;
+	}
+	/**
+	 * 获取两个时间之间相差的月数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long weeks(Temporal startInclusive, Temporal endExclusive) {
+		return days(startInclusive, endExclusive)/7;
+	}
+	/**
+	 * 获取两个时间之间相差的天数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long days(Temporal startInclusive, Temporal endExclusive) {
+		return duration(startInclusive,endExclusive).toDays();
+	}
+	/**
+	 * 获取两个时间之间相差的小时数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long hours(Temporal startInclusive, Temporal endExclusive) {
+		return duration(startInclusive,endExclusive).toHours();
+	}
+	/**
+	 * 获取两个时间之间相差的分钟数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long minutes(Temporal startInclusive, Temporal endExclusive) {
+		return duration(startInclusive,endExclusive).toMinutes();
+	}
+	/**
+	 * 获取两个时间之间相差的秒数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long seconds(Temporal startInclusive, Temporal endExclusive) {
+		return duration(startInclusive,endExclusive).getSeconds();
+	}
+	/**
+	 * 获取两个时间之间相差的毫秒数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long millis(Temporal startInclusive, Temporal endExclusive) {
+		return duration(startInclusive,endExclusive).toMillis();
+	}
+	/**
+	 * 获取两个时间之间相差的微秒数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long micros(Temporal startInclusive, Temporal endExclusive) {
+		return millis(startInclusive, endExclusive)*1000;
+	}
+	/**
+	 * 获取两个时间之间相差的纳秒数
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	public static long nanos(Temporal startInclusive, Temporal endExclusive) {
+		return duration(startInclusive,endExclusive).toNanos();
+	}
+	/**
+	 * 获取Duration对象
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return
+	 */
+	private static Duration duration(Temporal startInclusive, Temporal endExclusive) {
+		startInclusive=getDateTime(startInclusive);
+		endExclusive=getDateTime(endExclusive);
+		return Duration.between(startInclusive, endExclusive);
+	}
+	/**
+	 * 通过temporal获取LocalDateTime对象，如果传入的是LocalTime对象，则日期部分用{@link #start}填充，如果传入的是LocalDate对象，那么时间部分将设置为0:0:0.0
+	 * @param temporal
+	 * @return
+	 */
+	private static LocalDateTime getDateTime(Temporal temporal) {
+		if (temporal instanceof LocalDate) {
+			return LocalDateTime.of(LocalDate.from(temporal),LocalTime.MIN);
+		}else if (temporal instanceof LocalTime) {
+			return LocalDateTime.of(start,LocalTime.from(temporal));
+		}else {
+			return LocalDateTime.from(temporal);
+		}
 	}
 }

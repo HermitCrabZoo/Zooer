@@ -1,5 +1,9 @@
 package com.zoo.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -907,5 +911,29 @@ public final class Arrs {
 	 */
 	public static boolean notEmpty(char[] chars) {
 		return !(chars==null||chars.length==0);
+	}
+	/**
+	 * list深度拷贝的方法，返回新list，若src为null或拷贝失败则返回空list(empty)
+	 * @param src
+	 * @return 不会返回null
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> deepCopy(List<T> src){
+		List<T> dest=new ArrayList<>();
+		if (src!=null) {
+			try (
+					ByteArrayOutputStream byteOut = new ByteArrayOutputStream();  
+					ObjectOutputStream out = new ObjectOutputStream(byteOut);){
+				out.writeObject(src);
+				ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+				ObjectInputStream in = new ObjectInputStream(byteIn);
+				dest=(List<T>) in.readObject();
+				byteIn.close();
+				in.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	    return dest;  
 	}
 }

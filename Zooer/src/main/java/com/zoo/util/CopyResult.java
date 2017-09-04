@@ -87,7 +87,7 @@ public final class CopyResult {
 	 * @param eacher
 	 * @return
 	 */
-	public CopyResult forEach(Eacher eacher) {
+	public CopyResult forEach(Eacher<Path,Path,Exception> eacher) {
 		if (eacher!=null) {
 			for(int i=0;i<size;i++) {
 				Path in=ins.get(i);

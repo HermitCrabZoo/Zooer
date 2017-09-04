@@ -1,7 +1,5 @@
 package com.zoo.util;
-
-import java.nio.file.Path;
 @FunctionalInterface
-public interface Eacher {
-	void doIt(Path in,Path to,Exception e);
+public interface Eacher<I,T,E> {
+	void doIt(I in,T to,E e);
 }

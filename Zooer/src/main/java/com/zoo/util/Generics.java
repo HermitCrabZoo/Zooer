@@ -2,6 +2,8 @@ package com.zoo.util;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
+
 /**
  * 泛型工具类
  * @author Administrator
@@ -10,19 +12,36 @@ import java.lang.reflect.Type;
 public final class Generics {
 	private Generics(){}
 	/**
-	 * 获取泛型的类型
+	 * 获取list里面元素的类型
+	 * @param list
+	 * @return 若list为null或没有元素则返回null
+	 */
+	public static <T>Class<?> getGenericType(List<T> list){
+		if (list!=null&&!list.isEmpty()) {
+			for(T t:list){
+				if (t!=null) {
+					try {
+						return t.getClass();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取父类泛型的Class
 	 * @param clazz
 	 * @return Class
 	 */
 	@SuppressWarnings("rawtypes")
 	public static Class getGenericType(Class clazz){
-		
 		Type parentType = clazz.getGenericSuperclass();//得到泛型父类  
-		
 		Type[] types = ((ParameterizedType) parentType).getActualTypeArguments();
-		
 		if (!(types[0] instanceof Class)) {
-            return Object.class; 
+            return Object.class;
         } 
 		return (Class) types[0];
 	}

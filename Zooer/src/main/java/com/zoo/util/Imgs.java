@@ -44,7 +44,7 @@ public final class Imgs {
 		return new Imgs(image);
 	}
 	/**
-	 * 构造一个空的Imgs对象
+	 * 构造一个未关联image属性的Imgs对象，后续对image的操作前必须先关联当前对象的image属性到一个已存在的BufferedImage实例。
 	 * @return
 	 */
 	public static Imgs ofNull() {

@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -163,6 +164,40 @@ public final class Filer {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	/**
+	 * 创建文件，当不存在时则创建该文件，创建成功返回true，失败返回false；当存在时则不创建，若存在的是文件返回true，若存在的是目录返回false
+	 * @param file
+	 * @param attrs
+	 * @return
+	 */
+	public static boolean createFileIfNotExists(Path file, FileAttribute<?>... attrs) {
+		if (!isExists(file)) {
+			try {
+				Files.createFile(file, attrs);
+				return true;
+			} catch (Exception e) {}
+		}else {
+			return isFile(file);
+		}
+		return false;
+	}
+	/**
+	 * 创建目录，当不存在时则创建该文件夹，创建成功返回true，失败返回false；当存在时则不创建，若存在的是目录则返回true，若存在的是文件则返回false
+	 * @param dir
+	 * @param attrs
+	 * @return
+	 */
+	public static boolean createDirIfNotExists(Path dir, FileAttribute<?>... attrs) {
+		if (!isExists(dir)) {
+			try {
+				Files.createDirectories(dir, attrs);
+				return true;
+			} catch (Exception e) {}
+		}else {
+			return isDir(dir);
+		}
+		return false;
 	}
 	/**
 	 * 文件拷贝

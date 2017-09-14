@@ -55,7 +55,7 @@ public final class Pager<T> {
 		return this;
 	}
 	/**
-	 * 按照sortField和sortType来对sorts进行排序,不产生新对象
+	 * 按照sortField和sortType来对sorts进行排序
 	 * @param sortType asc为升序，desc为降序，默认asc。
 	 * @param sortField 当前list中的元素是String类型时，此字段可为空，非String类型的时候排序字段不能为空，若T代表的是Map对象，那么sortField代表Map的key，否则sortField作为T的属性
 	 */
@@ -100,7 +100,7 @@ public final class Pager<T> {
 		return this;
 	}
 	/**
-	 * 限制当前关联list的长度，start小于0或size小于1或start大于等于当前关联list的元素个数，那么该方法将将不对当前关联的list做截取操作
+	 * 限制当前关联list的长度，start小于0或size小于1或start大于等于当前关联list的元素个数，那么该方法将不对当前关联的list做截取操作
 	 * @param start
 	 * @param size
 	 */

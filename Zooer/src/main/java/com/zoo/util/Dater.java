@@ -10,13 +10,16 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public final class Dater {
 	private Dater(){}
-	private static final Clock clock=Clock.systemUTC();
 	public static final String allFormat="yyyy-MM-dd HH:mm:ss";
+	private static final Clock clock=Clock.systemUTC();
 	private static final LocalDate start=LocalDate.of(0, 1, 1);
+	private static final Map<String, DateTimeFormatter> dfs=new HashMap<String, DateTimeFormatter>();
 	/**
 	 * 获取当前日期的"年月日时分秒"字符串(yyyy-MM-dd HH:mm:ss)
 	 * @param date
@@ -157,6 +160,20 @@ public final class Dater {
 	public static String day(){
 		return String.valueOf(LocalDate.now().getDayOfMonth());
 	}
+	/**
+	 * 获取当前日期是一年中的"第几天"字符串
+	 * @return 当前是一年中的"第几天"字符串
+	 */
+	public static String dayOfYear(){
+		return String.valueOf(LocalDate.now().getDayOfYear());
+	}
+	/**
+	 * 获取当前日期的"周几"字符串
+	 * @return 当前"周几"字符串
+	 */
+	public static String week(){
+		return String.valueOf(LocalDate.now().getDayOfWeek().getValue());
+	}
 	
 	/**
 	 * 获取当前日期的"小时"字符串
@@ -225,7 +242,7 @@ public final class Dater {
 	 */
 	public static String format(TemporalAccessor temporal, String pattern) {
 		return Optional.ofNullable(pattern)
-				.flatMap(p -> Optional.ofNullable(temporal).map(t -> DateTimeFormatter.ofPattern(p).format(t)))
+				.flatMap(p -> Optional.ofNullable(temporal).map(t -> formatter(p).format(t)))
 				.orElse(Strs.empty());
 	}
 	/**
@@ -238,6 +255,21 @@ public final class Dater {
 		return Optional.ofNullable(pattern)
 				.flatMap(p -> Optional.ofNullable(date).map(t -> new SimpleDateFormat(p).format(t)))
 				.orElse(Strs.empty());
+	}
+	/**
+	 * 缓存并获取DateTimeFormatter类的对象
+	 * @param pattern
+	 * @return
+	 */
+	private static DateTimeFormatter formatter(String pattern) {
+		DateTimeFormatter dateTimeFormatter=null;
+		if (dfs.containsKey(pattern)) {
+			dateTimeFormatter=dfs.get(pattern);
+		}else {
+			dateTimeFormatter=DateTimeFormatter.ofPattern(pattern);
+			dfs.put(pattern, dateTimeFormatter);
+		}
+		return dateTimeFormatter;
 	}
 	/**
 	 * 自1970-01-01T00:00Z (UTC)以来的毫秒数。

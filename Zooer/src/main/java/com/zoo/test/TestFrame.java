@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,10 +69,17 @@ public class TestFrame{
 		Path fPath=Paths.get("E:\\ffmpeg-3.3\\新建文本文档.txt");
 		Path npath=Paths.get("E:\\ffmpeg-3.300");
 		Path in=Paths.get("E:\\Arrs.java"),to=Paths.get("E:\\CBD\\Arrs.java");
+		LocalDateTime localDateTime=LocalDateTime.now();
 		long a=clock.millis();
 //		CopyResult cr=Filer.copy(in,to, null, Charsetor.GBK);
+		System.out.println(Dater.format(localDateTime, Dater.allFormat));
 		long b=clock.millis();
+		for(int i=0;i<5000;i++) {
+			Dater.format(localDateTime, Dater.allFormat);
+		}
+		long c=clock.millis();
 		System.out.println("时长:"+(b-a));
+		System.out.println("时长:"+(c-b));
 //		testBeanCopy();
 //		testAvg(1);
 //		testImg();

@@ -30,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.google.zxing.common.StringUtils;
 import com.zoo.cons.Charsets;
 import com.zoo.cons.Images;
 import com.zoo.util.Arrs;
@@ -69,21 +70,11 @@ public class TestFrame{
 		Path in=Paths.get("E:\\Arrs.java"),to=Paths.get("E:\\CBD\\Arrs.java");
 		long a=clock.millis();
 //		CopyResult cr=Filer.copy(in,to, null, Charsetor.GBK);
-		LocalDateTime dt1=LocalDateTime.of(2000, 1, 31, 20, 0);
-		LocalDateTime dt2=LocalDateTime.of(2000, 2, 29, 20, 0);
-		LocalDate d1=LocalDate.of(2017, 5, 31);
-		LocalDate d2=LocalDate.of(2017, 5, 31);
-		LocalTime t1=LocalTime.of(12,25,30);
-		LocalTime t2=LocalTime.of(19, 30, 0);
-		System.out.println(Dater.months(dt1, dt2));
-		System.out.println(Dater.months(d1, d2));
-		System.out.println(Dater.months(t1, t2));
-		System.out.println(dt2.minusMonths(1));
 		long b=clock.millis();
 		System.out.println("时长:"+(b-a));
 //		testBeanCopy();
 //		testAvg(1);
-		testImg();
+//		testImg();
 //		testFileCopy();
 	}
 	public static void testImg() {

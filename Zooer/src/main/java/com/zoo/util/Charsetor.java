@@ -19,6 +19,7 @@ public final class Charsetor {
 	
 	public static final Charset UTF8=Charset.forName(Charsets.UTF8);
 	public static final Charset GBK=Charset.forName(Charsets.GBK);
+	public static final Charset GB2312=Charset.forName(Charsets.GB2312);
 	/**
 	 * 初始化文件字符集识别对象
 	 */

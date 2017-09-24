@@ -71,7 +71,12 @@ public class TestFrame{
 		Path in=Paths.get("E:\\Arrs.java"),to=Paths.get("E:\\CBD\\Arrs.java");
 		LocalDateTime localDateTime=LocalDateTime.now();
 		long a=clock.millis();
-//		CopyResult cr=Filer.copy(in,to, null, Charsetor.GBK);
+		/*CopyResult cr=Filer.copy(in,to, null, Charsetor.GBK);
+		cr.forEach((i,t,e)->{
+			System.out.println(i);
+			System.out.println(t);
+			System.out.println(e);
+			});*/
 		System.out.println(Dater.format(localDateTime, Dater.allFormat));
 		long b=clock.millis();
 		for(int i=0;i<5000;i++) {

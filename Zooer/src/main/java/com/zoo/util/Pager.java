@@ -1,8 +1,10 @@
 package com.zoo.util;
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sf.cglib.beans.BeanMap;
@@ -112,6 +114,21 @@ public final class Pager<T> {
 		}
 		return this;
 	}
+	/**
+	 * 通过by字段(若元素是Map则by为key)分组
+	 * @param by
+	 */
+	public Map<Object,List<T>> group(String by){
+		Map<Object,List<T>> oneToMore=new HashMap<Object,List<T>>();
+		for(T t:list){
+			Object key=Beaner.value(t, by);
+			List<T> us=oneToMore.containsKey(key)?oneToMore.get(key):new ArrayList<T>();
+			us.add(t);
+			oneToMore.put(key, us);
+		}
+		return oneToMore;
+	}
+	
 	/**
 	 * one大于two返回1，one小于two返回-1，one等于two返回0
 	 * @param one

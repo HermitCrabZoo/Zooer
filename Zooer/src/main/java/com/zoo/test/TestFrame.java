@@ -51,6 +51,7 @@ import com.zoo.util.QRCode;
 import com.zoo.util.Resource;
 import com.zoo.util.Strs;
 import com.zoo.util.Syss;
+import com.zoo.util.Worder;
 import com.zoo.util.Yuv;
 
 import net.sf.cglib.beans.BeanCopier;
@@ -85,6 +86,9 @@ public class TestFrame{
 		long c=clock.millis();
 		System.out.println("时长:"+(b-a));
 		System.out.println("时长:"+(c-b));
+		String abc="word分词是一个Java实现的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。 能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。 同时提供了Lucene、Solr、ElasticSearch插件。";
+		System.out.println(Worder.pureWords(abc));
+		System.out.println(Worder.intactWords(abc));
 //		testBeanCopy();
 //		testAvg(1);
 //		testImg();

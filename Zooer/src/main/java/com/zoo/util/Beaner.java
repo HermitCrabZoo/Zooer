@@ -1,5 +1,6 @@
 package com.zoo.util;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -171,5 +172,31 @@ public final class Beaner {
 		copierMap.put(key, copier);
 		keys.add(key);
 		return copier;
+	}
+	/**
+	 * 获取t的field字段值，若t是Map子类的实例:那么field将作为t的key来获取对应的value。
+	 * @param t
+	 * @param field
+	 * @return value(未获取到则为null)
+	 */
+	public static <T>Object value(T t,String field) {
+		Object value=null;
+		if (t!=null) {
+			if(t instanceof Map){
+				Map<?, ?> map=(Map<?, ?>) t;
+				value=map.get(field);
+			}else{
+				for(Class<?> clazz=t.getClass();clazz!=Object.class;clazz=clazz.getSuperclass()) {
+					try {
+						Field f=clazz.getDeclaredField(field);
+						f.setAccessible(true);
+						value=f.get(t);
+						break;
+					} catch (Exception e) {
+					}
+				}
+			}
+		}
+		return value;
 	}
 }

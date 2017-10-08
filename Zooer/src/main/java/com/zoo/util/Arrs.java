@@ -5,12 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -749,24 +747,7 @@ public final class Arrs {
 			return fields;
 		}
 		for(T t:list){
-			if(t==null){
-				continue;
-			}
-			Object value=null;
-			if(t instanceof Map){
-				Map<?, ?> map=(Map<?, ?>) t;
-				value=map.get(field);
-			}else{
-				for(Class<?> clazz=t.getClass();clazz!=Object.class;clazz=clazz.getSuperclass()) {
-					try {
-						Field f=clazz.getDeclaredField(field);
-						f.setAccessible(true);
-						value=f.get(t);
-						break;
-					} catch (Exception e) {
-					}
-				}
-			}
+			Object value=Beaner.value(t, field);
 			if(value!=null){
 				fields.add(value);
 			}

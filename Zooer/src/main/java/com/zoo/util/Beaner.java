@@ -199,4 +199,22 @@ public final class Beaner {
 		}
 		return value;
 	}
+	/**
+	 * 获取list中每个元素的field字段的值，并返回值的list
+	 * @param list
+	 * @param field
+	 * @return
+	 */
+	public static <T>List<Object> values(List<T> list,String field){
+		List<Object> vals=new ArrayList<>();
+		if (list!=null) {
+			for (T t : list) {
+				Object val=value(t, field);
+				if (val!=null) {
+					vals.add(val);
+				}
+			}
+		}
+		return vals;
+	}
 }

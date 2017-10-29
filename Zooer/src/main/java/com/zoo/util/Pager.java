@@ -26,7 +26,7 @@ public final class Pager<T> {
 		this.list=list;
 	}
 	/**
-	 * 构造一个 Pager<T>对象
+	 * 使用list构造一个 Pager<T>对象,后续操作会改变原list对象。
 	 * @param list
 	 * @return
 	 */
@@ -37,6 +37,17 @@ public final class Pager<T> {
 		return new Pager<T>(list);
 	}
 	/**
+	 * 使用list的拷贝来构造一个 Pager<T>对象，后续操作将不会改变原list对象
+	 * @param list
+	 * @return
+	 */
+	public static <T>Pager<T> ofNew(List<T> list){
+		if (list==null) {
+			throw new NullPointerException("list 不能为空！");
+		}
+		return new Pager<T>(Arrs.deepCopy(list));
+	}
+	/**
 	 * 获取当前关联的对象
 	 * @return
 	 */
@@ -44,7 +55,19 @@ public final class Pager<T> {
 		return list;
 	}
 	/**
-	 * 设置当前对象关联的list
+	 * 将当前对象关联到list
+	 * @param list
+	 * @return
+	 */
+	public Pager<T> set(List<T> list){
+		if (list==null) {
+			throw new NullPointerException("list 不能为空！");
+		}
+		this.list=list;
+		return this;
+	}
+	/**
+	 * 将当前对象关联到list的一份拷贝
 	 * @param list
 	 * @return
 	 */
@@ -52,7 +75,7 @@ public final class Pager<T> {
 		if (list==null) {
 			throw new NullPointerException("list 不能为空！");
 		}
-		this.list=list;
+		this.list=Arrs.deepCopy(list);
 		return this;
 	}
 	/**

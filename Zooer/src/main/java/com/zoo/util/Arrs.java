@@ -17,6 +17,22 @@ public final class Arrs {
 	private Arrs(){}
 	
 	/**
+	 * 生成一个可增删改的list
+	 * @param ts
+	 * @return
+	 */
+	@SafeVarargs
+	public static <T>List<T> of(T...ts){
+		List<T> list=new ArrayList<T>();
+		if (ts!=null) {
+			for (T t : ts) {
+				list.add(t);
+			}
+		}
+		return list;
+	}
+	
+	/**
 	 * 将total平均分成len份的数组返回,若total不是len的整数倍,
 	 * 那么数组值将尽量平均(数组中元素和仍然等于total).
 	 * @param total
@@ -742,17 +758,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static <T>List<Object> fields(List<T> list,String field){
-		List<Object> fields=new ArrayList<Object>();
-		if(list==null || field==null){
-			return fields;
-		}
-		for(T t:list){
-			Object value=Beaner.value(t, field);
-			if(value!=null){
-				fields.add(value);
-			}
-		}
-		return fields;
+		return Beaner.values(list, field);
 	}
 	/**
 	 * 判断elements中的元素是否都在onlys中，如果是返回true(即elements是onlys的可重复元素的子集)，否则elements存在非onlys集合里的元素返回false

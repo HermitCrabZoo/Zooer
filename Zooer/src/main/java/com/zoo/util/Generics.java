@@ -20,11 +20,7 @@ public final class Generics {
 		if (list!=null&&!list.isEmpty()) {
 			for(T t:list){
 				if (t!=null) {
-					try {
-						return t.getClass();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					return t.getClass();
 				}
 			}
 		}

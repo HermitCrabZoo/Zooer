@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.sf.cglib.beans.BeanMap;
 
 /**
  * 分页排序工具
@@ -17,7 +16,7 @@ public final class Pager<T> {
 	
 	public static final String DESC="DESC";
 	public static final String ASC="ASC";
-	private static final Comparator<Object> chinese = Collator.getInstance(java.util.Locale.CHINA);
+	private static final Comparator<Object> CHINESE = Collator.getInstance(java.util.Locale.CHINA);
 	/**
 	 * 当前对象关联的list
 	 */
@@ -57,6 +56,22 @@ public final class Pager<T> {
 		return this;
 	}
 	/**
+	 * 通过sortField字段降序排序
+	 * @param sortField
+	 * @return
+	 */
+	public Pager<T> desc(String sortField){
+		return sort(DESC, sortField);
+	}
+	/**
+	 * 通过sortField字段升序排序
+	 * @param sortField
+	 * @return
+	 */
+	public Pager<T> asc(String sortField){
+		return sort(ASC, sortField);
+	}
+	/**
 	 * 按照sortField和sortType来对sorts进行排序
 	 * @param sortType asc为升序，desc为降序，默认asc。
 	 * @param sortField 当前list中的元素是String类型时，此字段可为空，非String类型的时候排序字段不能为空，若T代表的是Map对象，那么sortField代表Map的key，否则sortField作为T的属性
@@ -74,27 +89,24 @@ public final class Pager<T> {
 					if (isStr) {
 						a +="";
 						b +="";
-					}else if (a.getClass().isAssignableFrom(Map.class)) {
+					}else if (a instanceof Map) {
 						a=((Map)a).get(sortField);
 						b=((Map)b).get(sortField);
 					}else{
 						try {
-							a=BeanMap.create(a).get(sortField);
-							b=BeanMap.create(b).get(sortField);
+							a=Beaner.value(a,sortField);
+							b=Beaner.value(b,sortField);
 						} catch (Exception e) {
 							return 1;
 						}
 					}
-					if (a instanceof Double && b instanceof Double) {
-						double one=(double) a,two=(double) b;
-						if (Double.isNaN(one) || Double.isNaN(two)) {//有一个非double值则保持原排序
-							return 1;
-						}
-						return isRise?compareDouble(one, two):compareDouble(two, one);
+					if (a instanceof Number && b instanceof Number) {
+						Number one=(Number) a,two=(Number) b;
+						return isRise?compareNumber(one, two):compareNumber(two, one);
 					}else{
 						String one = a+"";
 						String two = b+"";
-						return isRise?chinese.compare(one, two):chinese.compare(two,one);
+						return isRise?CHINESE.compare(one, two):CHINESE.compare(two,one);
 					}
 				}
 			});
@@ -135,10 +147,11 @@ public final class Pager<T> {
 	 * @param two
 	 * @return
 	 */
-	private static int compareDouble(double one,double two){
-		if(one>two){
+	private static int compareNumber(Number one,Number two){
+		double d1=one.doubleValue(),d2=two.doubleValue();
+		if(d1>d2){
 			return 1;
-		}else if(one==two){
+		}else if(d1==d2){
 			return 0;
 		}else{
 			return -1;

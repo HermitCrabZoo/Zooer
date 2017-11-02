@@ -101,27 +101,20 @@ public final class Pager<T> {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Pager<T> sort(final String sortType,final String sortField){
+		if (list.isEmpty()) {
+			return this;
+		}
 		final boolean isRise=sortDefAsc(sortType).equals(ASC);
-		final boolean isStr=(Generics.getGenericType(list) == String.class);
-		if (isStr || sortField!=null) {//只有元素类型是字符串，的时候sortFiled才可以为null
+		final boolean directSort=Typer.isStr(list.get(0))||Typer.isWrap(list.get(0));
+		if (directSort || sortField!=null) {//只有元素类型是字符串，的时候sortFiled才可以为null
 			Collections.sort(list, new Comparator() {
 				public int compare(Object a, Object b) {
 					if (a==null || b==null) {
 						return 1;
 					}
-					if (isStr) {
-						a +="";
-						b +="";
-					}else if (a instanceof Map) {
-						a=((Map)a).get(sortField);
-						b=((Map)b).get(sortField);
-					}else{
-						try {
-							a=Beaner.value(a,sortField);
-							b=Beaner.value(b,sortField);
-						} catch (Exception e) {
-							return 1;
-						}
+					if (!directSort){
+						a=Beaner.value(a,sortField);
+						b=Beaner.value(b,sortField);
 					}
 					if (a instanceof Number && b instanceof Number) {
 						Number one=(Number) a,two=(Number) b;

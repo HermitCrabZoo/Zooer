@@ -7,6 +7,44 @@ import java.util.Optional;
  */
 public final class Typer {
 	private  Typer(){}
+	
+	/**
+	 * 判断obj是否是基本类型的包装类的实例，若是返回true，不是返回false
+	 * @param obj
+	 * @return 
+	 */
+	public static boolean isWrap(Object obj) {
+		if(obj instanceof Integer){
+			return true;
+		}else if (obj instanceof Double) {
+			return true;
+		}else if(obj instanceof Long){
+			return true;
+		}else if(obj instanceof Float){
+			return true;
+		}else if(obj instanceof Short){
+			return true;
+		}else if(obj instanceof Byte){
+			return true;
+		}else if(obj instanceof Character){
+			return true;
+		}else if(obj instanceof Boolean){
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 判断obj是否是String的实例
+	 * @param obj
+	 * @return
+	 */
+	public static boolean isStr(Object obj) {
+		if (obj instanceof String) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * 验证字符串的有效性(不为null并且不为空字符串)
 	 * @param s 验证字符串

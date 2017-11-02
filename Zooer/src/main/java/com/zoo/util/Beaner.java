@@ -179,8 +179,9 @@ public final class Beaner {
 	 * @param field
 	 * @return value(未获取到则为null)
 	 */
-	public static <T>Object value(T t,String field) {
+	public static <T>Object value(T t,Object field) {
 		Object value=null;
+		String fstr=field+"";
 		if (t!=null) {
 			if(t instanceof Map){
 				Map<?, ?> map=(Map<?, ?>) t;
@@ -188,7 +189,7 @@ public final class Beaner {
 			}else{
 				for(Class<?> clazz=t.getClass();clazz!=Object.class;clazz=clazz.getSuperclass()) {
 					try {
-						Field f=clazz.getDeclaredField(field);
+						Field f=clazz.getDeclaredField(fstr);
 						f.setAccessible(true);
 						value=f.get(t);
 						break;
@@ -205,7 +206,7 @@ public final class Beaner {
 	 * @param field
 	 * @return
 	 */
-	public static <T>List<Object> values(List<T> list,String field){
+	public static <T>List<Object> values(List<T> list,Object field){
 		List<Object> vals=new ArrayList<>();
 		if (list!=null) {
 			for (T t : list) {

@@ -923,4 +923,66 @@ public final class Arrs {
 		}
 	    return dest;  
 	}
+	/**
+	 * 查到list中第一个字段名为equalKey，对应字段值为equalValue的元素并返回。
+	 * 若list中的元素是Map或Map的子类的实例，那么上述的equalKey对应了Map实例的Key。
+	 * @param list
+	 * @param equalKey
+	 * @param equalValue
+	 * @return
+	 */
+	public static <T>T firstEqualIf(List<T> list,Object equalKey,Object equalValue){
+		if (list!=null) {
+			for(T t:list) {
+				if (Objects.equals(Beaner.value(t, equalKey),equalValue)) {
+					return t;
+				}
+			}
+		}
+		return null;
+	}
+	/**
+	 * 查找list中所有字段名为equalKey，，对应字段值为equalValue的元素，并返回这些元素的集合，
+	 * 若list中的元素是Map或Map的子类的实例，那么上述的equalKey对应了Map实例的Key。
+	 * @param list
+	 * @param equalKey
+	 * @param equalValue
+	 * @return
+	 */
+	public static <T>List<T> equalsIf(List<T> list,Object equalKey,Object equalValue){
+		List<T> items=new ArrayList<>();
+		if (list!=null) {
+			for(T t:list) {
+				if (Objects.equals(Beaner.value(t, equalKey),equalValue)) {
+					items.add(t);
+				}
+			}
+		}
+		return items;
+	}
+	/**
+	 * 查找list中第一个字段名为equalKey，对应字段值为equalValue的元素，并返回该元素字段名为valueKey的字段值，
+	 * 若list中的元素是Map或Map的子类的实例，那么上述的equalKey、valueKey对应了Map实例的Key。
+	 * @param list
+	 * @param equalKey
+	 * @param equalValue
+	 * @param valueKey
+	 * @return
+	 */
+	public static <T>Object firstValueIf(List<T> list,Object equalKey,Object equalValue,Object valueKey){
+		return Beaner.value(firstEqualIf(list, equalKey, equalValue),valueKey);
+	}
+	/**
+	 * 查找list中所有字段名为equalKey，对应字段值为equalValue的元素，并返回这些元素的字段名为valueKey对应的字段值的集合，
+	 * 若list中的元素是Map或Map的子类的实例，那么上述的equalKey、valueKey对应了Map实例的Key。
+	 * @param list
+	 * @param equalKey
+	 * @param equalValue
+	 * @param valueKey
+	 * @return
+	 */
+	public static <T>List<Object> valuesIf(List<T> list,Object equalKey,Object equalValue,Object valueKey){
+		return Beaner.values(equalsIf(list, equalKey, equalValue), valueKey);
+	}
+	
 }

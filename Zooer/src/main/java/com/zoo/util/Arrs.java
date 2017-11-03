@@ -929,7 +929,7 @@ public final class Arrs {
 	 * @param list
 	 * @param equalKey
 	 * @param equalValue
-	 * @return
+	 * @return 若list不为空，并匹配到至少一个对象，那么将返回该对象，否则返回空
 	 */
 	public static <T>T firstEqualIf(List<T> list,Object equalKey,Object equalValue){
 		if (list!=null) {
@@ -947,7 +947,7 @@ public final class Arrs {
 	 * @param list
 	 * @param equalKey
 	 * @param equalValue
-	 * @return
+	 * @return 不会返回null
 	 */
 	public static <T>List<T> equalsIf(List<T> list,Object equalKey,Object equalValue){
 		List<T> items=new ArrayList<>();
@@ -967,7 +967,7 @@ public final class Arrs {
 	 * @param equalKey
 	 * @param equalValue
 	 * @param valueKey
-	 * @return
+	 * @return 若未匹配到则返回null
 	 */
 	public static <T>Object firstValueIf(List<T> list,Object equalKey,Object equalValue,Object valueKey){
 		return Beaner.value(firstEqualIf(list, equalKey, equalValue),valueKey);
@@ -979,7 +979,7 @@ public final class Arrs {
 	 * @param equalKey
 	 * @param equalValue
 	 * @param valueKey
-	 * @return
+	 * @return 不会返回null
 	 */
 	public static <T>List<Object> valuesIf(List<T> list,Object equalKey,Object equalValue,Object valueKey){
 		return Beaner.values(equalsIf(list, equalKey, equalValue), valueKey);

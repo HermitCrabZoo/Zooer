@@ -32,7 +32,7 @@ public final class Videor {
 	 */
 	public static BufferedImage imageToFile(File videoFile,int position,File file) throws IOException{
 		BufferedImage image=image(videoFile, position);
-		if (ImageIO.write(image, Images.JPEG, file)) {
+		if (ImageIO.write(image, Images.PNG, file)) {
 			return image;
 		}else {
 			throw new IOException("Could not write an image of format JPEG to "+file);
@@ -48,7 +48,7 @@ public final class Videor {
 	 */
 	public static BufferedImage imageToStream(File videoFile,int position,OutputStream ops) throws IOException{
 		BufferedImage image=image(videoFile, position);
-		if (ImageIO.write(image, Images.JPEG, ops)) {
+		if (ImageIO.write(image, Images.PNG, ops)) {
 			return image;
 		}else {
 			throw new IOException("Could not write an image of format JPEG to "+ops);
@@ -72,7 +72,8 @@ public final class Videor {
 	 */
 	public static Frame frame(File videoFile,int position){
 		Frame frame = null;
-		try (FrameGrabber grabber = FFmpegFrameGrabber.createDefault(videoFile)){
+		try {
+			FrameGrabber grabber = FFmpegFrameGrabber.createDefault(videoFile);
 			try {
 				grabber.start();
 			} catch (Exception e) {
@@ -85,6 +86,5 @@ public final class Videor {
 		}
 		return frame;
 	}
-	
 
 }

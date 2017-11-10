@@ -86,5 +86,9 @@ public final class Videor {
 		}
 		return frame;
 	}
+	
+	public static Java2DFrameConverter getFrameconverter() {
+		return frameConverter;
+	}
 
 }

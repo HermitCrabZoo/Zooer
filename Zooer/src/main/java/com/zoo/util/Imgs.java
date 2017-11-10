@@ -862,13 +862,54 @@ public final class Imgs {
 	}
 	/**
 	 * 将图片转为黑白色
-	 * @param image
 	 * @return
 	 */
 	public Imgs gray() {
 		this.image=colorConvertOp.filter(image, null);
 		return this;
 	}
+	/**
+	 * 将图片按y轴水平方向的翻转
+	 * @return
+	 */
+	public Imgs flipY() {
+		return flip(1);
+	}
+	/**
+	 * 将图片按x轴垂直方向的翻转
+	 * @return
+	 */
+	public Imgs flipX() {
+		return flip(0);
+	}
+	/**
+	 * 将图片按x轴翻转，再按y轴翻转(180度翻转)
+	 * @return
+	 */
+	public Imgs flipXY() {
+		return flip(-1);
+	}
+	/**
+	 * 将图片翻转，flipCode在等于0、1、-1时分别代表：垂直翻转、水平翻转、两者都翻转
+	 * @param flipCode
+	 * @return
+	 */
+	private Imgs flip(int flipCode) {
+		int w = image.getWidth();
+		int h = image.getHeight();
+		image(0, 0, w, h, Colors.wTransparent);
+		Graphics2D graphics2d=image.createGraphics();
+		if (flipCode==0) {//垂直翻转(x轴)
+			graphics2d.drawImage(oldImage, 0, 0, w, h, 0, h, w, 0, null);
+		}else if(flipCode==1) {//水平翻转(y轴)
+			graphics2d.drawImage(oldImage, 0, 0, w, h, w, 0, 0, h, null);
+		}else if (flipCode==-1) {//垂直水平都翻转(x、y轴)
+			graphics2d.drawImage(oldImage, 0, 0, w, h, w, h, 0, 0, null);
+		}
+		graphics2d.dispose();
+		return this;
+	}
+	
 	/**
 	 * 图片宽
 	 * @return

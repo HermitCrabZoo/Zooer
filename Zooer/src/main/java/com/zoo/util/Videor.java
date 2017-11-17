@@ -8,14 +8,14 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import org.bytedeco.javacpp.avcodec;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
 import com.zoo.cons.Images;
-
-import org.bytedeco.javacv.FrameGrabber.Exception;
 
 public final class Videor {
 	private Videor(){}
@@ -81,10 +81,50 @@ public final class Videor {
 			}
 			grabber.setFrameNumber(position);
 			frame = grabber.grab();
-		} catch (Exception e) {
+		} catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
 			e.printStackTrace();
 		}
 		return frame;
+	}
+	
+	public static void transToMp4(File file,File target) {
+		try {
+			FFmpegFrameGrabber frameGrabber = FFmpegFrameGrabber.createDefault(file);
+			Frame captured_frame = null;
+			frameGrabber.start();
+			FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(target, frameGrabber.getImageWidth(), frameGrabber.getImageHeight(),frameGrabber.getAudioChannels());
+			//avcodec.AV_CODEC_ID_H264  //AV_CODEC_ID_MPEG4
+			recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);//视频编码格式
+			recorder.setFormat("mp4");//封装格式
+			System.out.println(frameGrabber.getVideoBitrate()/2);
+			recorder.setVideoBitrate(frameGrabber.getVideoBitrate()/2);
+			recorder.setFrameRate(frameGrabber.getFrameRate());//视频帧率
+			//recorder.setSampleFormat(frameGrabber.getSampleFormat());  //
+			recorder.setSampleRate(frameGrabber.getSampleRate());//音频采样率
+//			recorder.setAudioChannels(frameGrabber.getAudioChannels());
+			recorder.setAudioCodec(avcodec.AV_CODEC_ID_AAC);//音频编码格式
+			recorder.setAudioBitrate(frameGrabber.getAudioBitrate());
+			recorder.start();
+			while (true) {
+				try {
+					captured_frame = frameGrabber.grab();
+					if (captured_frame == null) {
+						break;
+					}
+					recorder.setTimestamp(frameGrabber.getTimestamp());
+					recorder.record(captured_frame); 
+				} catch (Exception e) {
+				}
+			}
+			recorder.stop();
+			recorder.release();
+			recorder.close();
+			frameGrabber.stop();
+			frameGrabber.release();
+			frameGrabber.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static Java2DFrameConverter getFrameconverter() {

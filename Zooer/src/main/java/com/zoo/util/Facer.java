@@ -13,13 +13,21 @@ import org.opencv.objdetect.CascadeClassifier;
 
 public final class Facer {
 	private Facer() {}
+	
+	/**
+	 * 级联分拣器
+	 */
+	private static CascadeClassifier faceDetector=null;
+	static {
+		System.load("E:\\opencv_java331.dll");
+		faceDetector = new CascadeClassifier(Paths.get("E:\\IDE\\opencv-3.3.1-vc14\\opencv\\sources\\data\\lbpcascades\\lbpcascade_frontalface.xml").toString());
+	}
+	
 	public static void detect() {
 		String n="5";
 		String filename="E:\\images\\"+n+".jpeg";
 		String filenameDest="E:\\images\\"+n+"Detection.png";
-		System.load("E:\\opencv_java331.dll");
 		System.out.println();
-		CascadeClassifier faceDetector = new CascadeClassifier(Paths.get("E:\\IDE\\opencv-3.3.1-vc14\\opencv\\sources\\data\\lbpcascades\\lbpcascade_frontalface.xml").toString());
 		Mat image = Imgcodecs.imread(filename);
 	    // Detect faces in the image.
 	    // MatOfRect is a special container class for Rect.

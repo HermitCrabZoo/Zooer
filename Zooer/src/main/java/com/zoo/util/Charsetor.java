@@ -24,12 +24,14 @@ public final class Charsetor {
 	 * 初始化文件字符集识别对象
 	 */
 	private static final CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();
+	
 	static {
 		detector.add(new ParsingDetector(false));
 		detector.add(JChardetFacade.getInstance());
 		detector.add(ASCIIDetector.getInstance());
 		detector.add(UnicodeDetector.getInstance());
 	}
+	
 	/**
 	 * 判断是否是java支持的字符集。
 	 * @param charsetName
@@ -42,6 +44,7 @@ public final class Charsetor {
 			return false;
 		}
 	}
+	
 	/**
 	 * 如果java支持该字符集则返回Charset对象，否则返回java默认的Charset对象。
 	 * @param charsetName
@@ -50,6 +53,7 @@ public final class Charsetor {
 	public static Charset elseDefault(String charsetName) {
 		return elseGet(charsetName,Charset.defaultCharset());
 	}
+	
 	/**
 	 * 如果java支持字符集charsetName则返回该字符集的Charset对象，否则返回other。
 	 * @param charsetName
@@ -59,6 +63,43 @@ public final class Charsetor {
 	public static Charset elseGet(String charsetName,Charset other) {
 		return isSupported(charsetName)?Charset.forName(charsetName):other;
 	}
+	
+	/**
+	 * 识别path的字符集，若识别失败则返回defChartset
+	 * @param path
+	 * @param defChartset
+	 * @return
+	 * @see #discern(Path)
+	 */
+	public static Charset discern(Path path,Charset defChartset) {
+		Charset charset=discern(path);
+		return charset==null?defChartset:charset;
+	}
+	
+	/**
+	 * 识别url的字符集，若识别失败则返回defChartset
+	 * @param url
+	 * @param defChartset
+	 * @return
+	 * @see #discern(URL)
+	 */
+	public static Charset discern(URL url,Charset defChartset) {
+		Charset charset=discern(url);
+		return charset==null?defChartset:charset;
+	}
+	
+	/**
+	 * 识别is的字符集，若识别失败则返回defChartset
+	 * @param is
+	 * @param defChartset
+	 * @return
+	 * @see #discern(InputStream)
+	 */
+	public static Charset discern(InputStream is,Charset defChartset) {
+		Charset charset=discern(is);
+		return charset==null?defChartset:charset;
+	}
+	
 	/**
 	 * 识别文件的字符集并返回Charset对象，未成功识别将返回null。
 	 * @param path
@@ -75,6 +116,7 @@ public final class Charsetor {
 		}
 		return charset;
 	}
+	
 	/**
 	 * 识别url的字符集并返回Charset对象，未成功识别将返回null。
 	 * @param url
@@ -91,6 +133,7 @@ public final class Charsetor {
 		}
 		return charset;
 	}
+	
 	/**
 	 * 识别一个输入流的字符集并返回Charset对象，未成功识别将返回null。
 	 * @param is

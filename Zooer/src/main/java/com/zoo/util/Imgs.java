@@ -203,7 +203,7 @@ public final class Imgs {
 	 * @return
 	 */
 	private static BufferedImage newImg(int x,int y,int width,int height,Color color) {
-		BufferedImage image =new BufferedImage(width, height,BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image =new BufferedImage(width, height,BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = image.createGraphics();
 		g.setColor(Optional.ofNullable(color).orElse(Colors.randColor()));
 		g.fillRect(x, y, width, height);

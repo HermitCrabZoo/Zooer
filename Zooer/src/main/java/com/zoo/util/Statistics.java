@@ -25,7 +25,7 @@ public final class Statistics {
 	 * @param defValue 未匹配到元素，用该值来填充。
 	 * @return
 	 */
-	public static <T>List<Object> patch(List<T> rules,List<T> list,Object equalKey,Object valueKey,Object defValue){
+	public static <T>List<Object> patch(List<T> rules,List<T> list,String equalKey,String valueKey,Object defValue){
 		List<Object> data=new ArrayList<>();
 		if (rules!=null && list!=null) {
 			for(T rule:rules){

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,17 +36,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.Java2DFrameConverter;
+import org.opencv.core.Mat;
+
 import com.google.zxing.common.StringUtils;
 import com.zoo.cons.Charsets;
 import com.zoo.cons.Images;
 import com.zoo.util.Arrs;
 import com.zoo.util.Beaner;
+import com.zoo.util.CvBridge;
 import com.zoo.util.Chars;
 import com.zoo.util.Charsetor;
 import com.zoo.util.Chroma;
 import com.zoo.util.Colors;
 import com.zoo.util.CopyResult;
 import com.zoo.util.Dater;
+import com.zoo.util.Facer;
 import com.zoo.util.Filer;
 import com.zoo.util.Funcs;
 import com.zoo.util.Imager;
@@ -56,6 +63,7 @@ import com.zoo.util.QRCode;
 import com.zoo.util.Resource;
 import com.zoo.util.Strs;
 import com.zoo.util.Syss;
+import com.zoo.util.Videor;
 import com.zoo.util.Worder;
 import com.zoo.util.Yuv;
 
@@ -67,57 +75,21 @@ import javax.swing.ImageIcon;
 
 public class TestFrame{
 	 static Clock clock=Clock.systemUTC();
+	 static {
+			System.load("E:\\GitRepositorys\\Zooer\\Zooer\\lib\\opencv_java331.dll");
+	 }
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		Path path=Paths.get("E:\\ffmpeg-3.3");
-		Path fPath=Paths.get("E:\\ffmpeg-3.3\\新建文本文档.txt");
-		Path npath=Paths.get("E:\\ffmpeg-3.300");
-		Path in=Paths.get("E:\\Arrs.java"),to=Paths.get("E:\\CBD\\Arrs.java");
-		LocalDateTime localDateTime=LocalDateTime.now();
-		/*CopyResult cr=Filer.copy(in,to, null, Charsetor.GBK);
-		cr.forEach((i,t,e)->{
-			System.out.println(i);
-			System.out.println(t);
-			System.out.println(e);
-			});*/
+		Path path=Paths.get("E:\\images\\video.mp4");
+		Path fPath=Paths.get("E:\\images\\video.png");
 		String abc="word分词是一个Java实现的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。 能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。 同时提供了Lucene、Solr、ElasticSearch插件。";
 //		System.out.println(Worder.pureWords(abc));
 //		System.out.println(Worder.intactWords(abc));
-		System.out.println(Double.MAX_VALUE);
-		System.out.println(Long.MAX_VALUE);
-		System.out.println(Float.MAX_VALUE);
-		System.out.println(Integer.MAX_VALUE);
-		System.out.println(Byte.MAX_VALUE);
-		Map<String,Object> map1=new HashMap<>();
-		map1.put("type", "Double");
-		map1.put("max", Double.MAX_VALUE);
-		Map<String,Object> map2=new HashMap<>();
-		map2.put("type", "Long");
-		map2.put("max", Long.MAX_VALUE);
-		Map<String,Object> map3=new HashMap<>();
-		map3.put("type", "Float");
-		map3.put("max", Float.MAX_VALUE);
-		Map<String,Object> map4=new HashMap<>();
-		map4.put("type", "Integer");
-		map4.put("max", Integer.MAX_VALUE);
-		Map<String,Object> map5=new HashMap<>();
-		map5.put("type", "Byte");
-		map5.put("max", Byte.MAX_VALUE);
-		List<Map<String, Object>> maps=Arrs.of(map3,map1,map4,map2,map5);
-		System.out.println(maps);
-		long a=clock.millis();
-		for (int i = 0; i < 500000; i++) {
-			maps=Pager.of(maps).desc("max").get();
-		}
-		long b=clock.millis();
-		System.out.println("用时："+(b-a));
-		maps.forEach(n->System.out.println(new BigDecimal(n.get("max").toString()).toPlainString()));
 //		testBeanCopy();
 //		testAvg(1);
-//		testImg();
-//		testFileCopy();
+		testImg();
 	}
 	public static void testImg() {
 		EventQueue.invokeLater(new Runnable() {
@@ -146,42 +118,21 @@ public class TestFrame{
 			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com", 800, 800,fg,bg);
 			Optional.ofNullable(qrcode).orElseGet(null);
 			try {
-				Chroma[] chromas= {Chroma.lightest,Chroma.lighter,Chroma.light,Chroma.middle,Chroma.heavy,Chroma.heavier,Chroma.heaviest};
-				/*Imgs imgs=Imgs.ofNull();
-				Imgs imgs2=Imgs.of(bgImage);
-				for(int j=0;j<7;j++) {
-					for(int i=0;i<12;i++) {
-						Color color=Colors.randColor(chromas[j]);
-						String surface=color.getRed()+","+color.getGreen()+","+color.getBlue();
-						BufferedImage ii=imgs.image(w, h,color).borderDropRadius(3,Color.WHITE,r).pile(surface).get();
-						imgs2.pile(ii, i*w, j*h);
-					}
-				}*/
 				BufferedImage imageA=ImageIO.read(new File("E:\\130922.jpg"));
-				BufferedImage imageC=ImageIO.read(new File("E:\\星北.jpg"));
-				System.out.println(System.currentTimeMillis());
-				Imgs imgs=Imgs.ofNull();
-				BufferedImage circle=imgs.setNew(imageC).cutBehind().scaleWidth(40).borderDropRadius(1,Color.white,40).get();
-				BufferedImage scale=imgs.setNew(imageC).scale(0.5).get();
-				BufferedImage scaleWidth=imgs.setNew(imageC).scaleWidth(200).get();
-				BufferedImage scaleHeight=imgs.setNew(imageC).scaleHeight(100).get();
-				BufferedImage scaleRatio=imgs.setNew(imageC).scaleRatio(400, 130).get();
-				BufferedImage scaleRatioBox=imgs.setNew(imageC).scaleRatioBox(200, 300).get();
-				BufferedImage scaleRatioBoxColor=imgs.setNew(imageC).scaleRatioBox(200, 300,Colors.randColor()).get();
-				BufferedImage scaleZoom=imgs.setNew(imageC).scaleZoom(200,200).get();
-				imgs.setNew(qrcode).pileLeftTop(scaleZoom).pileCenter(circle).pileRightTop(scale).pileRight(scaleWidth).pileRightBottom(scaleHeight).pileBottom(scaleRatio).pileLeftBottom(scaleRatioBox).pileLeft(scaleRatioBoxColor);
-				double rat=imageC.getWidth()/(double)imageC.getHeight();
-				System.out.println(rat);
-				System.out.println(circle.getWidth()+"-"+circle.getHeight()+" r:"+circle.getWidth()/(double)circle.getHeight());
-				System.out.println(scale.getWidth()+"-"+scale.getHeight()+" r:"+scale.getWidth()/(double)scale.getHeight());
-				System.out.println(scaleWidth.getWidth()+"-"+scaleWidth.getHeight()+" r:"+scaleWidth.getWidth()/(double)scaleWidth.getHeight());
-				System.out.println(scaleHeight.getWidth()+"-"+scaleHeight.getHeight()+" r:"+scaleHeight.getWidth()/(double)scaleHeight.getHeight());
-				System.out.println(scaleRatio.getWidth()+"-"+scaleRatio.getHeight()+" r:"+scaleRatio.getWidth()/(double)scaleRatio.getHeight());
-				System.out.println(scaleRatioBox.getWidth()+"-"+scaleRatioBox.getHeight()+" r:"+scaleRatioBox.getWidth()/(double)scaleRatioBox.getHeight());
-				System.out.println(scaleRatioBoxColor.getWidth()+"-"+scaleRatioBoxColor.getHeight()+" r:"+scaleRatioBoxColor.getWidth()/(double)scaleRatioBoxColor.getHeight());
-				System.out.println(scaleZoom.getWidth()+"-"+scaleZoom.getHeight()+" r:"+scaleZoom.getWidth()/(double)scaleZoom.getHeight());
-				System.out.println(System.currentTimeMillis());
-				
+//				BufferedImage imageC=ImageIO.read(new File("E:\\星北.jpg"));
+				BufferedImage imageC=ImageIO.read(new File("E:\\images\\video.png"));
+				BufferedImage circle=Imgs.of(imageC).cutBehind().scaleWidth(100).borderDropRadius(1,Color.white,40).get();
+				BufferedImage bufferedImage=Imgs.ofNew(500, 500, new Color(255, 255, 255,20 )).get();
+				int pixel =bufferedImage.getRGB(1, 1);
+				int red = (pixel & 0xff0000) >> 16;  
+                int g = (pixel & 0xff00) >> 8;  
+                int b = (pixel & 0xff);
+				System.out.println(red);
+				System.out.println(g);
+				System.out.println(b);
+				Mat mat=CvBridge.mat(circle);
+				BufferedImage bImage=CvBridge.image(mat);
+				Imgs.of(qrcode).pileCenter(bImage);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -192,31 +143,6 @@ public class TestFrame{
 			contentPane.setBackground(Colors.randColor(Chroma.lightest));
 			setVisible(true);
 		}
-	}
-	public static void testFileCopy() {
-		File file=new File("E:\\130922.jpg");
-		Path dir=Paths.get("E:\\ffmpeg-win64-static");
-		Path cFile=Paths.get("E:\\testJavacv\\javacvContent");
-		Path gFile=Paths.get("E:\\TestResource\\ccd");
-//		System.out.println(pp.toString());
-//		System.out.println(pp.getFileName().toString());
-//		System.out.println(pp.getParent().toString());
-//		System.out.println(pp.getRoot().toString());
-		try(Stream<Path> pathStream = Files.walk(cFile, FileVisitOption.FOLLOW_LINKS).parallel()) {
-//			pathStream.filter(Funcs.pathTrue).forEach(p->System.out.println(p.toAbsolutePath()));
-			Path path=Paths.get("E:\\TestResource\\nobb\\ccd\\cmos.pp");
-//			Files.createDirectories(path.getParent());
-//			Files.createFile(path);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		long a=clock.millis();
-//		Filer.copy(cFile, gFile);
-		long b=clock.millis();
-		long c=clock.millis();
-		System.out.println(b-a);
-		System.out.println(c-b);
-		
 	}
 	public static void testBeanCopy(){
 		

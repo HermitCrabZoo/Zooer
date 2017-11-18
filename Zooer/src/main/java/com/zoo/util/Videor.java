@@ -16,6 +16,7 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
 import com.zoo.cons.Images;
+import com.zoo.cons.Videos;
 
 public final class Videor {
 	private Videor(){}
@@ -95,13 +96,12 @@ public final class Videor {
 			FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(target, frameGrabber.getImageWidth(), frameGrabber.getImageHeight(),frameGrabber.getAudioChannels());
 			//avcodec.AV_CODEC_ID_H264  //AV_CODEC_ID_MPEG4
 			recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);//视频编码格式
-			recorder.setFormat("mp4");//封装格式
+			recorder.setFormat(Videos.mp4);//封装格式
 			System.out.println(frameGrabber.getVideoBitrate()/2);
 			recorder.setVideoBitrate(frameGrabber.getVideoBitrate()/2);
 			recorder.setFrameRate(frameGrabber.getFrameRate());//视频帧率
 			//recorder.setSampleFormat(frameGrabber.getSampleFormat());  //
 			recorder.setSampleRate(frameGrabber.getSampleRate());//音频采样率
-//			recorder.setAudioChannels(frameGrabber.getAudioChannels());
 			recorder.setAudioCodec(avcodec.AV_CODEC_ID_AAC);//音频编码格式
 			recorder.setAudioBitrate(frameGrabber.getAudioBitrate());
 			recorder.start();

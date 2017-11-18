@@ -173,6 +173,7 @@ public final class Filer {
 	 */
 	public static boolean createFileIfNotExists(Path file, FileAttribute<?>... attrs) {
 		if (!isExists(file)) {
+			createDirIfNotExists(file.getParent(), attrs);
 			try {
 				Files.createFile(file, attrs);
 				return true;

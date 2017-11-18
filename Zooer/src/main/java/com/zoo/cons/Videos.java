@@ -5,6 +5,7 @@ public final class Videos {
 	public static final String MPEG1="MPEG-1";
 	public static final String MPEG2="MPEG-2";
 	public static final String MPEG4="MPEG-4";
+	public static final String MP4="MP4";
 	public static final String AVI="AVI";
 	public static final String MKV="MKV";
 	public static final String MOV="MOV";
@@ -19,6 +20,7 @@ public final class Videos {
 	public static final String mpeg1="mpeg-1";
 	public static final String mpeg2="mpeg-2";
 	public static final String mpeg4="mpeg-4";
+	public static final String mp4="mp4";
 	public static final String avi="avi";
 	public static final String mkv="mkv";
 	public static final String mov="mov";

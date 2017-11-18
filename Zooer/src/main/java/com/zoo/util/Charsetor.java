@@ -73,7 +73,7 @@ public final class Charsetor {
 	 */
 	public static Charset discern(Path path,Charset defChartset) {
 		Charset charset=discern(path);
-		return charset==null?defChartset:charset;
+		return (charset==null||"void".equals(charset.displayName()))?defChartset:charset;
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public final class Charsetor {
 	 */
 	public static Charset discern(URL url,Charset defChartset) {
 		Charset charset=discern(url);
-		return charset==null?defChartset:charset;
+		return (charset==null||"void".equals(charset.displayName()))?defChartset:charset;
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public final class Charsetor {
 	 */
 	public static Charset discern(InputStream is,Charset defChartset) {
 		Charset charset=discern(is);
-		return charset==null?defChartset:charset;
+		return (charset==null||"void".equals(charset.displayName()))?defChartset:charset;
 	}
 	
 	/**

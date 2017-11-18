@@ -9,18 +9,18 @@ public final class Funcs {
 	/**
 	 * 永远返回true
 	 */
-	public static Predicate<? super Path> pathTrue=p->true;
+	public final static Predicate<? super Path> pathTrue=p->true;
 	/**
 	 * 永远返回false
 	 */
-	public static Predicate<? super Path> pathFalse=p->false;
+	public final static Predicate<? super Path> pathFalse=p->false;
 	/**
 	 * 是文件返回true
 	 */
-	public static Predicate<? super Path> onlyFile=p->Files.isRegularFile(p);
+	public final static Predicate<? super Path> onlyFile=p->Files.isRegularFile(p);
 	/**
 	 * 是目录返回true
 	 */
-	public static Predicate<? super Path> onlyDir=p->Files.isDirectory(p);
+	public final static Predicate<? super Path> onlyDir=p->Files.isDirectory(p);
 
 }

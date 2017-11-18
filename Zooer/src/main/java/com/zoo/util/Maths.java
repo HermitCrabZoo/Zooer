@@ -1,5 +1,7 @@
 package com.zoo.util;
 
+import java.math.BigDecimal;
+
 public final class Maths {
 	private Maths(){}
 	/**
@@ -16,7 +18,7 @@ public final class Maths {
 	 * @return
 	 */
 	public static int digit(double num){
-		return String.valueOf((long)num).length();
+		return new BigDecimal(num).toPlainString().split(".")[0].length();
 	}
 	
 	/**

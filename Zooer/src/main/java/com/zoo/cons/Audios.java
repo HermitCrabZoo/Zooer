@@ -3,6 +3,7 @@ package com.zoo.cons;
 public final class Audios {
 	private Audios(){}
 	public static final String MPEG3="MPEG3";
+	public static final String MP3="MP3";
 	public static final String CD="CD";
 	public static final String WAVE="WAVE";
 	public static final String AIFF="AIFF";
@@ -12,6 +13,7 @@ public final class Audios {
 	public static final String FLAC="FLAC";
 	public static final String AAC="AAC";
 	public static final String mpeg3="mpeg3";
+	public static final String mp3="mp3";
 	public static final String cd="cd";
 	public static final String wave="wave";
 	public static final String aiff="aiff";

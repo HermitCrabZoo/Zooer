@@ -90,7 +90,7 @@ public final class Packer {
 						int count;
 						byte [] b = new byte[BUFFER];//字节数组，每次读取4096个字节  
 						//循环读取压缩文件的值  
-						while((count=cos.read(b))!=-1)  
+						while((count=cos.read(b,0,BUFFER))!=-1)  
 						{  
 							bos.write(b,0,count);//写入到新文件  
 						}  

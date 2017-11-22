@@ -13,6 +13,7 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,6 +21,10 @@ import java.util.stream.Stream;
 public final class Filer {
 
 	private Filer() {}
+	
+	private final static String MIME_VIDEO="video/";
+	private final static String MIME_IMAGE="image/";
+	
 	/**
 	 * 文件或目录、存在
 	 * @param path
@@ -326,4 +331,35 @@ public final class Filer {
 		}
 		return paths;
 	}
+	
+	/**
+	 * 获取文件的MIME信息
+	 * @param file
+	 * @return
+	 */
+	public static Optional<String> mime(Path file) {
+		try {
+			return Optional.ofNullable(Files.probeContentType(file));
+		} catch (Exception e) {}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 判断文件是否是视频类型文件
+	 * @param file
+	 * @return
+	 */
+	public static boolean isVideo(Path file) {
+		return mime(file).map(m->m.contains(MIME_VIDEO)).orElse(false);
+	}
+	
+	/**
+	 * 判断文件是否是图片类型的文件
+	 * @param file
+	 * @return
+	 */
+	public static boolean isImage(Path file) {
+		return mime(file).map(m->m.contains(MIME_IMAGE)).orElse(false);
+	}
+	
 }

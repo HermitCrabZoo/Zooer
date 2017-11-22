@@ -163,6 +163,25 @@ public final class Packer {
 				zos.close();
 			}
 		}
+		return zipPath;
+	}
+	
+	public static Path unrar(Path rarPath,Path dock) {
 		return dock;
 	}
+	
+	public static Path rar(Path dock,Path rarPath) {
+		return rarPath;
+	}
+	
+	
+	public static Path unjar(Path jarPath,Path dock) {
+		return dock;
+	}
+	
+	public static Path jar(Path dock,Path jarPath) {
+		return jarPath;
+	}
+	
+	
 }

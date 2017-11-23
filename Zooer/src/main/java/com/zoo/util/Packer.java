@@ -2,6 +2,7 @@ package com.zoo.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,10 +12,14 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -23,7 +28,7 @@ public final class Packer {
 
 	private Packer() {}
 	
-	private static final int BUFFER = 4096;
+	private static final int BUFFER = 8192;
 
 	
 	/**
@@ -166,21 +171,149 @@ public final class Packer {
 		return zipPath;
 	}
 	
-	public static Path unrar(Path rarPath,Path dock) {
+	public static Path ungzip(Path gzipPath,Path dock) {
 		return dock;
 	}
 	
-	public static Path rar(Path dock,Path rarPath) {
-		return rarPath;
+	public static Path gzip(Path dock,Path gzipPath) {
+		return gzipPath;
 	}
 	
-	
-	public static Path unjar(Path jarPath,Path dock) {
-		return dock;
+	/**
+	 * 将字符解压并返回新字符串
+	 * @param str
+	 * @return
+	 * @throws Exception
+	 * @see {@link #decompress(byte[])}
+	 */
+	public static String decompress(String str) throws Exception {
+		return decompress(str,null);
 	}
 	
-	public static Path jar(Path dock,Path jarPath) {
-		return jarPath;
+	/**
+	 * 将字符串按特定编码解压返回新字符串
+	 * @param str
+	 * @param charset
+	 * @return
+	 * @throws Exception
+	 * @see {@link #decompress(byte[])}
+	 */
+	public static String decompress(String str,Charset charset) throws Exception {
+		if (str!=null) {
+			if(charset!=null) {
+				return new String(decompress(str.getBytes(charset)),charset);
+			}else {
+				return new String(decompress(str.getBytes()));
+			}
+		}
+		return Strs.empty();
+	}
+	
+	/**
+	 * 将字节数组解压缩，返回解压后的数组
+	 * @param bytes
+	 * @return
+	 * @throws Exception
+	 */
+	public static byte[] decompress(byte[] bytes) throws Exception {
+		byte[] output = new byte[0];
+		if (bytes!=null && bytes.length>0) {
+			Inflater decompresser = new Inflater();
+			decompresser.setInput(bytes);
+			try(ByteArrayOutputStream o = new ByteArrayOutputStream(bytes.length);) {
+				byte[] buf = new byte[BUFFER];
+				while (!decompresser.finished()) {
+					int i = decompresser.inflate(buf);
+					o.write(buf, 0, i);
+				}
+				output = o.toByteArray();
+			} catch (IOException | DataFormatException e) {
+				throw e;
+			}
+			decompresser.end();
+		}
+        return output;
+	}
+	
+	/**
+	 * 对字符串进行压缩，返回压缩后的字节数组
+	 * @param str
+	 * @return
+	 * @see #compress(String, Charset, int)
+	 */
+	public static byte[] compress(String str) {
+		return compress(str.getBytes());
+	}
+	
+	/**
+	 * 对字符串按指定级别进行压缩，返回压缩后的字节数组
+	 * @param str
+	 * @param level
+	 * @return
+	 * @see #compress(String, Charset, int)
+	 */
+	public static byte[] compress(String str,int level) {
+		return compress(str,null,level);
+	}
+	
+	/**
+	 * 对字符串按指定的编码进行压缩，返回压缩后的字节数组
+	 * @param str
+	 * @param charset
+	 * @return
+	 * @see #compress(String, Charset, int)
+	 */
+	public static byte[] compress(String str,Charset charset) {
+		return compress(str,charset,Deflater.DEFAULT_COMPRESSION);
+	}
+	
+	/**
+	 * 对字符串按指定的编码和压缩级别进行压缩，返回压缩后的字节数组
+	 * @param str
+	 * @param charset
+	 * @param level
+	 * @return
+	 * @see #compress(byte[], int)
+	 */
+	public static byte[] compress(String str,Charset charset,int level) {
+		if (str!=null) {
+			if(charset!=null) {
+				return compress(str.getBytes(charset), level);
+			}else {
+				return compress(str.getBytes(), level);
+			}
+		}
+		return Typer.bytes();
+	}
+	
+	/**
+	 * 对字节数组进行压缩，返回压缩后的数组
+	 * @param bytes
+	 * @return
+	 * @see #compress(byte[], int)
+	 */
+	public static byte[] compress(byte[] bytes) {
+		return compress(bytes, Deflater.DEFAULT_COMPRESSION);
+	}
+	
+	/**
+	 * 对字节数组进行压缩，返回压缩后的字节数组
+	 * @param bytes
+	 * @param level 压缩级别
+	 * @return
+	 */
+	public static byte[] compress(byte[] bytes,int level) {
+		if (bytes!=null && bytes.length>0) {
+			byte[] output = new byte[bytes.length+10+new Double(Math.ceil(bytes.length*0.25f)).intValue()];
+			Deflater compresser = new Deflater();
+			compresser.setLevel(level);
+			compresser.setInput(bytes);
+			compresser.finish();
+			int compressedDataLength = compresser.deflate(output);
+			compresser.end();
+			return Arrays.copyOf(output, compressedDataLength);
+		}
+		return Typer.bytes();
 	}
 	
 	

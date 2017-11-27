@@ -985,4 +985,51 @@ public final class Arrs {
 		return Beaner.values(equalsIf(list, equalKey, equalValue), valueKey);
 	}
 	
+	/**
+	 * 将数组按参数中出现的先后顺序合并为一个数组返回。
+	 * @param mores
+	 * @return 若传入至少有一个非null数组，那么就不会返回null，否则返回null，
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] concat(T[]... mores) {
+		if (mores==null) {
+			return null;
+		}
+		int len=Arrays.stream(mores).filter(a->a!=null).map(a->a.length).reduce((a,b)->a+b).orElse(0).intValue();
+		T[] array=Arrays.stream(mores).filter(a->a!=null).findFirst().orElse(null);
+		if (len<=0||array==null) {
+			return null;
+		}
+		T[] result=(T[]) Array.newInstance(array.getClass().getComponentType(), len);
+		int start = 0;
+		for (T[] arr : mores) {
+			if (arr!=null && arr.length>0) {
+				int cpLen=arr.length;
+				System.arraycopy(arr, 0, result, start, cpLen);
+				start += cpLen;
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 将数组按参数中出现的先后顺序合并为一个数组返回。
+	 * @param array
+	 * @param mores
+	 * @return
+	 */
+	public static byte[] concat(byte[] array, byte[]... mores) {
+		int start = array.length;
+		int len = start;
+		for (byte[] arr : mores) {
+			len += arr.length;
+		}
+		byte[] result = Arrays.copyOf(array, len);
+		for (byte[] arr : mores) {
+			int cpLen=arr.length;
+			System.arraycopy(arr, 0, result, start, cpLen);
+			start += cpLen;
+		}
+		return result;
+	}
 }

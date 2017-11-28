@@ -12,6 +12,7 @@ public final class Beaner {
 	private Beaner(){}
 	private static Map<String, BeanCopier> copierMap=new HashMap<String, BeanCopier>();
 	private static List<String> keys=new ArrayList<String>();
+	
 	/**
 	 * 将多个JavaBean转换到多个Map输出
 	 * @param beans
@@ -62,6 +63,7 @@ public final class Beaner {
 		}
 		return map;
 	}
+	
 	private static void put(Map<String,Object> map,BeanMap beanMap,List<String> excludeKeys) {
 		for(Object key:beanMap.keySet()){
 			if (!excludeKeys.contains(key)) {
@@ -69,6 +71,7 @@ public final class Beaner {
 			}
 		}
 	}
+	
 	private static void put(Map<String,Object> map,BeanMap beanMap) {
 		for(Object key:beanMap.keySet()){
 			map.put(String.valueOf(key), beanMap.get(key));
@@ -84,6 +87,7 @@ public final class Beaner {
 	public static <T>List<T> toBeans(List<Map<String, Object>> maps,List<T> beans){
 		return toBeans(maps, beans, null);
 	}
+	
 	/**
 	 * 将多个Map转换到多个JavaBean输出
 	 * @param maps
@@ -99,6 +103,7 @@ public final class Beaner {
 		}
 		return beans;
 	}
+	
 	/**
 	 * 将Map转换到JavaBean输出
 	 * @param map
@@ -131,6 +136,7 @@ public final class Beaner {
 		}
 		return bean;
 	}
+	
 	/**
 	 * 将f的属性拷贝到t中,同名和同类型的属性才会,t中的setter方法需大于f中的getter方法,否则将无法创建拷贝.
 	 * @param fs
@@ -145,6 +151,7 @@ public final class Beaner {
 		}
 		return ts;
 	}
+	
 	/**
 	 * 将f的属性拷贝到t中,同名和同类型的属性才会,t中的setter方法需大于f中的getter方法,否则将无法创建拷贝.
 	 * @param f
@@ -157,6 +164,7 @@ public final class Beaner {
 		}
 		return t;
 	}
+	
 	/**
 	 * 获取属性拷贝对象,以提升批量拷贝时的性能
 	 * @param f
@@ -173,6 +181,7 @@ public final class Beaner {
 		keys.add(key);
 		return copier;
 	}
+	
 	/**
 	 * 获取t的field字段值，若t是Map子类的实例:那么field将作为t的key来获取对应的value。
 	 * @param t
@@ -200,6 +209,7 @@ public final class Beaner {
 		}
 		return value;
 	}
+	
 	/**
 	 * 获取list中每个元素的field字段的值，并返回值的list
 	 * @param list
@@ -217,5 +227,46 @@ public final class Beaner {
 			}
 		}
 		return vals;
+	}
+	
+	/**
+	 * 判断t对象以及t对象的fields属性是否null，若其中有一个为null则返回false，若t对象以及其fields属性对应的值都不为null，则返回true
+	 * @param t
+	 * @param fields t对象的属性数组，若t是Map或其子类的实例，那fields作为t对象的key的数组来对待
+	 * @return
+	 */
+	public static <T>boolean notNull(T t,Object...fields){
+		if (t==null) {
+			return false;
+		}
+		if(fields!=null) {
+			for(Object field:fields) {
+				if (value(t, field)==null) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * 判断t对象以及t对象的fields属性是否不是null且不是空字符串，若其中有一个为null或空字符串则返回false，若t对象以及其fields属性对应的值都不为null且不为空字符串，则返回true，
+	 * @param t
+	 * @param fields t对象的属性数组，若t是Map或其子类的实例，那fields作为t对象的key的数组来对待
+	 * @return
+	 */
+	public static <T>boolean notEmpty(T t,Object...fields){
+		if (t==null||Strs.empty().equals(t)) {
+			return false;
+		}
+		if(fields!=null) {
+			for(Object field:fields) {
+				Object value=value(t, field);
+				if (value==null||Strs.empty().equals(value)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

@@ -15,33 +15,68 @@ import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
+import java.awt.image.ColorModel;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+
+import com.zoo.cons.Images;
 
 import sun.font.FontDesignMetrics;
 
 @SuppressWarnings("restriction")
 public final class Imgs {
 	
+	/**
+	 * 当前对象绑定的图像
+	 */
 	private BufferedImage image;
 	private BufferedImage oldImage;
+	
+	/**
+	 * 灰度图像转换工具
+	 */
 	private static ColorConvertOp colorConvertOp=new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
+	
+	/**
+	 * 推荐的图片字节密度与最高压缩质量之间对应的值<br/>
+	 * 其中每个数组元素下标为0的值代表图片按png格式转换为byte[]数组时，数组长度与图片宽高像素数乘积之间的比值。该比值代表图片字节密度，大于等于该值时，使用当前数组元素下标为1的值作为参考的最高压缩质量，大于该压缩质量的压缩将是不被推荐的。<br/>
+	 * 如：图片字节密度大于1.343，压缩质量应该小于等于0.8，否则压缩效果可能不理想。
+	 */
+	private final static double[][] RESTRICTS= {{1.343,0.8},{1.224,0.7},{1.089,0.5},{0.946,0.4},{0.825,0.3},{0.702,0.3},{0.584,0.2},{0.465,0.2},{0.308,0.0}};
+	
+	/**
+	 * 该数组中每个数组元素中下标为0的值代表图片字节密度大于等于该值时，系统推荐的压缩质量为数组元素中下标为1的值。<br/>
+	 * 如：图片字节密度大于等于0.946，压缩质量为0.5较为理想。
+	 */
+	private final static double[][] SUGGESTS= {{0.946,0.5},{0.825,0.6}};
 	
 	private Imgs() {}
 	private Imgs(BufferedImage image) {
 		this.image=image;
 	}
 	/**
-	 * 根据给定的BufferedImage对象构造一个Imgs对象
+	 * 根据给定的BufferedImage对象的拷贝构造一个Imgs对象,即后续操作将不改变传入的原始Image对象
 	 * @param image
 	 * @throws NullPointerException 如果image参数为null，则抛出此异常
 	 * @return
 	 */
 	public static Imgs of(BufferedImage image) {
-		if (image==null) {
-			throw new NullPointerException("Argument image cant not be null!");
-		}
-		return new Imgs(image);
+		assertNull(image);
+		return new Imgs(copy(image));
 	}
 	/**
 	 * 构造一个未关联image属性的Imgs对象，后续对image的操作前必须先关联当前对象的image属性到一个已存在的BufferedImage实例。
@@ -81,16 +116,14 @@ public final class Imgs {
 		return Imgs.of(newImg(0, 0, width, height, color));
 	}
 	/**
-	 * 设置新的图像(替换当前的)
+	 * 用传入的BufferedImage的拷贝来绑定当前的对象，后续操作不会改变传入的BufferedImage对象
 	 * @param image
 	 * @throws NullPointerException 如果image参数为null，则抛出此异常
 	 * @return
 	 */
-	public Imgs setNew(BufferedImage image) {
-		if (image==null) {
-			throw new NullPointerException("Argument image cant not be null!");
-		}
-		this.image=image;
+	public Imgs set(BufferedImage image) {
+		assertNull(image);
+		this.image=copy(image);
 		return this;
 	}
 	/**
@@ -180,7 +213,7 @@ public final class Imgs {
 		return image(rect.x, rect.y, rect.width, rect.height, color);
 	}
 	/**
-	 * 根据给定大小、坐标、颜色生成图片，若color为null那么将随机产生一种颜色
+	 * 根据给定大小、坐标、颜色生成图片，若color为null那么将使用透明黑色
 	 * @param x
 	 * @param y
 	 * @param width
@@ -205,10 +238,31 @@ public final class Imgs {
 	private static BufferedImage newImg(int x,int y,int width,int height,Color color) {
 		BufferedImage image =new BufferedImage(width, height,BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = image.createGraphics();
-		g.setColor(Optional.ofNullable(color).orElse(Colors.randColor()));
+		g.setColor(Optional.ofNullable(color).orElse(Colors.bTransparent));
 		g.fillRect(x, y, width, height);
 		g.dispose();
 		return image;
+	}
+	
+	/**
+	 * 拷贝出一个与传入对象一样的新对象
+	 * @param image
+	 * @return
+	 */
+	private static BufferedImage copy(BufferedImage image) {
+		BufferedImage ni=new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		ni.setData(image.getData());
+		return ni;
+	}
+	
+	/**
+	 * 如果image为null将抛异常
+	 * @param image
+	 */
+	private static void assertNull(BufferedImage image) {
+		if (image==null) {
+			throw new NullPointerException("Argument image cant not be null!");
+		}
 	}
 	/**
 	 * 在图片上写字,默认字体、颜色,位置居中
@@ -909,6 +963,83 @@ public final class Imgs {
 		graphics2d.dispose();
 		return this;
 	}
+	/**
+	 * 获取当前图片的字节密度，密度过低则代表图片不适合压缩。
+	 */
+	private double density() {
+		try(ByteArrayOutputStream baos=new ByteArrayOutputStream()) {
+			ImageIO.write(this.image, Images.png, baos);
+			return baos.toByteArray().length*1.0/(this.image.getWidth()*this.image.getHeight());
+		} catch (IOException e) {
+			return 0.0;
+		}
+	}
+	
+	/**
+	 * 对图片进行适当的压缩，系统根据当前图片的质量来决定是否对当前图片进行压缩和压缩的程度，注意：压缩图片会导致图片清晰度降低。<br/>
+	 * 图片'质量-压缩图片质量'的界定参考  @see {@link #SUGGESTS}
+	 * @see #quality(double)
+	 */
+	public Imgs properCompress() {
+		double d=density();
+		for(double[] ss:SUGGESTS) {
+			if (d>=ss[0]) {
+				return quality(ss[1]);
+			}
+		}
+		return this;
+	}
+	/**
+	 * 对图片按原图片质量的f倍进行压缩，若当前图片质量和传入的f值在推荐范围之内，那么将会对该图片进行压缩，若系统判定该图片不在合适的可压缩范围，则不对图片进行压缩。<br/>
+	 * 图片'质量-压缩质量上限'界定的范围参考 @see {@link #RESTRICTS}
+	 * @see #quality(double)
+	 */
+	public Imgs mayCompress(double f) {
+		double d=density();
+		for(double[] ss:RESTRICTS) {
+			if (d>=ss[0] && f<=ss[1]) {
+				return quality(f);
+			}
+		}
+		return this;
+	}
+	
+	/**
+	 * 改变当前图片的质量，传入值在[0.0,1.0]之间，传入该区间外的值将不做任何处理
+	 * @param f
+	 * @return
+	 */
+	public Imgs quality(double f) {
+		if (f >= 0.0 && f <= 1.0) {
+			// 得到指定Format图片的writer
+			ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+			// 得到指定writer的输出参数设置(ImageWriteParam )
+			ImageWriteParam iwp = writer.getDefaultWriteParam();
+			iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT); // 设置可否压缩
+			iwp.setCompressionQuality((float)f); // 设置压缩质量参数
+			iwp.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+//			ColorModel colorModel = ColorModel.getRGBdefault();
+			ColorModel colorModel = this.image.getColorModel();
+			// 指定压缩时使用的色彩模式
+			iwp.setDestinationType(new ImageTypeSpecifier(colorModel, colorModel.createCompatibleSampleModel(16, 16)));
+			// 通过ImageIo中的静态方法，得到ByteArrayOutputStream的ImageOutput
+			IIOImage iIamge = new IIOImage(this.image, null, null);
+			try(ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ImageOutputStream ios=ImageIO.createImageOutputStream(baos);) {
+				// 此处因为ImageWriter中用来接收write信息的output要求必须是ImageOutput
+				writer.setOutput(ios);
+				//将图片压缩到输出流里
+				writer.write(null, iIamge, iwp);
+				ByteArrayInputStream bais=new ByteArrayInputStream(baos.toByteArray());
+				this.oldImage=this.image;
+				this.image=ImageIO.read(bais);
+				bais.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return this;
+	}
 	
 	/**
 	 * 图片宽
@@ -930,5 +1061,28 @@ public final class Imgs {
 	 */
 	public Dimension dimen() {
 		return new Dimension(image.getWidth(),image.getHeight());
+	}
+	
+	/**
+	 * 获取图片文件的分辨率
+	 * @param path
+	 * @return
+	 */
+	public static Dimension dimen(Path path) {
+		Dimension dimension=new Dimension();
+		if(Filer.isReadableFile(path)) {
+			Iterator<ImageReader> it=ImageIO.getImageReadersBySuffix(Pather.suffix(path.normalize().toString()));
+			if (it.hasNext()) {
+				ImageReader imageReader=it.next();
+				try (ImageInputStream iis = ImageIO.createImageInputStream(path)){
+					imageReader.setInput(iis, true);
+					dimension.width=imageReader.getWidth(0);
+					dimension.height=imageReader.getHeight(0);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return dimension;
 	}
 }

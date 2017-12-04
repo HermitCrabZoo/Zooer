@@ -130,7 +130,8 @@ public final class Pager<T> {
 		return this;
 	}
 	/**
-	 * 限制当前关联list的长度，start小于0或size小于1或start大于等于当前关联list的元素个数，那么该方法将不对当前关联的list做截取操作
+	 * 限制当前关联list的长度，start小于0或size小于1或start大于等于当前关联list的元素个数，那么该方法将不对当前关联的list做截取操作。<br/>
+	 * 该方法只对当前关联的list对象重新进行原list对象元素的范围映射，而不产生新的元素，即：对原始list的对象的'增删改'仍会对当前Pager<T>对象里关联的list产生影响。
 	 * @param start
 	 * @param size
 	 */

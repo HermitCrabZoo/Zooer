@@ -2,6 +2,7 @@ package com.zoo.util;
 
 public final class Pather {
 	private Pather(){}
+	
 	/**
 	 * 组合路径和文件名组合成文件路径
 	 * @param path
@@ -22,6 +23,7 @@ public final class Pather {
 		}
 		return Strs.empty();
 	}
+	
 	/**
 	 * 获取父级目录
 	 * @param fileName
@@ -30,6 +32,7 @@ public final class Pather {
 	public static String parent(String fileName) {
 		return split(fileName)[0];
 	}
+	
 	/**
 	 * 获取文件/目录名
 	 * @param fileName
@@ -38,6 +41,16 @@ public final class Pather {
 	public static String name(String fileName) {
 		return split(fileName)[1];
 	}
+	
+	/**
+	 * 获取文件/目录短名，即不包含后缀
+	 * @param fileName
+	 * @return
+	 */
+	public static String shortName(String fileName) {
+		return splitText(fileName)[0];
+	}
+	
 	/**
 	 * 获取文件名后缀
 	 * @param fileName
@@ -46,6 +59,7 @@ public final class Pather {
 	public static String suffix(String fileName) {
 		return splitText(fileName)[1];
 	}
+	
 	/**
 	 * 将文件路径分割为目录和文件名
 	 * 返回长度为2的字符串数组,第一个值为文件所在的目录,第二个值为文件名

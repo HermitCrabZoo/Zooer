@@ -148,7 +148,8 @@ public final class ImgCode {
 	 * @return
 	 */
 	public static BufferedImage imgCode(int w,int h,String surface,Chroma bgChroma,Chroma fgChroma,Font font){
-		BufferedImage image=Imager.image(w,h, Colors.randColor(bgChroma));
+		Imgs imgs=Imgs.ofNew(w,h, Colors.randColor(bgChroma));
+		BufferedImage image=imgs.get();
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
 			FontMetrics fm=FontDesignMetrics.getMetrics(font);
@@ -156,7 +157,7 @@ public final class ImgCode {
 			int x=0,y=(image.getHeight()+fm.getAscent()-fm.getDescent())/2;
 			for(int i=0;i<units.length;i++){
 				x+=units[i];
-				image=Imager.pile(image, surface.charAt(i)+"",x,y, Colors.randColor(fgChroma), font);
+				imgs.pile(surface.charAt(i)+"",x,y, Colors.randColor(fgChroma), font);
 			}
 		}
 		return image;
@@ -207,7 +208,8 @@ public final class ImgCode {
 	 * @return
 	 */
 	public static BufferedImage imgCode(int w,int h,String surface,Color bgColor,Color fgColor,Font font){
-		BufferedImage image=Imager.image(w,h, bgColor);
+		Imgs imgs=Imgs.ofNew(w,h, bgColor);
+		BufferedImage image=imgs.get();
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
 			FontMetrics fm=FontDesignMetrics.getMetrics(font);
@@ -215,7 +217,7 @@ public final class ImgCode {
 			int x=0,y=(image.getHeight()+fm.getAscent()-fm.getDescent())/2;
 			for(int i=0;i<units.length;i++){
 				x+=units[i];
-				image=Imager.pile(image, surface.charAt(i)+"",x,y, fgColor, font);
+				imgs.pile(surface.charAt(i)+"",x,y, fgColor, font);
 			}
 		}
 		return image;

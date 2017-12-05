@@ -17,8 +17,11 @@ import java.util.Enumeration;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
+import java.util.zip.Checksum;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -34,40 +37,39 @@ public final class Packer {
 	/**
 	 * 将file解压到文件夹dock里
 	 * @param zipPath
-	 * @param dock
+	 * @param toPath
 	 * @return 
 	 * @throws IOException
 	 * @see {@link #unzip(Path, Path, Charset)}
 	 */
-	public static Path unzip(Path zipPath,Path dock) throws IOException {
-		return unzip(zipPath, dock, null);
+	public static Path unzip(Path zipPath,Path toPath) throws IOException {
+		return unzip(zipPath, toPath, null);
 	}
 	
 	/**
 	 * 将file解压到文件夹dock里，自动识别zip文件的字符集
 	 * @param zipPath
-	 * @param dock
+	 * @param toPath
 	 * @return
 	 * @throws IOException
 	 * @see {@link #unzip(Path, Path, Charset)}
 	 */
-	public static Path unzipAutoCharset(Path zipPath,Path dock) throws IOException {
-		return unzip(zipPath, dock, Charsetor.discern(zipPath, Charset.defaultCharset()));
+	public static Path unzipAutoCharset(Path zipPath,Path toPath) throws IOException {
+		return unzip(zipPath, toPath, Charsetor.discern(zipPath, Charset.defaultCharset()));
 	}
 	
 	/**
 	 * 将file解压到文件夹dock里，指定字符集
 	 * @param zipPath 不能为null，必须为可读的zip压缩包
-	 * @param dock 不能为null，必须为可写的目录
+	 * @param toPath 不能为null，必须为可写的目录
 	 * @param charset 字符集，可为null
 	 * @return 返回输出目录(dock对象)
 	 * @throws IOException
 	 */
-	public static Path unzip(Path zipPath,Path dock,Charset charset) throws IOException {
-		if (Filer.isReadableFile(zipPath) && !Filer.isFile(dock)) {
-			Filer.createDirIfNotExists(dock);//创建输出目录
-			String dest=dock.toString();
-			//识别压缩包的编码，识别不了则当UTF-8来处理
+	public static Path unzip(Path zipPath,Path toPath,Charset charset) throws IOException {
+		if (Filer.isReadableFile(zipPath) && !Filer.isFile(toPath) && !toPath.startsWith(zipPath)) {
+			Filer.createDirIfNotExists(toPath);//创建输出目录
+			String dest=toPath.toString();
 			//读取zip文件
 			ZipFile zFile=null;
 			if(charset!=null) {
@@ -77,6 +79,7 @@ public final class Packer {
 			}
 			Enumeration<? extends ZipEntry> zEntries=zFile.entries();
 			//遍历zip包里面的文件并输出
+			byte [] b = new byte[BUFFER];//字节数组，每次读取4096个字节  
 			while (zEntries.hasMoreElements()) {
 				ZipEntry zipEntry = zEntries.nextElement();
 				Path one=Paths.get(Pather.join(dest, zipEntry.getName()));
@@ -90,15 +93,9 @@ public final class Packer {
 			                BufferedInputStream bis = new BufferedInputStream(is);//读取流的缓存流 
 			                CheckedInputStream cos = new CheckedInputStream(bis, new CRC32());//检查读取流，采用CRC32算法，保证文件的一致性
 							OutputStream os = new FileOutputStream(one.toFile());//创建解压后的文件 
-							BufferedOutputStream bos = new BufferedOutputStream(os);//带缓的写出流 
+							BufferedOutputStream bos = new BufferedOutputStream(os,BUFFER);//带缓的输出流 
 					) {
-						int count;
-						byte [] b = new byte[BUFFER];//字节数组，每次读取4096个字节  
-						//循环读取压缩文件的值  
-						while((count=cos.read(b,0,BUFFER))!=-1)  
-						{  
-							bos.write(b,0,count);//写入到新文件  
-						}  
+						Filer.copy(cos, bos, b);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -107,44 +104,41 @@ public final class Packer {
 			}
 			zFile.close();
 		}
-		return dock;
+		return toPath;
 	}
 	
 	/**
 	 * 将dock压缩到名为zipPath的zip格式文件中。
-	 * @param dock
+	 * @param fromPath
 	 * @param zipPath
 	 * @return
 	 * @throws IOException
 	 * @see {@link #zip(Path, Path, Charset)}
 	 */
-	public static Path zip(Path dock,Path zipPath) throws IOException {
-		return zip(dock, zipPath, null);
+	public static Checksum zip(Path fromPath,Path zipPath) throws IOException {
+		return zip(fromPath, zipPath, null);
 	}
 	
 	/**
 	 * 将dock压缩到名为zipPath的zip格式文件中，指定压缩的字符集。
-	 * @param dock 需要被压缩的文件或文件夹，需要有可读权限。
+	 * @param fromPath 需要被压缩的文件或文件夹，需要有可读权限。
 	 * @param zipPath 压缩后保存的zip文件，不能是已存在的目录，不能在dock以及dock的子目录下。
 	 * @param charset 压缩为指定的字符集
-	 * @return
+	 * @return Checksum
 	 * @throws IOException
 	 */
-	public static Path zip(Path dock,Path zipPath,Charset charset) throws IOException {
-		if(Filer.isReadable(dock) && !Filer.isDir(zipPath) && !zipPath.startsWith(dock)) {
-			ZipOutputStream zos =null;
+	public static Checksum zip(Path fromPath,Path zipPath,Charset charset) throws IOException {
+		Checksum checksum=new CRC32();
+		if(Filer.isReadable(fromPath) && !Filer.isDir(zipPath) && !zipPath.startsWith(fromPath)) {
+			Filer.createDirIfNotExists(zipPath.getParent());
 			try(FileOutputStream fos = new FileOutputStream(zipPath.toFile());
-				CheckedOutputStream cos=new CheckedOutputStream(fos, new CRC32());
-				BufferedOutputStream bos = new BufferedOutputStream(fos);//用带缓冲的输出流包装
+				BufferedOutputStream bos = new BufferedOutputStream(fos,BUFFER);//用带缓冲的输出流包装
+				CheckedOutputStream cos=new CheckedOutputStream(bos, new CRC32());
+				ZipOutputStream zos=charset==null?new ZipOutputStream(cos):new ZipOutputStream(cos,charset);//设定字符集
 			) {
-				if (charset!=null) {
-					zos=new ZipOutputStream(bos,charset);//设定字符集
-				}else {
-					zos=new ZipOutputStream(bos);
-				}
 				byte [] b = new byte[BUFFER];
-				String parent=dock.getParent().toAbsolutePath().toString()+Platform.slash();
-				for(Path p:Filer.paths(dock, null)) {
+				String parent=fromPath.getParent().toAbsolutePath().toString()+Platform.slash();
+				for(Path p:Filer.paths(fromPath, null)) {
 					//如果是文件就需要写入数据,非文件则只需创建文件夹
 					String pt=Strs.removeStart(p.toAbsolutePath().toString(), parent);
 					if (Files.isRegularFile(p)) {
@@ -152,30 +146,70 @@ public final class Packer {
 						FileInputStream fis = new FileInputStream(p.toFile());
 						//用带缓冲的输入流包装，加快速度
 			            BufferedInputStream bis = new BufferedInputStream(fis);
-			            int count;
-						while ((count = bis.read(b, 0, BUFFER)) != -1) {
-							zos.write(b, 0, count);
-						}
+						Filer.copy(bis, zos, b);
 			            bis.close();
 			            fis.close();
 					}else {
 						zos.putNextEntry(new ZipEntry(pt+Platform.SLASH));//文件夹以'/'结尾
 					}
-				};
+				}
+				checksum=cos.getChecksum();
 			} catch (IOException e) {
 				throw e;
-			}finally {
-				zos.close();
 			}
 		}
-		return zipPath;
+		return checksum;
 	}
 	
-	public static Path ungzip(Path gzipPath,Path dock) {
-		return dock;
+	/**
+	 * 解压gzip包到目录或文件
+	 * @param gzipPath
+	 * @param to 若该参数指向一个目录，则解压后的文件在此目录下文件名不变。
+	 * @return
+	 * @throws IOException
+	 */
+	public static Path ungzip(Path gzipPath,Path to) throws IOException {
+		if(Filer.isReadableFile(gzipPath) &&!Filer.isSame(gzipPath.getParent(), to) && !to.startsWith(gzipPath)) {
+			Path toPath=Filer.isDir(to)?Paths.get(to.normalize().toString(), gzipPath.getFileName().toString()):to;
+			Filer.createDirIfNotExists(toPath.getParent());
+			try(
+				FileInputStream fis=new FileInputStream(gzipPath.toFile());
+				BufferedInputStream bis=new BufferedInputStream(fis, BUFFER);
+				GZIPInputStream gis=new GZIPInputStream(bis, BUFFER);
+				FileOutputStream fos = new FileOutputStream(toPath.toFile());
+				BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
+			) {
+				Filer.copy(gis, bos);
+			} catch (IOException e) {
+				throw e;
+			}
+		}
+		return to;
 	}
 	
-	public static Path gzip(Path dock,Path gzipPath) {
+	/**
+	 * 将文件以gzip形式压缩
+	 * @param fromPath
+	 * @param gzipPath 可以是目录或文件，若是目录则压缩后的文件在此目录下，文件名不变。
+	 * @return
+	 * @throws IOException
+	 */
+	public static Path gzip(Path fromPath,Path gzipPath) throws IOException {
+		if(Filer.isReadableFile(fromPath) && !Filer.isSame(fromPath.getParent(), gzipPath) && !gzipPath.startsWith(fromPath)) {
+			Path toPath=Filer.isDir(gzipPath)?Paths.get(gzipPath.normalize().toString(), fromPath.getFileName().toString()):gzipPath;
+			Filer.createDirIfNotExists(toPath.getParent());
+			try(
+				FileInputStream fis=new FileInputStream(fromPath.toFile());
+				BufferedInputStream bis=new BufferedInputStream(fis, BUFFER);
+				FileOutputStream fos = new FileOutputStream(toPath.toFile());
+				BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
+				GZIPOutputStream gos=new GZIPOutputStream(bos, BUFFER);
+			) {
+				Filer.copy(bis, gos);
+			} catch (IOException e) {
+				throw e;
+			}
+		}
 		return gzipPath;
 	}
 	

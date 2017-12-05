@@ -1,6 +1,10 @@
 package com.zoo.util;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -23,7 +27,10 @@ public final class Filer {
 	private Filer() {}
 	
 	private final static String MIME_VIDEO="video/";
+	
 	private final static String MIME_IMAGE="image/";
+	
+	private static final int BUFFER = 8192;
 	
 	/**
 	 * 文件或目录、存在
@@ -247,7 +254,7 @@ public final class Filer {
 	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter,Charset destCharset){
 		CopyResult cr=CopyResult.instance();
 		//被拷贝的目录或文件要有可读属性，目录无法拷贝到文件，两个不相同的目录或文件才能对考
-		if(isReadable(source) && target!=null && !(isDir(source)&&isFile(target)) && !isSame(source, target) && !isSame(source.getParent(), target)) {
+		if(isReadable(source) && target!=null && !(isDir(source)&&isFile(target)) && !isSame(source, target) && !isSame(source.getParent(), target) && !target.startsWith(source)) {
 			String inParent=isFile(target)?source.normalize().toString():source.normalize().getParent().toString();
 			String toParent=target.normalize().toString();
 			paths(source, filter).forEach(p->{//遍历
@@ -289,7 +296,7 @@ public final class Filer {
 			if (inc==null || onc==null) {
 				ic.transferTo(0, ic.size(), oc);
 			}else {
-				ByteBuffer buffer = ByteBuffer.allocate(8192);
+				ByteBuffer buffer = ByteBuffer.allocate(BUFFER);
 				while (ic.read(buffer) != -1) {
 					buffer.flip();
 					oc.write(onc.encode(inc.decode(buffer)));
@@ -360,6 +367,65 @@ public final class Filer {
 	 */
 	public static boolean isImage(Path file) {
 		return mime(file).map(m->m.contains(MIME_IMAGE)).orElse(false);
+	}
+	
+	/**
+	 * 从in拷贝到out默认缓存数组长度为 {@link #BUFFER}
+	 * @param in
+	 * @param out
+	 * @return
+	 * @throws IOException
+	 */
+	public static long copy(InputStream in, OutputStream out) throws IOException {
+		return copy(in, out, new byte[BUFFER]);
+	}
+	
+	/**
+	 * 从in拷贝到out
+	 * @param in
+	 * @param out
+	 * @param buff
+	 * @return
+	 * @throws IOException
+	 */
+	public static long copy(InputStream in, OutputStream out, byte[] buff) throws IOException {
+		long count = 0;
+		int len = -1,blen=buff.length;
+		while((len=in.read(buff, 0, blen))!=-1){
+			out.write(buff, 0, len);
+			count += len;
+		}
+		return count;
+	}
+	
+	/**
+	 * 输入流到输出流的拷贝,默认缓存数组的长度 {@link #BUFFER}
+	 * @param reader
+	 * @param writer
+	 * @return
+	 * @throws IOException
+	 * @see {@link #copy(Reader, Writer, char[])}
+	 */
+	public static long copy(Reader reader, Writer writer) throws IOException {
+		return copy(reader, writer,new char[BUFFER]);
+	}
+	
+	/**
+	 * 输入流到输出流的拷贝
+	 * @param reader
+	 * @param writer
+	 * @param buff
+	 * @return
+	 * @throws IOException
+	 */
+	public static long copy(Reader reader, Writer writer, char[] buff) throws IOException {
+		long count = 0;
+		int len = -1,blen=buff.length;
+		while((len=reader.read(buff, 0, blen))!=-1){
+			writer.write(buff, 0, len);
+			count += len;
+		}
+		return count;
 	}
 	
 }

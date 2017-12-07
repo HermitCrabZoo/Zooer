@@ -38,13 +38,13 @@ public enum Chroma {
 	/**
 	 * 颜色系梯度
 	 */
-	private static final double unit = 256 / 7.0;
+	private static final double UNIT = 256 / 7.0;
 	private final double start;
 	private final double end;
 
 	private Chroma(double start, double end) {
-		this.start = start * unit;
-		this.end = end * unit;
+		this.start = start * UNIT;
+		this.end = end * UNIT;
 	}
 
 	/**

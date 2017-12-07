@@ -23,13 +23,13 @@ public final class Charsetor {
 	/**
 	 * 初始化文件字符集识别对象
 	 */
-	private static final CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();
+	private static final CodepageDetectorProxy DETECTOR = CodepageDetectorProxy.getInstance();
 	
 	static {
-		detector.add(new ParsingDetector(false));
-		detector.add(JChardetFacade.getInstance());
-		detector.add(ASCIIDetector.getInstance());
-		detector.add(UnicodeDetector.getInstance());
+		DETECTOR.add(new ParsingDetector(false));
+		DETECTOR.add(JChardetFacade.getInstance());
+		DETECTOR.add(ASCIIDetector.getInstance());
+		DETECTOR.add(UnicodeDetector.getInstance());
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public final class Charsetor {
 		Charset charset = null;
 		if (Filer.isReadableFile(path)) {
 			try {
-				charset = detector.detectCodepage(path.toUri().toURL());
+				charset = DETECTOR.detectCodepage(path.toUri().toURL());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -126,7 +126,7 @@ public final class Charsetor {
 		Charset charset = null;
 		if (url!=null) {
 			try {
-				charset = detector.detectCodepage(url);
+				charset = DETECTOR.detectCodepage(url);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -143,7 +143,7 @@ public final class Charsetor {
 		Charset charset = null;
 		if (is!=null) {
 			try {
-				charset = detector.detectCodepage(is,6);
+				charset = DETECTOR.detectCodepage(is,6);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

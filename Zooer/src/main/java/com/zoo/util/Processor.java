@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface Processor<T> {
 	T process(T property);
 
-	Processor<?> dateProcessor = obj -> Optional.ofNullable(obj).map(o -> {
+	Processor<?> DATE_PROCESSOR = obj -> Optional.ofNullable(obj).map(o -> {
 		if (TemporalAccessor.class.isAssignableFrom(o.getClass())) {
-			return Dater.format((TemporalAccessor) o, Dater.allFormat);
+			return Dater.format((TemporalAccessor) o, Dater.ALL_FORMAT);
 		} else if (Date.class.isAssignableFrom(o.getClass())) {
-			return Dater.format((Date) o, Dater.allFormat);
+			return Dater.format((Date) o, Dater.ALL_FORMAT);
 		}
 		return o;
 	}).orElse(Strs.empty());

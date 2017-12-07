@@ -16,18 +16,28 @@ import java.util.Optional;
 
 public final class Dater {
 	private Dater(){}
-	public static final String allFormat="yyyy-MM-dd HH:mm:ss";
-	private static final Clock clock=Clock.systemUTC();
-	private static final LocalDate start=LocalDate.of(0, 1, 1);
-	private static final Map<String, DateTimeFormatter> dfs=new HashMap<String, DateTimeFormatter>();
+	
+	public static final String ALL_FORMAT="yyyy-MM-dd HH:mm:ss";
+	
+	public static final String YMD_FORMAT="yyyy-MM-dd";
+	
+	public static final String HMS_FORMAT="HH:mm:ss";
+	
+	private static final Clock CLOCK=Clock.systemUTC();
+	
+	private static final LocalDate START=LocalDate.of(0, 1, 1);
+	
+	private static final Map<String, DateTimeFormatter> DFS=new HashMap<String, DateTimeFormatter>();
+	
 	/**
 	 * 获取当前日期的"年月日时分秒"字符串(yyyy-MM-dd HH:mm:ss)
 	 * @param date
 	 * @return
 	 */
 	public static String formatDateTime() {
-		return dateTime(allFormat);
+		return dateTime(ALL_FORMAT);
 	}
+	
 	/**
 	 * 获取当前日期的"年月日时分秒毫秒"字符串(yyyy-MM-dd HH:mm:ss.SSS)
 	 * @param date
@@ -216,6 +226,7 @@ public final class Dater {
 	{
 		return format(LocalDateTime.now(),pattern);
 	}
+	
 	/**
 	 * 根据字符串格式返回当前日期字符串
 	 * @param pattern 字符串格式
@@ -225,6 +236,7 @@ public final class Dater {
 	{
 		return format(LocalDate.now(),pattern);
 	}
+	
 	/**
 	 * 根据字符串格式返回当前时间字符串
 	 * @param pattern 字符串格式
@@ -234,6 +246,7 @@ public final class Dater {
 	{
 		return format(LocalTime.now(), pattern);
 	}
+	
 	/**
 	 * 将时间按pattern格式化输出
 	 * @param temporal
@@ -245,6 +258,7 @@ public final class Dater {
 				.flatMap(p -> Optional.ofNullable(temporal).map(t -> formatter(p).format(t)))
 				.orElse(Strs.empty());
 	}
+	
 	/**
 	 * 将时间按pattern格式化输出
 	 * @param date
@@ -256,6 +270,7 @@ public final class Dater {
 				.flatMap(p -> Optional.ofNullable(date).map(t -> new SimpleDateFormat(p).format(t)))
 				.orElse(Strs.empty());
 	}
+	
 	/**
 	 * 缓存并获取DateTimeFormatter类的对象
 	 * @param pattern
@@ -263,21 +278,23 @@ public final class Dater {
 	 */
 	private static DateTimeFormatter formatter(String pattern) {
 		DateTimeFormatter dateTimeFormatter=null;
-		if (dfs.containsKey(pattern)) {
-			dateTimeFormatter=dfs.get(pattern);
+		if (DFS.containsKey(pattern)) {
+			dateTimeFormatter=DFS.get(pattern);
 		}else {
 			dateTimeFormatter=DateTimeFormatter.ofPattern(pattern);
-			dfs.put(pattern, dateTimeFormatter);
+			DFS.put(pattern, dateTimeFormatter);
 		}
 		return dateTimeFormatter;
 	}
+	
 	/**
 	 * 自1970-01-01T00:00Z (UTC)以来的毫秒数。
 	 * @return
 	 */
 	public static long millis() {
-		return clock.millis();
+		return CLOCK.millis();
 	}
+	
 	/**
 	 * 获取两个时间之间相差的年数
 	 * @param startInclusive
@@ -287,6 +304,7 @@ public final class Dater {
 	public static long years(Temporal startInclusive, Temporal endExclusive) {
 		return months(startInclusive, endExclusive)/12;
 	}
+	
 	/**
 	 * 获取两个时间之间相差的月数
 	 * @param startInclusive
@@ -316,6 +334,7 @@ public final class Dater {
 		}
 		return y*12+m;
 	}
+	
 	/**
 	 * 获取两个时间之间相差的月数
 	 * @param startInclusive
@@ -325,6 +344,7 @@ public final class Dater {
 	public static long weeks(Temporal startInclusive, Temporal endExclusive) {
 		return days(startInclusive, endExclusive)/7;
 	}
+	
 	/**
 	 * 获取两个时间之间相差的天数
 	 * @param startInclusive
@@ -334,6 +354,7 @@ public final class Dater {
 	public static long days(Temporal startInclusive, Temporal endExclusive) {
 		return duration(startInclusive,endExclusive).toDays();
 	}
+	
 	/**
 	 * 获取两个时间之间相差的小时数
 	 * @param startInclusive
@@ -343,6 +364,7 @@ public final class Dater {
 	public static long hours(Temporal startInclusive, Temporal endExclusive) {
 		return duration(startInclusive,endExclusive).toHours();
 	}
+	
 	/**
 	 * 获取两个时间之间相差的分钟数
 	 * @param startInclusive
@@ -352,6 +374,7 @@ public final class Dater {
 	public static long minutes(Temporal startInclusive, Temporal endExclusive) {
 		return duration(startInclusive,endExclusive).toMinutes();
 	}
+	
 	/**
 	 * 获取两个时间之间相差的秒数
 	 * @param startInclusive
@@ -361,6 +384,7 @@ public final class Dater {
 	public static long seconds(Temporal startInclusive, Temporal endExclusive) {
 		return duration(startInclusive,endExclusive).getSeconds();
 	}
+	
 	/**
 	 * 获取两个时间之间相差的毫秒数
 	 * @param startInclusive
@@ -370,6 +394,7 @@ public final class Dater {
 	public static long millis(Temporal startInclusive, Temporal endExclusive) {
 		return duration(startInclusive,endExclusive).toMillis();
 	}
+	
 	/**
 	 * 获取两个时间之间相差的微秒数
 	 * @param startInclusive
@@ -379,6 +404,7 @@ public final class Dater {
 	public static long micros(Temporal startInclusive, Temporal endExclusive) {
 		return millis(startInclusive, endExclusive)*1000;
 	}
+	
 	/**
 	 * 获取两个时间之间相差的纳秒数
 	 * @param startInclusive
@@ -388,6 +414,7 @@ public final class Dater {
 	public static long nanos(Temporal startInclusive, Temporal endExclusive) {
 		return duration(startInclusive,endExclusive).toNanos();
 	}
+	
 	/**
 	 * 获取Duration对象
 	 * @param startInclusive
@@ -399,8 +426,9 @@ public final class Dater {
 		endExclusive=getDateTime(endExclusive);
 		return Duration.between(startInclusive, endExclusive);
 	}
+	
 	/**
-	 * 通过temporal获取LocalDateTime对象，如果传入的是LocalTime对象，则日期部分用{@link #start}填充，如果传入的是LocalDate对象，那么时间部分将设置为0:0:0.0
+	 * 通过temporal获取LocalDateTime对象，如果传入的是LocalTime对象，则日期部分用{@link #START}填充，如果传入的是LocalDate对象，那么时间部分将设置为0:0:0.0
 	 * @param temporal
 	 * @return
 	 */
@@ -408,7 +436,7 @@ public final class Dater {
 		if (temporal instanceof LocalDate) {
 			return LocalDateTime.of(LocalDate.from(temporal),LocalTime.MIN);
 		}else if (temporal instanceof LocalTime) {
-			return LocalDateTime.of(start,LocalTime.from(temporal));
+			return LocalDateTime.of(START,LocalTime.from(temporal));
 		}else {
 			return LocalDateTime.from(temporal);
 		}

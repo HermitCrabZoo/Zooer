@@ -1,8 +1,5 @@
 package com.zoo.util;
 
-import lombok.Data;
-
-@Data
 public class Yuv {
 	private double y;
 	private double u;
@@ -15,6 +12,18 @@ public class Yuv {
 			throw new IllegalArgumentException("argument y must be great than -1 and less than 256");
 		}
 		this.y = y;
+	}
+	public double getU() {
+		return u;
+	}
+	public void setU(double u) {
+		this.u = u;
+	}
+	public double getV() {
+		return v;
+	}
+	public void setV(double v) {
+		this.v = v;
 	}
 	@Override
 	public String toString() {

@@ -44,6 +44,7 @@ public final class Filer {
 			return false;
 		}
 	}
+	
 	/**
 	 * 文件、存在
 	 * @param path
@@ -56,6 +57,7 @@ public final class Filer {
 			return false;
 		}
 	}
+	
 	/**
 	 * 目录、存在
 	 * @param path
@@ -68,6 +70,7 @@ public final class Filer {
 			return false;
 		}
 	}
+	
 	/**
 	 * 文件或目录、可读
 	 * @param path
@@ -80,6 +83,7 @@ public final class Filer {
 			return false;
 		}
 	}
+	
 	/**
 	 * 文件或目录、可写
 	 * @param path
@@ -92,6 +96,7 @@ public final class Filer {
 			return false;
 		}
 	}
+	
 	/**
 	 * 文件、存在、可读
 	 * @param path
@@ -100,6 +105,7 @@ public final class Filer {
 	public static boolean isReadableFile(Path path){
 		return isFile(path)&&isReadable(path);
 	}
+	
 	/**
 	 * 目录、存在、可读
 	 * @param path
@@ -108,6 +114,7 @@ public final class Filer {
 	public static boolean isReadableDir(Path path){
 		return isDir(path)&&isReadable(path);
 	}
+	
 	/**
 	 * 文件、存在、可写
 	 * @param path
@@ -116,6 +123,7 @@ public final class Filer {
 	public static boolean isWritableFile(Path path){
 		return isFile(path)&&isWritable(path);
 	}
+	
 	/**
 	 * 目录、存在、可写
 	 * @param path
@@ -124,6 +132,7 @@ public final class Filer {
 	public static boolean isWritableDir(Path path){
 		return isDir(path)&&isWritable(path);
 	}
+	
 	/**
 	 * 
 	 * @param path
@@ -132,6 +141,7 @@ public final class Filer {
 	public static boolean isReadableWritable(Path path) {
 		return isReadable(path)&&isWritable(path);
 	}
+	
 	/**
 	 * 文件、存在、可读写
 	 * @param path
@@ -140,6 +150,7 @@ public final class Filer {
 	public static boolean isReadableWritableFile(Path path){
 		return isReadableFile(path)&&isWritable(path);
 	}
+	
 	/**
 	 * 目录、存在、可读写
 	 * @param path
@@ -148,6 +159,7 @@ public final class Filer {
 	public static boolean isReadableWritableDir(Path path){
 		return isReadableDir(path)&&isWritable(path);
 	}
+	
 	/**
 	 * 判断是否是一个根目录
 	 * @param path
@@ -164,6 +176,7 @@ public final class Filer {
 		}
 		return false;
 	}
+	
 	/**
 	 * 判断两个Path是否指向同一个目录或文件，是返回true
 	 * @param path1
@@ -177,6 +190,7 @@ public final class Filer {
 			return false;
 		}
 	}
+	
 	/**
 	 * 创建文件，当不存在时则创建该文件，创建成功返回true，失败返回false；当存在时则不创建，若存在的是文件返回true，若存在的是目录返回false
 	 * @param file
@@ -195,6 +209,7 @@ public final class Filer {
 		}
 		return false;
 	}
+	
 	/**
 	 * 创建目录，当不存在时则创建该文件夹，创建成功返回true，失败返回false；当存在时则不创建，若存在的是目录则返回true，若存在的是文件则返回false
 	 * @param dir
@@ -212,6 +227,7 @@ public final class Filer {
 		}
 		return false;
 	}
+	
 	/**
 	 * 文件拷贝
 	 * @param source
@@ -222,6 +238,7 @@ public final class Filer {
 	public static CopyResult copy(Path source,Path target) {
 		return copy(source, target, null, null);
 	}
+	
 	/**
 	 * 文件拷贝
 	 * @param source
@@ -233,6 +250,7 @@ public final class Filer {
 	public static CopyResult copy(Path source,Path target,Charset destCharset) {
 		return copy(source, target, null, destCharset);
 	}
+	
 	/**
 	 * 文件拷贝
 	 * @param source
@@ -243,6 +261,7 @@ public final class Filer {
 	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter) {
 		return copy(source, target, filter, null);
 	}
+	
 	/**
 	 * 文件拷贝，被拷贝的目录或文件要有可读属性，目录无法拷贝到文件，两个不相同的目录或文件之间才能拷贝。
 	 * @param source
@@ -254,35 +273,47 @@ public final class Filer {
 	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter,Charset destCharset){
 		CopyResult cr=CopyResult.instance();
 		//被拷贝的目录或文件要有可读属性，目录无法拷贝到文件，两个不相同的目录或文件才能对考
-		if(isReadable(source) && target!=null && !(isDir(source)&&isFile(target)) && !isSame(source, target) && !isSame(source.getParent(), target) && !target.startsWith(source)) {
-			String inParent=isFile(target)?source.normalize().toString():source.normalize().getParent().toString();
-			String toParent=target.normalize().toString();
-			paths(source, filter).forEach(p->{//遍历
-				Path t=Paths.get(toParent, Strs.removeStart(p.toAbsolutePath().toString(),inParent));
-				cr.add(p,t);
-				try {
-					if (!Files.exists(t)) {//不存在则创建
-						if (Files.isRegularFile(p)) {
-							Files.createDirectories(t.getParent());
-							Files.createFile(t);
-						}else {
-							Files.createDirectories(t);
-						}
-					}
-					if (Files.isRegularFile(p)&&Files.isRegularFile(t)) {//文件对文件拷贝
-						if(destCharset!=null) {
-							transfer(p, t,Charsetor.discern(p),destCharset);
-						}else {
-							transfer(p, t,null,null);
-						}
-					}
-				} catch (IOException e) {
-					cr.addException(e);
-				}
-			});
+		if (!isReadable(source)) {
+			cr.setStatus(CopyResult.UN_READABLE);
+			return cr;
 		}
+		if (target==null || (isDir(source)&&isFile(target))) {
+			cr.setStatus(CopyResult.UN_WRITEABLE);
+			return cr;
+		}
+		if (isSame(source.getParent(), target) || target.startsWith(source)) {
+			cr.setStatus(CopyResult.SAME);
+			return cr;
+		}
+		String inParent=isDir(target)||isDir(source)?source.normalize().getParent().toString():source.normalize().toString();
+		String toParent=target.normalize().toString();
+		paths(source, filter).forEach(p->{//遍历
+			Path t=Paths.get(toParent, Strs.removeStart(p.toAbsolutePath().toString(),inParent));
+			cr.add(p,t);
+			try {
+				if (!Files.exists(t)) {//不存在则创建
+					if (Files.isRegularFile(p)) {
+						Files.createDirectories(t.getParent());
+						Files.createFile(t);
+					}else {
+						Files.createDirectories(t);
+					}
+				}
+				if (Files.isRegularFile(p)&&Files.isRegularFile(t)) {//文件对文件拷贝
+					if(destCharset!=null) {
+						transfer(p, t,Charsetor.discern(p),destCharset);
+					}else {
+						transfer(p, t,null,null);
+					}
+				}
+			} catch (IOException e) {
+				cr.addException(e);
+			}
+		});
+		cr.setStatus(CopyResult.COMPLETED);
 		return cr;
 	}
+	
 	/**
 	 * 通道传送文件，in与out必须是存在的文件
 	 * @param in
@@ -317,6 +348,7 @@ public final class Filer {
 	public static List<String> suffixs(Path directory,Predicate<? super Path> filter){
 		return paths(directory, filter).stream().filter(Funcs.onlyFile).map(p->Pather.suffix(p.toString())).distinct().collect(Collectors.toList());
 	}
+	
 	/**
 	 * 获取目录下的所有目录和文件(包含当前传入目录)。
 	 * @param directory

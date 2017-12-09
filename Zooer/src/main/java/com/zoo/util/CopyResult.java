@@ -19,6 +19,8 @@ public final class CopyResult {
 	private int size=0;
 	private int failed=0;
 	private Map<Path, Exception> pex=new HashMap<Path, Exception>();
+	private int status=-1;
+	
 	/**
 	 * 添加输入和输出的文件或目录，两者都不能为空，不然无法添加成功。
 	 * @param in
@@ -34,6 +36,12 @@ public final class CopyResult {
 		}
 		return this;
 	}
+	
+	/**
+	 * 添加异常信息，该异常对应着前一次调用 {@link #add(Path, Path)}方法时所添加的文件拷贝信息
+	 * @param e
+	 * @return
+	 */
 	protected CopyResult addException(Exception e) {
 		if (nowIn!=null) {
 			pex.put(nowIn, e);
@@ -41,6 +49,7 @@ public final class CopyResult {
 		}
 		return this;
 	}
+	
 	/**
 	 * 输入与输出文件或目录对的总数
 	 * @return
@@ -48,18 +57,31 @@ public final class CopyResult {
 	public int size() {
 		return size;
 	}
+	
 	public int successful() {
 		return size-failed;
 	}
+	
 	public int failed() {
 		return failed;
 	}
+	
 	public Path toByIn(Path in) {
 		return getPath(in,ins,tos);
 	}
+	
 	public Path inByTo(Path to) {
 		return getPath(to,tos,ins);
 	}
+	
+	public int status() {
+		return status;
+	}
+	
+	protected void setStatus(int status) {
+		this.status=status;
+	}
+	
 	private Path getPath(Path x,List<Path> froms,List<Path> targets) {
 		if (x!=null) {
 			int i=froms.indexOf(x);
@@ -69,19 +91,22 @@ public final class CopyResult {
 		}
 		return null;
 	}
+	
 	public Exception exceptByIn(Path in) {
 		if (in!=null) {
 			return pex.get(in);
 		}
 		return null;
 	}
-	public Exception exceptByTO(Path to) {
+	
+	public Exception exceptByTo(Path to) {
 		Path in=inByTo(to);
 		if (in!=null) {
 			return pex.get(in);
 		}
 		return null;
 	}
+	
 	/**
 	 * 调用Eacher对象的doIt方法时传入的第三个参数e可能为null
 	 * @param eacher
@@ -96,4 +121,29 @@ public final class CopyResult {
 		}
 		return this;
 	}
+	
+	/**
+	 * 未完成或未开始的拷贝
+	 */
+	public static final int UN_COPIED=-1;
+	
+	/**
+	 * 源文件/目录无读取权限或不是可读的文件或目录
+	 */
+	public static final int UN_READABLE=0;
+	
+	/**
+	 * 目标文件/目录为null,或从目录拷贝到文件
+	 */
+	public static final int UN_WRITEABLE=1;
+	
+	/**
+	 * 源文件/目录与目标文件/目录相同
+	 */
+	public static final int SAME=2;
+	
+	/**
+	 * 拷贝完成
+	 */
+	public static final int COMPLETED=3;
 }

@@ -389,4 +389,20 @@ public final class Typer {
 		return floats();
 	}
 	
+	/**
+	 * 判断传入参数是否都不为null,若是返回true,只要有一个是null就返回false.
+	 * @param objs
+	 * @return
+	 */
+	public static boolean notNull(Object...objs) {
+		if (objs!=null) {
+			for(Object obj:objs) {
+				if (obj==null) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

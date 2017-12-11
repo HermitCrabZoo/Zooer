@@ -61,6 +61,7 @@ public final class Maths {
 		}
 		return isPositive?sum:-sum;
 	}
+	
 	/**
 	 * 返回0(不包含)与传入值之间整数的阶乘值
 	 * @param max
@@ -79,4 +80,20 @@ public final class Maths {
 		return isPositive?sum:-sum;
 	}
 	
+	/**
+	 * 判断整数是否是一个质数
+	 * @param x
+	 * @return
+	 */
+	public static boolean isPrime(long x) {
+	    long i, s = (long) (Math.sqrt((double) x) + 0.01), step = 4L;
+	    if (x == 2L || x == 3L) return true;
+	    if (x < 2L || x % 2L == 0L || x % 3L ==0L) return false;
+	    for (i = 5L; i <= s; i += step) {  
+	        if (x % i == 0L)  
+	            return false;  
+	        step ^= 6L;  
+	    }  
+	    return true;  
+	}
 }

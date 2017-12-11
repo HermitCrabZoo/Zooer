@@ -33,6 +33,7 @@ public final class Typer {
 		}
 		return false;
 	}
+	
 	/**
 	 * 判断obj是否是String的实例
 	 * @param obj
@@ -53,6 +54,7 @@ public final class Typer {
 	public static boolean isString(String s){
 		return Optional.ofNullable(s).map(i->i.length()>0).orElse(false);
 	}
+	
 	/**
 	 * 验证浮点对象的有效性(不为null并且大于0)
 	 * @param f 浮点对象
@@ -61,6 +63,7 @@ public final class Typer {
 	public static boolean isFloat(Float f){
 		return Optional.ofNullable(f).map(i->i>0).orElse(false);
 	}
+	
 	/**
 	 * 验证双精度浮点对象的有效性(不为null并且大于0)
 	 * @param d 浮点对象
@@ -69,6 +72,7 @@ public final class Typer {
 	public static boolean isDouble(Double d){
 		return Optional.ofNullable(d).map(i->i>0).orElse(false);
 	}
+	
 	/**
 	 * 验证整数对象的有效性(不为null并且大于0)
 	 * @param i 整数对象
@@ -77,6 +81,7 @@ public final class Typer {
 	public static boolean isInteger(Integer i){
 		return Optional.ofNullable(i).map(ii->ii>0).orElse(false);
 	}
+	
 	/**
 	 * 验证长整数对象的有效性(不为null并且大于0)
 	 * @param l 长整数对象
@@ -85,6 +90,7 @@ public final class Typer {
 	public static boolean isLong(Long l){
 		return Optional.ofNullable(l).map(i->i>0).orElse(false);
 	}
+	
 	/**
 	 * 验证短整数对象的有效性(不为null并且大于0)
 	 * @param l 短整数对象
@@ -93,6 +99,7 @@ public final class Typer {
 	public static boolean isShort(Short s){
 		return Optional.ofNullable(s).map(i->i>0).orElse(false);
 	}
+	
 	/**
 	 * 验证字节对象的有效性(不为null并且大于0)
 	 * @param l 字节对象
@@ -101,6 +108,7 @@ public final class Typer {
 	public static boolean isByte(Byte b){
 		return Optional.ofNullable(b).map(i->i>0).orElse(false);
 	}
+	
 	/**
 	 * 0个元素的字符串数组
 	 * @return
@@ -108,6 +116,7 @@ public final class Typer {
 	public static String[] strings() {
 		return Strs.emptys();
 	}
+	
 	/**
 	 * 0个元素的单精度浮点数组
 	 * @return
@@ -115,6 +124,7 @@ public final class Typer {
 	public static float[] floats() {
 		return new float[] {};
 	}
+	
 	/**
 	 * 0个元素的双精度浮点数组
 	 * @return
@@ -122,6 +132,7 @@ public final class Typer {
 	public static double[] doubles() {
 		return new double[] {};
 	}
+	
 	/**
 	 * 0个元素的整型数组
 	 * @return
@@ -129,6 +140,7 @@ public final class Typer {
 	public static int[] ints() {
 		return new int[] {};
 	}
+	
 	/**
 	 * 0个元素的长整型数组
 	 * @return
@@ -136,6 +148,7 @@ public final class Typer {
 	public static long[] longs() {
 		return new long[] {};
 	}
+	
 	/**
 	 * 0个元素的短整型数组
 	 * @return
@@ -143,6 +156,7 @@ public final class Typer {
 	public static short[] shorts() {
 		return new short[] {};
 	}
+	
 	/**
 	 * 0个元素的字节数组
 	 * @return
@@ -150,6 +164,7 @@ public final class Typer {
 	public static byte[] bytes() {
 		return new byte[] {};
 	}
+	
 	/**
 	 * 0个元素的字符数组
 	 * @return
@@ -157,6 +172,7 @@ public final class Typer {
 	public static char[] chars() {
 		return new char[] {};
 	}
+	
 	/**
 	 * 0个元素的布尔型数组
 	 * @return
@@ -164,6 +180,26 @@ public final class Typer {
 	public static boolean[] booleans() {
 		return new boolean[] {};
 	}
+	
+	/**
+	 * long型数组转成其包装类的数组
+	 * @param ls
+	 * @return
+	 */
+	public static Long[] longs(long[] ls) {
+		Long[] nls=null;
+		if (ls!=null) {
+			int len=ls.length;
+			nls=new Long[len];
+			for(int i=0;i<len;i++) {
+				nls[i]=ls[i];
+			}
+		}else {
+			nls=new Long[0];
+		}
+		return nls;
+	}
+	
 	/**
 	 * int数组转long数组
 	 * @param ints
@@ -180,6 +216,7 @@ public final class Typer {
 		}
 		return longs();
 	}
+	
 	/**
 	 * short数组转long数组
 	 * @param shorts
@@ -196,6 +233,7 @@ public final class Typer {
 		}
 		return longs();
 	}
+	
 	/**
 	 * byte数组转long数组
 	 * @param bytes
@@ -212,6 +250,26 @@ public final class Typer {
 		}
 		return longs();
 	}
+	
+	/**
+	 * int型数组转成其包装类型数组
+	 * @param is
+	 * @return
+	 */
+	public static Integer[] ints(int[] is) {
+		Integer[] nis=null;
+		if (is!=null) {
+			int len=is.length;
+			nis=new Integer[len];
+			for(int i=0;i<len;i++) {
+				nis[i]=is[i];
+			}
+		}else {
+			nis=new Integer[0];
+		}
+		return nis;
+	}
+	
 	/**
 	 * long数组转int数组
 	 * @param longs
@@ -228,6 +286,7 @@ public final class Typer {
 		}
 		return ints();
 	}
+	
 	/**
 	 * short数组转int数组
 	 * @param shorts
@@ -244,6 +303,7 @@ public final class Typer {
 		}
 		return ints();
 	}
+	
 	/**
 	 * byte数组转int数组
 	 * @param bytes
@@ -260,6 +320,26 @@ public final class Typer {
 		}
 		return ints();
 	}
+	
+	/**
+	 * short型数组转换成其包装类型数组
+	 * @param ss
+	 * @return
+	 */
+	public static Short[] shorts(short[] ss) {
+		Short[] nss=null;
+		if (ss!=null) {
+			int len=ss.length;
+			nss=new Short[len];
+			for(int i=0;i<len;i++) {
+				nss[i]=ss[i];
+			}
+		}else {
+			nss=new Short[0];
+		}
+		return nss;
+	}
+	
 	/**
 	 * long数组转short数组
 	 * @param longs
@@ -276,6 +356,7 @@ public final class Typer {
 		}
 		return shorts();
 	}
+	
 	/**
 	 * int数组转short数组
 	 * @param ints
@@ -292,6 +373,7 @@ public final class Typer {
 		}
 		return shorts();
 	}
+	
 	/**
 	 * byte数组转short数组
 	 * @param bytes
@@ -308,6 +390,26 @@ public final class Typer {
 		}
 		return shorts();
 	}
+	
+	/**
+	 * byte型数组转换成其包装类的数组
+	 * @param bs
+	 * @return
+	 */
+	public static Byte[] bytes(byte[] bs) {
+		Byte[] nbs=null;
+		if (bs!=null) {
+			int len=bs.length;
+			nbs=new Byte[len];
+			for(int i=0;i<len;i++) {
+				nbs[i]=bs[i];
+			}
+		}else {
+			nbs=new Byte[0];
+		}
+		return nbs;
+	}
+	
 	/**
 	 * long数组转byte数组
 	 * @param longs
@@ -324,6 +426,7 @@ public final class Typer {
 		}
 		return bytes();
 	}
+	
 	/**
 	 * int数组转byte数组
 	 * @param ints
@@ -340,6 +443,7 @@ public final class Typer {
 		}
 		return bytes();
 	}
+	
 	/**
 	 * short数组转byte数组
 	 * @param shorts
@@ -356,6 +460,26 @@ public final class Typer {
 		}
 		return bytes();
 	}
+	
+	/**
+	 * double型数组转换成其包装类型的数组
+	 * @param ds
+	 * @return
+	 */
+	public static Double[] doubles(double[] ds) {
+		Double[] nds=null;
+		if (ds!=null) {
+			int len=ds.length;
+			nds=new Double[len];
+			for(int i=0;i<len;i++) {
+				nds[i]=ds[i];
+			}
+		}else {
+			nds=new Double[0];
+		}
+		return nds;
+	}
+	
 	/**
 	 * float数组转double数组
 	 * @param floats
@@ -372,6 +496,26 @@ public final class Typer {
 		}
 		return doubles();
 	}
+	
+	/**
+	 * float型数组转换成其包装类型数组
+	 * @param fs
+	 * @return
+	 */
+	public static Float[] floats(float[] fs) {
+		Float[] nfs=null;
+		if (fs!=null) {
+			int len=fs.length;
+			nfs=new Float[len];
+			for(int i=0;i<len;i++) {
+				nfs[i]=fs[i];
+			}
+		}else {
+			nfs=new Float[0];
+		}
+		return nfs;
+	}
+	
 	/**
 	 * double数组转float数组
 	 * @param doubles
@@ -390,6 +534,44 @@ public final class Typer {
 	}
 	
 	/**
+	 * char型数组转换成其包装类型的数组
+	 * @param cs
+	 * @return
+	 */
+	public static Character[] chars(char[] cs) {
+		Character[] ncs=null;
+		if (cs!=null) {
+			int len=cs.length;
+			ncs=new Character[len];
+			for(int i=0;i<len;i++) {
+				ncs[i]=cs[i];
+			}
+		}else {
+			ncs=new Character[0];
+		}
+		return ncs;
+	}
+	
+	/**
+	 * boolean型数组转换成其包装类型的数组
+	 * @param bs
+	 * @return
+	 */
+	public static Boolean[] booleans(boolean[] bs) {
+		Boolean[] nbs=null;
+		if (bs!=null) {
+			int len=bs.length;
+			nbs=new Boolean[len];
+			for(int i=0;i<len;i++) {
+				nbs[i]=bs[i];
+			}
+		}else {
+			nbs=new Boolean[0];
+		}
+		return nbs;
+	}
+	
+	/**
 	 * 判断传入参数是否都不为null,若是返回true,只要有一个是null就返回false.
 	 * @param objs
 	 * @return
@@ -405,4 +587,6 @@ public final class Typer {
 		}
 		return false;
 	}
+	
+	
 }

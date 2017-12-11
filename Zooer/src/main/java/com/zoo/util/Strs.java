@@ -1,6 +1,7 @@
 package com.zoo.util;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 /**
  * 字符串操作类
  * @author ZOO
@@ -8,6 +9,22 @@ import java.util.Optional;
  */
 public final class Strs {
 	private Strs(){}
+	
+	/**
+	 * 只包含数字
+	 */
+	private static final Pattern PATTERN_NUMERIC = Pattern.compile("\\d+");
+	
+	/**
+	 * 正负整数
+	 */
+	private static final Pattern PATTERN_INTEGER= Pattern.compile("^[-\\+]?(0{1}|[1-9]+\\d*)");
+	
+	/**
+	 * 正负小数
+	 */
+	private static final Pattern PATTERN_DOUBLE= Pattern.compile("^[-\\+]?(0{1}|[1-9]+\\d*)\\.{1}\\d+");
+	
 	/**
 	 * 生成随机字符串,由大写字母、小写字母、数字组成
 	 * @param len 字符串长度
@@ -253,4 +270,66 @@ public final class Strs {
 		}
 		return str.replaceAll(regex, replacement);
 	}
+	
+	/**
+	 * 判断字符串是否只包含数字，不管是否是合法的整数值。
+	 * @param str
+	 * @return
+	 */
+	public static boolean isNumeric(String str) {
+		return Optional.ofNullable(str).map(s->PATTERN_NUMERIC.matcher(s).matches()).orElse(false);
+	}
+	
+	/**
+	 * 判断字符串是否是合法的整数结构，支持+、-前缀。
+	 * @param str
+	 * @return
+	 */
+	public static boolean isInteger(String str) {
+		return Optional.ofNullable(str).map(s->PATTERN_INTEGER.matcher(s).matches()).orElse(false);
+	}
+	
+	/**
+	 * 判断字符串是否是一个小数类型的结构，支持+、-前缀
+	 * @param str
+	 * @return
+	 */
+	public static boolean isDouble(String str) {
+		return Optional.ofNullable(str).map(s->PATTERN_DOUBLE.matcher(s).matches()).orElse(false);
+	}
+	
+	/**
+	 * 判断是否是中文字符串，包括标点符号
+	 * @param str
+	 * @return
+	 */
+	public static boolean isChanese(String str) {
+		return Optional.ofNullable(str).map(s->{
+			char[] cs=s.toCharArray();
+			int t=0,len=cs.length;
+			for (char c : cs) {
+				if (Chars.isChanese(c)) {
+					t++;
+				}
+			}
+			return len>0 && t==len;
+		}).orElse(false);
+	}
+	
+	/**
+	 * 是否至少包含一个中文字符
+	 * @param str
+	 * @return
+	 */
+	public static boolean hasChanese(String str) {
+		return Optional.ofNullable(str).map(s->{
+			for (char c : s.toCharArray()) {
+				if (Chars.isChanese(c)) {
+					return true;
+				}
+			}
+			return false;
+		}).orElse(false);
+	}
+	
 }

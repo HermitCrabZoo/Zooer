@@ -303,12 +303,12 @@ public final class Strs {
 	 * @param str
 	 * @return
 	 */
-	public static boolean isChanese(String str) {
+	public static boolean isChinese(String str) {
 		return Optional.ofNullable(str).map(s->{
 			char[] cs=s.toCharArray();
 			int t=0,len=cs.length;
 			for (char c : cs) {
-				if (Chars.isChanese(c)) {
+				if (Chars.isChinese(c)) {
 					t++;
 				}
 			}
@@ -321,10 +321,10 @@ public final class Strs {
 	 * @param str
 	 * @return
 	 */
-	public static boolean hasChanese(String str) {
+	public static boolean hasChinese(String str) {
 		return Optional.ofNullable(str).map(s->{
 			for (char c : s.toCharArray()) {
-				if (Chars.isChanese(c)) {
+				if (Chars.isChinese(c)) {
 					return true;
 				}
 			}

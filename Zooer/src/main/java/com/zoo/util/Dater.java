@@ -2,11 +2,13 @@ package com.zoo.util;
 
 import java.text.SimpleDateFormat;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
@@ -440,5 +442,66 @@ public final class Dater {
 		}else {
 			return LocalDateTime.from(temporal);
 		}
+	}
+	
+	/**
+	 * 获取当前一周从周一到周日每天的日期对象的数组
+	 * @return
+	 * @see {@link #daysOfWeek(Temporal)}
+	 */
+	public static LocalDate[] daysOfNowWeek() {
+		return daysOfWeek(LocalDate.now());
+	}
+	
+	/**
+	 * 获取传入日期所在这一周从周一到周日的每一天的日期,若传入日期为null或不支持年月日字段则返回一个长度为0的数组
+	 * @param temporal
+	 * @return
+	 */
+	public static LocalDate[] daysOfWeek(Temporal temporal) {
+		LocalDate[] days=null;
+		if (temporal!=null && temporal.isSupported(ChronoUnit.YEARS) && temporal.isSupported(ChronoUnit.MONTHS) && temporal.isSupported(ChronoUnit.DAYS)) {
+			LocalDate day=LocalDate.from(temporal);
+			DayOfWeek[] dows=DayOfWeek.values();
+			int len=dows.length;
+			days=new LocalDate[len];
+			for(int i=0;i<len;i++) {
+				days[i]=day.with(dows[i]);
+			}
+		}else {
+			days=new LocalDate[0];
+		}
+		return days;
+	}
+	
+	
+	/**
+	 * 获取当前月份从第一天到最后一天之间每天的日期对象数组
+	 * @return
+	 * @see {@link #daysOfMonth(Temporal)}
+	 */
+	public static LocalDate[] daysOfMonth() {
+		return daysOfMonth(LocalDate.now());
+	}
+	
+	/**
+	 * 获取传入日期所在月份的第一天到最后一天之间每天的日期,若传入日期为null或不支持年月日字段则返回一个长度为0的数组
+	 * @param temporal
+	 * @return
+	 */
+	public static LocalDate[] daysOfMonth(Temporal temporal) {
+		LocalDate[] days=null;
+		if (temporal!=null && temporal.isSupported(ChronoUnit.YEARS) && temporal.isSupported(ChronoUnit.MONTHS) && temporal.isSupported(ChronoUnit.DAYS)) {
+			LocalDate day=LocalDate.from(temporal).withDayOfMonth(1);
+			int len=day.lengthOfMonth();
+			days=new LocalDate[len];
+			days[0]=day;
+			for(int i=1;i<len;i++) {
+				days[i]=day=day.plusDays(1);
+			}
+		}else {
+			days=new LocalDate[0];
+		}
+		return days;
 	}
 }

@@ -25,7 +25,7 @@ public final class Chars {
 	 * @param c
 	 * @return
 	 */
-	public static boolean isChanese(char c) {
+	public static boolean isChinese(char c) {
 		Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
 		if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
 				|| ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS

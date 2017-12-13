@@ -1,17 +1,14 @@
 package com.zoo.util;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Optional;
-
 import javax.imageio.ImageIO;
 
-import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -21,47 +18,68 @@ import org.opencv.imgcodecs.Imgcodecs;
 public final class CvBridge {
 
 	private CvBridge() {}
-	private static final OpenCVFrameConverter.ToMat matConverter=new OpenCVFrameConverter.ToMat();
 	
 	/**
+	 * 是否
+	 */
+	private static boolean unload=true;
+	
+	static {loadOpenCv();}
+	
+	/**
+	 * 加载OpenCV库
+	 */
+	public static final void loadOpenCv() {
+		if (unload) {
+			try {
+				//windows平台的库文件
+//				System.load("E:\\GitRepositories\\Zooer\\Zooer\\lib\\opencv_java331.dll");
+				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+				unload=false;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * 使用opencv将图片翻转保存到新图片，其中图片读写部分较快，单纯的图片翻转操作建议使用此方法。
 	 * 图片翻转，flipCode为0、1、-1分别代表垂直翻转(x轴)、水平翻转(y轴)、垂直水平都翻转
-	 * @param image
+	 * @param sourceFileName 原始文件路径
+	 * @param destFileName 反转后的输出文件路径
 	 * @param flipCode
 	 * @return
 	 */
-	public static BufferedImage flip(BufferedImage image,int flipCode) {
-		BufferedImage image2=null;
-		Frame frame=frame(image);
-		if (frame!=null) {
-			org.bytedeco.javacpp.opencv_core.Mat mat=matConverter.convert(frame);
-			org.bytedeco.javacpp.opencv_core.Mat dst=new org.bytedeco.javacpp.opencv_core.Mat(mat.size(), mat.type());
-			opencv_core.flip(mat, dst, flipCode);//翻转
-			frame=matConverter.convert(dst);
-			image2=Videor.getFrameconverter().convert(frame);
-		}
-		return image2;
+	public static boolean flip(String sourceFileName,String destFileName,int flipCode) {
+		Mat mat=Imgcodecs.imread(sourceFileName);
+		Mat dst=new Mat(mat.size(), mat.type());
+		Core.flip(mat, dst, flipCode);
+		return Imgcodecs.imwrite(destFileName, dst);
 	}
-	public static BufferedImage flipImage(final BufferedImage bufferedimage) {
-		BufferedImage img=null;
-		if (bufferedimage!=null) {
-			int w = bufferedimage.getWidth();
-			int h = bufferedimage.getHeight();
-			img=new BufferedImage(w, h, bufferedimage.getColorModel().getTransparency());
-			Graphics2D graphics2d=img.createGraphics();
-			graphics2d.drawImage(bufferedimage, 0, 0, w, h, w, 0, 0, h, null);
-			graphics2d.dispose();
-		}
-        return img;
-    }
 	
+	/**
+	 * 将BufferedImage对象转换为JavaCV的Frame对象
+	 * @param image
+	 * @return
+	 */
 	public static Frame frame(BufferedImage image) {
 		return Optional.ofNullable(image).map(img->Videor.getFrameconverter().convert(img)).orElse(null);
 	}
 	
+	/**
+	 * 将JavaCV的Frame对象转换为BufferedImage对象
+	 * @param frame
+	 * @return
+	 */
 	public static BufferedImage image(Frame frame) {
 		return Optional.ofNullable(frame).map(f->Videor.getFrameconverter().convert(f)).orElse(null);
 	}
 	
+	/**
+	 * 将BufferedImage对象转换为OpenCV的Mat对象
+	 * @param image
+	 * @return
+	 */
 	public static Mat mat(BufferedImage image) {
 		byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 		Mat mat=Mat.eye(new Size(image.getWidth(), image.getHeight()), matType(image));
@@ -69,13 +87,17 @@ public final class CvBridge {
 		return mat;
 	}
 	
+	/**
+	 * 将OpenCV的Mat对象转换为BufferedImage对象
+	 * @param frame
+	 * @return
+	 */
 	public static BufferedImage image(Mat mat) {
 		BufferedImage image=null;
 		MatOfByte buf=new MatOfByte();
-		Imgcodecs.imencode(mat.type()==CvType.CV_8UC4?".png":".jpg", mat, buf);
+		Imgcodecs.imencode(imgExt(mat), mat, buf);
 		byte[] arr=buf.toArray();
-		ByteArrayInputStream in = new ByteArrayInputStream(arr);
-		try {
+		try (ByteArrayInputStream in = new ByteArrayInputStream(arr)){
 			image=ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -83,13 +105,24 @@ public final class CvBridge {
 		return image;
 	}
 	
-	private static int imgType(Mat mat) {
+	/**
+	 * 通过Mat的图片类型返回输入图片的后缀
+	 * @param mat
+	 * @return
+	 */
+	private static String imgExt(Mat mat) {
 		mat.type();
 		if (mat.type()==CvType.CV_8UC4) {
-			return BufferedImage.TYPE_4BYTE_ABGR;
+			return ".png";
 		}
-		return BufferedImage.TYPE_3BYTE_BGR;
+		return ".jpg";
 	}
+	
+	/**
+	 * 通过BufferedImage的图片类型返回对应的OpenCV里Mat对应的类型
+	 * @param image
+	 * @return
+	 */
 	private static int matType(BufferedImage image) {
 		if (image.getType()==BufferedImage.TYPE_4BYTE_ABGR) {
 			return CvType.CV_8UC4;

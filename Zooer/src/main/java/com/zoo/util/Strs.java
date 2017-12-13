@@ -26,6 +26,16 @@ public final class Strs {
 	private static final Pattern PATTERN_DOUBLE= Pattern.compile("^[-\\+]?(0{1}|[1-9]+\\d*)\\.{1}\\d+");
 	
 	/**
+	 * 仅仅是中文,不包含标点符号
+	 */
+	private static final Pattern PATTERN_CHINESE_ONLY= Pattern.compile("^[\u4E00-\u9FBF]+$");
+	
+	/**
+	 * 包含中文,不计入中文标点符号
+	 */
+	private static final Pattern PATTERN_CHINESE= Pattern.compile(".*[\u4e00-\u9fa5]+.*");
+	
+	/**
 	 * 生成随机字符串,由大写字母、小写字母、数字组成
 	 * @param len 字符串长度
 	 * @return
@@ -317,7 +327,7 @@ public final class Strs {
 	}
 	
 	/**
-	 * 是否至少包含一个中文字符
+	 * 是否至少包含一个中文字符，包括中文标点符号
 	 * @param str
 	 * @return
 	 */
@@ -330,6 +340,24 @@ public final class Strs {
 			}
 			return false;
 		}).orElse(false);
+	}
+	
+	/**
+	 * 判断是否仅仅是一个中文字符串，不包含中文标点符号，若有中文标点符号或者其他非中文字符，那么返回false
+	 * @param str
+	 * @return
+	 */
+	public static boolean isChineseOnly(String str) {
+		return Optional.ofNullable(str).map(s->PATTERN_CHINESE_ONLY.matcher(s).matches()).orElse(false);
+	}
+	
+	/**
+	 * 判断是否包含中文字符，不计入中文标点符号，即就算有中文标点符号但没有中文文字，那么也返回false
+	 * @param str
+	 * @return
+	 */
+	public static boolean hasChineseOnly(String str) {
+		return Optional.ofNullable(str).map(s->PATTERN_CHINESE.matcher(s).matches()).orElse(false);
 	}
 	
 }

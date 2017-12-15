@@ -11,7 +11,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
@@ -44,6 +46,7 @@ public final class Imgs {
 	 * 当前对象绑定的图像
 	 */
 	private BufferedImage image;
+	
 	private BufferedImage oldImage;
 	
 	/**
@@ -65,9 +68,11 @@ public final class Imgs {
 	private final static double[][] SUGGESTS= {{0.946,0.5},{0.825,0.6}};
 	
 	private Imgs() {}
+	
 	private Imgs(BufferedImage image) {
 		this.image=image;
 	}
+	
 	/**
 	 * 根据给定的BufferedImage对象的拷贝构造一个Imgs对象,即后续操作将不改变传入的原始Image对象
 	 * @param image
@@ -78,6 +83,7 @@ public final class Imgs {
 		assertNull(image);
 		return new Imgs(copy(image));
 	}
+	
 	/**
 	 * 构造一个未关联image属性的Imgs对象，后续对image的操作前必须先关联当前对象的image属性到一个已存在的BufferedImage实例。
 	 * @return
@@ -85,16 +91,18 @@ public final class Imgs {
 	public static Imgs ofNull() {
 		return new Imgs();
 	}
+	
 	/**
-	 * 根据给定大小构造一个Imgs对象,该对象绑定的BufferedImage对象的颜色随机。
+	 * 根据给定大小构造一个Imgs对象,该对象绑定的BufferedImage对象的颜色为黑色透明。
 	 * @param width
 	 * @param height
 	 * @param color
 	 * @return
 	 */
 	public static Imgs ofNew(int width,int height){
-		return ofNew(width, height, Colors.randColor());
+		return ofNew(width, height, Colors.bTransparent);
 	}
+	
 	/**
 	 * 根据给定大小、色系构造一个Imgs对象
 	 * @param width
@@ -105,6 +113,7 @@ public final class Imgs {
 	public static Imgs ofNew(int width,int height,Chroma chroma){
 		return ofNew(width, height, Colors.randColor(chroma));
 	}
+	
 	/**
 	 * 根据给定大小、颜色构造一个Imgs对象
 	 * @param width
@@ -115,6 +124,7 @@ public final class Imgs {
 	public static Imgs ofNew(int width,int height,Color color){
 		return Imgs.of(newImg(0, 0, width, height, color));
 	}
+	
 	/**
 	 * 用传入的BufferedImage的拷贝来绑定当前的对象，后续操作不会改变传入的BufferedImage对象
 	 * @param image
@@ -126,6 +136,7 @@ public final class Imgs {
 		this.image=copy(image);
 		return this;
 	}
+	
 	/**
 	 * 返回当前对象关联的BufferedImage实例
 	 * @return
@@ -133,6 +144,7 @@ public final class Imgs {
 	public BufferedImage get() {
 		return image;
 	}
+	
 	/**
      * Return the image if present, otherwise return {@code other}.
      *
@@ -143,6 +155,7 @@ public final class Imgs {
     public BufferedImage orElse(BufferedImage other) {
         return image != null ? image : other;
     }
+    
 	/**
      * Return the image if present, otherwise invoke {@code other} and return
      * the result of that invocation.
@@ -156,15 +169,17 @@ public final class Imgs {
 	public BufferedImage orElseGet(Supplier<? extends BufferedImage> other) {
 		return image!=null?image:other.get();
 	}
+	
 	/**
-	 * 根据给定大小生成随机颜色的图片
+	 * 根据给定大小生成黑色透明的图片
 	 * @param width
 	 * @param height
 	 * @return
 	 */
 	public Imgs image(int width,int height){
-		return image(0,0,width,height,Colors.randColor());
+		return image(0,0,width,height,null);
 	}
+	
 	/**
 	 * 根据给定大小和色系该色系内的颜色的图片
 	 * @param width
@@ -175,6 +190,7 @@ public final class Imgs {
 	public Imgs image(int width,int height,Chroma chroma){
 		return image(0,0,width,height,Colors.randColor(chroma));
 	}
+	
 	/**
 	 * 根据给定大小、颜色生成图片
 	 * @param width
@@ -185,6 +201,7 @@ public final class Imgs {
 	public Imgs image(int width,int height,Color color){
 		return image(0,0,width,height,color);
 	}
+	
 	/**
 	 * 根据给定大小、颜色生成图片
 	 * @param dimen
@@ -194,6 +211,7 @@ public final class Imgs {
 	public Imgs image(Dimension dimen,Color color){
 		return image(0,0,dimen.width,dimen.height,color);
 	}
+	
 	/**
 	 * 根据给定坐标、大小、颜色生成图片
 	 * @param dimen
@@ -203,6 +221,7 @@ public final class Imgs {
 	public Imgs image(Point point,Dimension dimen,Color color){
 		return image(point.x,point.y,dimen.width,dimen.height,color);
 	}
+	
 	/**
 	 * 根据给定大小、坐标、颜色生成图片
 	 * @param rect
@@ -212,6 +231,7 @@ public final class Imgs {
 	public Imgs image(Rectangle rect,Color color){
 		return image(rect.x, rect.y, rect.width, rect.height, color);
 	}
+	
 	/**
 	 * 根据给定大小、坐标、颜色生成图片，若color为null那么将使用透明黑色
 	 * @param x
@@ -226,6 +246,7 @@ public final class Imgs {
 		image =newImg(x, y, width, height, color);
 		return this;
 	}
+	
 	/**
 	 * 生成新的BufferedImage对象
 	 * @param x
@@ -255,6 +276,12 @@ public final class Imgs {
 		return ni;
 	}
 	
+	private Imgs update(BufferedImage image) {
+		this.oldImage=this.image;
+		this.image=image;
+		return this;
+	}
+	
 	/**
 	 * 如果image为null将抛异常
 	 * @param image
@@ -264,6 +291,7 @@ public final class Imgs {
 			throw new NullPointerException("Argument image cant not be null!");
 		}
 	}
+	
 	/**
 	 * 在图片上写字,默认字体、颜色,位置居中
 	 * @param surface
@@ -272,6 +300,7 @@ public final class Imgs {
 	public Imgs pile(String surface){
 		return pile(surface, null,null);
 	}
+	
 	/**
 	 * 在图片上写字,默认字体,位置居中
 	 * @param surface
@@ -280,6 +309,7 @@ public final class Imgs {
 	public Imgs pile(String surface,Font font){
 		return pile(surface,null,font);
 	}
+	
 	/**
 	 * 在图片上写字,默认字体,位置居中
 	 * @param surface
@@ -288,6 +318,7 @@ public final class Imgs {
 	public Imgs pile(String surface,Color color){
 		return pile(surface,color,null);
 	}
+	
 	/**
 	 * 在图片上写字,默认字体,位置居中
 	 * @param surface 文本
@@ -302,6 +333,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 在图片上写字
 	 * @param surface 文本
@@ -314,6 +346,7 @@ public final class Imgs {
 		point=Optional.ofNullable(point).orElse(new Point(0, 0));
 		return pile(surface, point.x, point.y, color, font);
 	}
+	
 	/**
 	 * 在图片上写字
 	 * @param surface 文本
@@ -334,6 +367,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层左上角,返回base.
 	 * @param cover
@@ -342,6 +376,7 @@ public final class Imgs {
 	public Imgs pileLeftTop(Image cover){
 		return pile(cover,0, 0);
 	}
+	
 	/**
 	 * 将cover画在base上层左侧中部,返回base.
 	 * @param cover
@@ -353,6 +388,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层左下角,返回base.
 	 * @param cover
@@ -364,6 +400,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层右上角,返回base.
 	 * @param cover
@@ -375,6 +412,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层右侧中部,返回base.
 	 * @param cover
@@ -386,6 +424,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层右下角,返回base.
 	 * @param cover
@@ -397,6 +436,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层水平居中上方,返回base.
 	 * @param cover
@@ -408,6 +448,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层水平垂直居中,返回base.
 	 * @param cover
@@ -419,6 +460,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层水平居中下方,返回base.
 	 * @param cover
@@ -430,6 +472,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层,返回base
 	 * @param cover
@@ -443,6 +486,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover画在base上层,返回base
 	 * @param cover
@@ -456,6 +500,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover以给定的rect信息确定与base的相对坐标和大小画在base上面
 	 * @param cover 表面层图片
@@ -469,6 +514,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将cover以给定的rect信息确定与base的相对坐标和大小画在base上面
 	 * @param cover 表面层图片
@@ -487,6 +533,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 将原始图片按比例缩放输出(输出图片不变形)
 	 * @param ratio 缩放率
@@ -496,6 +543,7 @@ public final class Imgs {
 		int width=(int) Math.round(image.getWidth()*ratio),height=(int) Math.round(image.getHeight()*ratio);
 		return scaleZoom(width, height);
 	}
+	
 	/**
 	 * 基于宽的按比例缩放,输出图片宽高比不变(输出图片不变形)
 	 * @param w 输出图片的宽度
@@ -505,6 +553,7 @@ public final class Imgs {
 		int h=(int) Math.round(w*1.0/image.getWidth()*image.getHeight());
 		return scaleZoom(w, h);
     }
+	
 	/**
 	 * 基于高的按比例缩放,输出图片宽高比不变(输出图片不变形)
 	 * @param h 输出图片的高度
@@ -514,6 +563,7 @@ public final class Imgs {
 		int w=(int) Math.round(h*1.0/image.getHeight()*image.getWidth());
 		return scaleZoom(w, h);
 	}
+	
 	/**
 	 * 图片缩放,输出图片将按输入的宽高比进行缩放输出(输出宽高比与原始图片宽高比不一致可能导致输出图片效果变形)
 	 * @param h 输出图片的高
@@ -527,6 +577,7 @@ public final class Imgs {
 		}
         return this;
     }
+	
 	/**
 	 * 图片缩放,输出图片将按传入的宽高参数输出,若输入宽高比与原图片宽高比不一致,那么原始图片将按原始宽高比被缩放至刚好可以放入输出宽高大小的图片大小中,其余透明色填充.
 	 * @param h 输出图片的高
@@ -536,6 +587,7 @@ public final class Imgs {
 	public Imgs scaleRatioBox(int w, int h){
 		return scaleRatioBox(w, h, Colors.wTransparent);
 	}
+	
 	/**
 	 * 图片缩放,输出图片将按输入的宽高参数输出,若输入宽高比与原图片宽高比不一致,那么原始图片将按原始宽高比被缩放至刚好可以放入输出宽高大小的图片大小中,其余用bgColor填充.
 	 * @param h 输出图片的高
@@ -545,8 +597,9 @@ public final class Imgs {
 	 */
 	public Imgs scaleRatioBox(int w, int h,Color bgColor){
 		Image cover=scaleRatio(w, h).image;
-		return image(w, h, Optional.ofNullable(bgColor).orElse(Colors.wTransparent)).pileCenter(cover);
+		return image(w, h, bgColor).pileCenter(cover);
 	}
+	
 	/**
 	 * 图片缩放,图片将按原始比例缩放到刚好可以放入宽为w高为h的容器中的大小(输出图片不变形).
 	 * @param w
@@ -567,6 +620,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 通过宽高获取缩放实例
 	 * @param w
@@ -576,6 +630,7 @@ public final class Imgs {
 	private Image scale(int w,int h){
         return image.getScaledInstance(w, h,BufferedImage.SCALE_SMOOTH);
 	}
+	
 	/**
 	 * 裁剪图片的前面部分，裁剪的图片宽高值为原图片宽高值中较小的一个值。
 	 * @return 返回宽高值相同的图片
@@ -583,6 +638,7 @@ public final class Imgs {
 	public Imgs cutFront(){
 		return cutLeftTop(Math.min(image.getWidth(), image.getHeight()));
 	}
+	
 	/**
 	 * 裁剪图片的中间部分，裁剪的图片宽高值为原图片宽高值中较小的一个值。
 	 * @return 返回宽高值相同的图片
@@ -590,6 +646,7 @@ public final class Imgs {
 	public Imgs cutCenter(){
 		return cutCenter(Math.min(image.getWidth(), image.getHeight()));
 	}
+	
 	/**
 	 * 裁剪图片的后面部分，裁剪的图片宽高值为原图片宽高值中较小的一个值。
 	 * @return 返回宽高值相同的图片
@@ -597,6 +654,7 @@ public final class Imgs {
 	public Imgs cutBehind(){
 		return cutRightBottom(Math.min(image.getWidth(), image.getHeight()));
 	}
+	
 	/**
 	 * 从左上角处裁剪出宽高为w的图片
 	 * @param w
@@ -605,6 +663,7 @@ public final class Imgs {
 	public Imgs cutLeftTop(int w){
 		return cutLeftTop(w, w);
 	}
+	
 	/**
 	 * 从左边中间处裁剪出宽高为w的图片
 	 * @param w
@@ -613,6 +672,7 @@ public final class Imgs {
 	public Imgs cutLeft(int w){
 		return cutLeft(w, w);
 	}
+	
 	/**
 	 * 从左下角处裁剪出宽高为w的图片
 	 * @param w
@@ -621,6 +681,7 @@ public final class Imgs {
 	public Imgs cutLeftBottom(int w){
 		return cutLeftBottom(w, w);
 	}
+	
 	/**
 	 * 从右上角处裁剪出宽高为w的图片
 	 * @param w
@@ -629,6 +690,7 @@ public final class Imgs {
 	public Imgs cutRightTop(int w){
 		return cutRightTop(w, w);
 	}
+	
 	/**
 	 * 从右边中间处裁剪出宽高为w的图片
 	 * @param w
@@ -637,6 +699,7 @@ public final class Imgs {
 	public Imgs cutRight(int w){
 		return cutRight(w, w);
 	}
+	
 	/**
 	 * 从右下角处裁剪出宽高为w的图片
 	 * @param w
@@ -645,6 +708,7 @@ public final class Imgs {
 	public Imgs cutRightBottom(int w){
 		return cutRightBottom(w, w);
 	}
+	
 	/**
 	 * 从上边中间处裁剪出宽高为w的图片
 	 * @param w
@@ -653,6 +717,7 @@ public final class Imgs {
 	public Imgs cutTop(int w){
 		return cutTop(w, w);
 	}
+	
 	/**
 	 * 从中间处裁剪出宽高为w的图片
 	 * @param w
@@ -661,6 +726,7 @@ public final class Imgs {
 	public Imgs cutCenter(int w){
 		return cutCenter( w, w);
 	}
+	
 	/**
 	 * 从下边中间处裁剪出宽高为w的图片
 	 * @param w
@@ -669,6 +735,7 @@ public final class Imgs {
 	public Imgs cutBottom(int w){
 		return cutBottom(w, w);
 	}
+	
 	/**
 	 * 从左上角处裁剪出宽为w高为h的图片
 	 * @param w
@@ -678,6 +745,7 @@ public final class Imgs {
 	public Imgs cutLeftTop(int w,int h){
 		return cut(0,0, w, h);
 	}
+	
 	/**
 	 * 从左边中间处裁剪出宽为w高为h的图片
 	 * @param w
@@ -687,6 +755,7 @@ public final class Imgs {
 	public Imgs cutLeft(int w,int h){
 		return cut(0,(image.getHeight()-h)/2, w, h);
 	}
+	
 	/**
 	 * 从左下角处裁剪出宽为w高为h的图片
 	 * @param w
@@ -696,6 +765,7 @@ public final class Imgs {
 	public Imgs cutLeftBottom(int w,int h){
 		return cut(0,image.getHeight()-h, w, h);
 	}
+	
 	/**
 	 * 从右上角处裁剪出宽为w高为h的图片
 	 * @param w
@@ -705,6 +775,7 @@ public final class Imgs {
 	public Imgs cutRightTop(int w,int h){
 		return cut(image.getWidth()-w,0, w, h);
 	}
+	
 	/**
 	 * 从右边中间处裁剪出宽为w高为h的图片
 	 * @param w
@@ -714,6 +785,7 @@ public final class Imgs {
 	public Imgs cutRight(int w,int h){
 		return cut(image.getWidth()-w,(image.getHeight()-h)/2, w, h);
 	}
+	
 	/**
 	 * 从右下角处裁剪出宽为w高为h的图片
 	 * @param w
@@ -723,6 +795,7 @@ public final class Imgs {
 	public Imgs cutRightBottom(int w,int h){
 		return cut(image.getWidth()-w,image.getHeight()-h, w, h);
 	}
+	
 	/**
 	 * 从上边中间处裁剪出宽为w高为h的图片
 	 * @param w
@@ -732,6 +805,7 @@ public final class Imgs {
 	public Imgs cutTop(int w,int h){
 		return cut((image.getWidth()-w)/2,0, w, h);
 	}
+	
 	/**
 	 * 从中间处裁剪出宽为w高为h的图片
 	 * @param w
@@ -741,6 +815,7 @@ public final class Imgs {
 	public Imgs cutCenter(int w,int h){
 		return cut((image.getWidth()-w)/2,(image.getHeight()-h)/2, w, h);
 	}
+	
 	/**
 	 * 从下边中间处裁剪出宽为w高为h的图片
 	 * @param w 输出图片的宽
@@ -774,6 +849,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸将变大)，并将图片边框的内角和外角变成圆角
 	 * @param w 边框宽度
@@ -784,6 +860,7 @@ public final class Imgs {
 	public Imgs borderRiseRadius(int w,Color borderColor,int radius){
 		return borderRiseRadius(w, borderColor, radius, radius);
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)，并将图片边框的内角和外角变成圆角
 	 * @param w 边框宽度
@@ -794,6 +871,7 @@ public final class Imgs {
 	public Imgs borderDropRadius(int w,Color borderColor,int radius){
 		return borderDropRadius(w, borderColor, radius, radius);
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸将变大)，并将图片边框的内角和外角变成圆角
 	 * @param w 边框宽度
@@ -805,6 +883,7 @@ public final class Imgs {
 	public Imgs borderRiseRadius(int w,Color borderColor,int inRadius,int outRadius){
 		return radius(inRadius).borderRise(w, borderColor).radius(outRadius);
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)，并将图片边框的内角和外角变成圆角
 	 * @param w 边框宽度
@@ -816,6 +895,7 @@ public final class Imgs {
 	public Imgs borderDropRadius(int w,Color borderColor,int inRadius,int outRadius){
 		return radius(inRadius).borderDrop(w, borderColor).radius(outRadius);
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸将变大)，并将图片边框外角变成圆角
 	 * @param w 边框宽度
@@ -826,6 +906,7 @@ public final class Imgs {
 	public Imgs borderRiseRadiusOut(int w,Color borderColor,int outRadius){
 		return borderRise(w, borderColor).radius(outRadius);
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸将变大)，并将图片边框的内角变成圆角
 	 * @param w 边框宽度
@@ -836,6 +917,7 @@ public final class Imgs {
 	public Imgs borderRiseRadiusIn(int w,Color borderColor,int inRadius){
 		return radius(inRadius).borderRise(w, borderColor);
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)，并将图片边框外角变成圆角
 	 * @param w 边框宽度
@@ -846,6 +928,7 @@ public final class Imgs {
 	public Imgs borderDropRadiusOut(int w,Color borderColor,int outRadius){
 		return borderDrop(w, borderColor).radius(outRadius);
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)，并将图片边框内角变成圆角
 	 * @param w 边框宽度
@@ -856,6 +939,7 @@ public final class Imgs {
 	public Imgs borderDropRadiusIn(int w,Color borderColor,int inRadius){
 		return radius(inRadius).borderDrop(w, borderColor);
 	}
+	
 	/**
 	 * 将图片变成圆形,原图片不变,返回新图片.若原图片宽高不相同,那么将按原图片宽高值中较小的一个值为宽高,从原图片中间部位裁剪出宽高相等的图片,再将裁剪出来的图片变成圆形.
 	 * @return
@@ -867,6 +951,7 @@ public final class Imgs {
 			return cutCenter().radius(image.getWidth(), null);
 		}
 	}
+	
 	/**
 	 * 生成圆角图片，圆角外透明
 	 * @param radius 圆角直径
@@ -875,6 +960,7 @@ public final class Imgs {
 	public Imgs radius(int radius) {
 		return radius(radius, null);
 	}
+	
 	/**
 	 * 生成圆角图片，圆角外borderColor做底色
 	 * @param radius 圆角直径
@@ -882,7 +968,7 @@ public final class Imgs {
 	 * @return
 	 */
 	public Imgs radius(int radius,Color bgColor) {
-		image(image.getWidth(), image.getHeight(), Optional.ofNullable(bgColor).orElse(Colors.wTransparent));
+		image(image.getWidth(), image.getHeight(), bgColor);
 		Graphics2D g=image.createGraphics();
 		g.drawImage(oldImage, 0, 0, null);
 		if(radius>0) {
@@ -896,6 +982,7 @@ public final class Imgs {
 		g.dispose();
 		return this;
 	}
+	
 	/**
 	 * 在图片外围上加边框(图片尺寸将变大)
 	 * @param w 边框宽度
@@ -903,7 +990,7 @@ public final class Imgs {
 	 * @return
 	 */
 	public Imgs borderRise(int w,Color borderColor){
-		return image(image.getWidth()+w*2, image.getHeight()+w*2, Optional.ofNullable(borderColor).orElse(Colors.wTransparent)).pile(oldImage, w, w);
+		return image(image.getWidth()+w*2, image.getHeight()+w*2, borderColor).pile(oldImage, w, w);
 	}
 	/**
 	 * 在图片外围上加边框(图片尺寸不变)
@@ -912,8 +999,21 @@ public final class Imgs {
 	 * @return
 	 */
 	public Imgs borderDrop(int w,Color borderColor){
-		return scaleZoom(image.getWidth()-w*2, image.getHeight()-w*2).image(oldImage.getWidth(), oldImage.getHeight(),Optional.ofNullable(borderColor).orElse(Colors.wTransparent)).pile(oldImage,w, w);
+		return scaleZoom(image.getWidth()-w*2, image.getHeight()-w*2).image(oldImage.getWidth(), oldImage.getHeight(),borderColor).pile(oldImage,w, w);
 	}
+	
+	/**
+	 * 在图片外圈加边框(图片尺寸不变),原图部分内容会被边框覆盖
+	 * @param w
+	 * @param borderColor
+	 * @return
+	 */
+	public Imgs border(int w,Color borderColor){
+		return cutCenter(image.getWidth()-w*2, image.getHeight()-w*2).image(oldImage.getWidth(), oldImage.getHeight(),borderColor).pile(oldImage,w, w);
+	}
+	
+	
+	
 	/**
 	 * 将图片转为黑白色
 	 * @return
@@ -922,6 +1022,7 @@ public final class Imgs {
 		this.image=colorConvertOp.filter(image, null);
 		return this;
 	}
+	
 	/**
 	 * 将图片按y轴水平方向的翻转
 	 * @return
@@ -929,6 +1030,7 @@ public final class Imgs {
 	public Imgs flipY() {
 		return flip(1);
 	}
+	
 	/**
 	 * 将图片按x轴垂直方向的翻转
 	 * @return
@@ -936,6 +1038,7 @@ public final class Imgs {
 	public Imgs flipX() {
 		return flip(0);
 	}
+	
 	/**
 	 * 将图片按x轴翻转，再按y轴翻转(180度翻转)
 	 * @return
@@ -943,6 +1046,7 @@ public final class Imgs {
 	public Imgs flipXY() {
 		return flip(-1);
 	}
+	
 	/**
 	 * 将图片翻转，flipCode在等于0、1、-1时分别代表：垂直翻转、水平翻转、两者都翻转
 	 * @param flipCode
@@ -963,6 +1067,7 @@ public final class Imgs {
 		graphics2d.dispose();
 		return this;
 	}
+	
 	/**
 	 * 获取当前图片的字节密度，密度过低则代表图片不适合压缩。
 	 */
@@ -989,6 +1094,7 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
 	/**
 	 * 对图片按原图片质量的f倍进行压缩，若当前图片质量和传入的f值在推荐范围之内，那么将会对该图片进行压缩，若系统判定该图片不在合适的可压缩范围，则不对图片进行压缩。<br/>
 	 * 图片'质量-压缩质量上限'界定的范围参考 @see {@link #RESTRICTS}
@@ -1041,6 +1147,88 @@ public final class Imgs {
 		return this;
 	}
 	
+	public Imgs rotateDrop(int degree) {
+		image(image.getWidth(), image.getHeight());
+		Graphics2D graphics2d = image.createGraphics();
+		graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		graphics2d.rotate(Math.toRadians(degree), image.getWidth() / 2, image.getHeight() / 2);
+		graphics2d.drawImage(this.oldImage, 0, 0, null);  
+		graphics2d.dispose();
+		return this;
+	}
+	
+	public Imgs rotateRise(int angle) {
+		/*int width = this.image.getWidth();
+		int height = this.image.getHeight();
+		int new_w = 0, new_h = 0;
+		int new_radian = angle;
+		if (angle <= 90) {
+			new_w = (int) (width * Math.cos(Math.toRadians(new_radian))+ height * Math.sin(Math.toRadians(new_radian)));
+			new_h = (int) (height * Math.cos(Math.toRadians(new_radian))+ width * Math.sin(Math.toRadians(new_radian)));
+		} else if (angle <= 180) {
+			new_radian = angle - 90;
+			new_w = (int) (height * Math.cos(Math.toRadians(new_radian))+ width * Math.sin(Math.toRadians(new_radian)));
+			new_h = (int) (width * Math.cos(Math.toRadians(new_radian))+ height * Math.sin(Math.toRadians(new_radian)));
+		} else if (angle <= 270) {
+			new_radian = angle - 180;
+			new_w = (int) (width * Math.cos(Math.toRadians(new_radian))+ height * Math.sin(Math.toRadians(new_radian)));
+			new_h = (int) (height * Math.cos(Math.toRadians(new_radian))+ width * Math.sin(Math.toRadians(new_radian)));
+		} else {
+			new_radian = angle - 270;
+			new_w = (int) (height * Math.cos(Math.toRadians(new_radian))+ width * Math.sin(Math.toRadians(new_radian)));
+			new_h = (int) (width * Math.cos(Math.toRadians(new_radian))+ height * Math.sin(Math.toRadians(new_radian)));
+		}
+		BufferedImage toStore = new BufferedImage(new_w, new_h, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g = toStore.createGraphics();
+		AffineTransform affineTransform = new AffineTransform();
+		affineTransform.rotate(Math.toRadians(angle), width / 2, height / 2);
+		if (angle != 180) {
+			AffineTransform translationTransform = this.findTranslation(affineTransform, this.image, angle);
+			affineTransform.preConcatenate(translationTransform);
+		}
+		g.setColor(Colors.bTransparent);
+		g.fillRect(0, 0, new_w, new_h);
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.drawRenderedImage(this.image, affineTransform);
+		g.dispose();
+		this.image = toStore;*/
+		
+		
+		int width=image.getWidth(),height=image.getHeight();
+		int new_w=0,new_h=0;
+		double radians=Math.toRadians(angle);
+		double cos=Math.cos(radians);
+		double sin=Math.sin(radians);
+		new_w = (int) (Math.abs(width*cos) + Math.abs(height*sin));
+		new_h = (int) (Math.abs(height*cos) + Math.abs(width*sin));
+		image(new_w, new_h);
+        Graphics2D graphics2d = image.createGraphics();
+        graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        AffineTransform affineTransform = new AffineTransform();
+		affineTransform.rotate(radians, new_w / 2, new_h / 2);
+		AffineTransform rAffineTransform=this.findTranslation(affineTransform, this.oldImage, angle);
+		affineTransform.preConcatenate(rAffineTransform);
+		graphics2d.drawRenderedImage(this.oldImage, affineTransform);
+        graphics2d.dispose();
+        return this;
+	}
+	
+	/**
+	 * 图片按degree度旋转,旋转后图片内容超出的部分可能会被裁减，旋转后图片尺寸不变
+	 * @param degree 大于0图片按顺时针旋转,小于0图片按逆时针旋转
+	 * @return
+	 */
+	public Imgs rotate(int degree) {
+		image(image.getWidth(), image.getHeight());
+        Graphics2D graphics2d = image.createGraphics();
+        graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics2d.rotate(Math.toRadians(degree), image.getWidth() / 2, image.getHeight() / 2);
+        graphics2d.drawImage(this.oldImage, 0, 0, null);  
+        graphics2d.dispose();
+        return this;
+	}
+	
+	
 	/**
 	 * 图片宽
 	 * @return
@@ -1048,6 +1236,7 @@ public final class Imgs {
 	public int width() {
 		return image.getWidth();
 	}
+	
 	/**
 	 * 图片高
 	 * @return
@@ -1055,6 +1244,7 @@ public final class Imgs {
 	public int height() {
 		return image.getHeight();
 	}
+	
 	/**
 	 * 图片分辨率
 	 * @return
@@ -1085,4 +1275,75 @@ public final class Imgs {
 		}
 		return dimension;
 	}
+	
+	
+	
+	
+	
+	
+	private AffineTransform findTranslation(AffineTransform at, BufferedImage bi, int angle) {
+		Point2D p2din, p2dout;
+		double ytrans = 0.0, xtrans = 0.0;
+		if (angle <= 90) {
+			p2din = new Point2D.Double(0.0, 0.0);
+			p2dout = at.transform(p2din, null);
+			ytrans = p2dout.getY();
+			p2din = new Point2D.Double(0, bi.getHeight());
+			p2dout = at.transform(p2din, null);
+			xtrans = p2dout.getX();
+		}
+		/*
+		 * else if(angle<=135){ p2din = new Point2D.Double(0.0, bi.getHeight()); p2dout
+		 * = at.transform(p2din, null); ytrans = p2dout.getY();
+		 * 
+		 * p2din = new Point2D.Double(bi.getWidth(),bi.getHeight()); p2dout =
+		 * at.transform(p2din, null); xtrans = p2dout.getX();
+		 * 
+		 * }
+		 */
+		else if (angle <= 180) {
+			p2din = new Point2D.Double(0.0, bi.getHeight());
+			p2dout = at.transform(p2din, null);
+			ytrans = p2dout.getY();
+
+			p2din = new Point2D.Double(bi.getWidth(), bi.getHeight());
+			p2dout = at.transform(p2din, null);
+			xtrans = p2dout.getX();
+
+		}
+		/*
+		 * else if(angle<=225){ p2din = new Point2D.Double(bi.getWidth(),
+		 * bi.getHeight()); p2dout = at.transform(p2din, null); ytrans = p2dout.getY();
+		 * 
+		 * p2din = new Point2D.Double(bi.getWidth(),0.0); p2dout = at.transform(p2din,
+		 * null); xtrans = p2dout.getX();
+		 * 
+		 * }
+		 */
+		else if (angle <= 270) {
+			p2din = new Point2D.Double(bi.getWidth(), bi.getHeight());
+			p2dout = at.transform(p2din, null);
+			ytrans = p2dout.getY();
+
+			p2din = new Point2D.Double(bi.getWidth(), 0.0);
+			p2dout = at.transform(p2din, null);
+			xtrans = p2dout.getX();
+
+		} else {
+			p2din = new Point2D.Double(bi.getWidth(), 0.0);
+			p2dout = at.transform(p2din, null);
+			ytrans = p2dout.getY();
+
+			p2din = new Point2D.Double(0.0, 0.0);
+			p2dout = at.transform(p2din, null);
+			xtrans = p2dout.getX();
+
+		}
+		AffineTransform tat = new AffineTransform();
+		tat.translate(-xtrans, -ytrans);
+		System.out.println(xtrans);
+		System.out.println(ytrans);
+		return tat;
+	}
+	
 }

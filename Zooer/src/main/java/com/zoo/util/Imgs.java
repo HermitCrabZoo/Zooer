@@ -171,6 +171,16 @@ public final class Imgs {
 	}
 	
 	/**
+	 * 做某些额外的操作,参数freedom的doIt方法的第一个参数为当前绑定的BufferedImage对象,第二个参数为上一个(旧的)与当前绑定的BufferedImage对象,第三个参数为当前的Imgs对象
+	 * @param freedom
+	 * @return
+	 */
+	public Imgs free(Eacher<BufferedImage, BufferedImage, Imgs> freedom) {
+		freedom.doIt(image, oldImage, this);
+		return this;
+	}
+	
+	/**
 	 * 根据给定大小生成黑色透明的图片
 	 * @param width
 	 * @param height
@@ -242,9 +252,7 @@ public final class Imgs {
 	 * @return
 	 */
 	public Imgs image(int x,int y,int width,int height,Color color){
-		this.oldImage=image;
-		image =newImg(x, y, width, height, color);
-		return this;
+		return update(newImg(x, y, width, height, color));
 	}
 	
 	/**
@@ -276,6 +284,11 @@ public final class Imgs {
 		return ni;
 	}
 	
+	/**
+	 * 将当前的图像关联到传入参数image,{@link #oldImage}则关联到原image对象
+	 * @param image
+	 * @return
+	 */
 	private Imgs update(BufferedImage image) {
 		this.oldImage=this.image;
 		this.image=image;
@@ -573,7 +586,7 @@ public final class Imgs {
 	public Imgs scaleZoom(int w, int h){
 		if (w>0&&h>0) {
 			Image cover=scale(w, h);
-			image(w, h, Colors.wTransparent).pileLeftTop(cover);
+			image(w, h).pileLeftTop(cover);
 		}
         return this;
     }
@@ -585,7 +598,7 @@ public final class Imgs {
 	 * @return
 	 */
 	public Imgs scaleRatioBox(int w, int h){
-		return scaleRatioBox(w, h, Colors.wTransparent);
+		return scaleRatioBox(w, h, Colors.bTransparent);
 	}
 	
 	/**
@@ -616,7 +629,7 @@ public final class Imgs {
 		}
 		if (w>0&&h>0) {
 			Image cover=scale(w, h);
-			image(w, h, Colors.wTransparent).pileLeftTop(cover);
+			image(w, h).pileLeftTop(cover);
 		}
 		return this;
 	}
@@ -1012,7 +1025,27 @@ public final class Imgs {
 		return cutCenter(image.getWidth()-w*2, image.getHeight()-w*2).image(oldImage.getWidth(), oldImage.getHeight(),borderColor).pile(oldImage,w, w);
 	}
 	
+	/**
+	 * 为图片添加背景颜色
+	 * @param bgColor
+	 * @return
+	 */
+	public Imgs bg(Color bgColor) {
+		if (bgColor!=null) {
+			image(image.getWidth(), image.getHeight(), bgColor).pile(oldImage, 0, 0);
+		}
+		return this;
+	}
 	
+	/**
+	 * 为图片添加给定色系的背景颜色
+	 * @param bgColor
+	 * @return
+	 * @see {@link #bg(Color)}
+	 */
+	public Imgs bg(Chroma bgColorChroma) {
+		return bg(Colors.randColor(bgColorChroma));
+	}
 	
 	/**
 	 * 将图片转为黑白色
@@ -1073,7 +1106,7 @@ public final class Imgs {
 	 */
 	private double density() {
 		try(ByteArrayOutputStream baos=new ByteArrayOutputStream()) {
-			ImageIO.write(this.image, Images.png, baos);
+			ImageIO.write(this.image, this.image.getType()==BufferedImage.TYPE_4BYTE_ABGR?Images.png:Images.jpeg, baos);
 			return baos.toByteArray().length*1.0/(this.image.getWidth()*this.image.getHeight());
 		} catch (IOException e) {
 			return 0.0;
@@ -1118,13 +1151,12 @@ public final class Imgs {
 	public Imgs quality(double f) {
 		if (f >= 0.0 && f <= 1.0) {
 			// 得到指定Format图片的writer
-			ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+			ImageWriter writer = ImageIO.getImageWritersByFormatName(Images.jpeg).next();
 			// 得到指定writer的输出参数设置(ImageWriteParam )
 			ImageWriteParam iwp = writer.getDefaultWriteParam();
 			iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT); // 设置可否压缩
 			iwp.setCompressionQuality((float)f); // 设置压缩质量参数
 			iwp.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
-//			ColorModel colorModel = ColorModel.getRGBdefault();
 			ColorModel colorModel = this.image.getColorModel();
 			// 指定压缩时使用的色彩模式
 			iwp.setDestinationType(new ImageTypeSpecifier(colorModel, colorModel.createCompatibleSampleModel(16, 16)));
@@ -1137,8 +1169,7 @@ public final class Imgs {
 				//将图片压缩到输出流里
 				writer.write(null, iIamge, iwp);
 				ByteArrayInputStream bais=new ByteArrayInputStream(baos.toByteArray());
-				this.oldImage=this.image;
-				this.image=ImageIO.read(bais);
+				update(ImageIO.read(bais));
 				bais.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1146,57 +1177,25 @@ public final class Imgs {
 		}
 		return this;
 	}
-	
+	/**
+	 * 图片按degree度旋转,旋转后图片尺寸不变。
+	 * @param degree 旋转的角度，大于0图片按顺时针旋转,小于0图片按逆时针旋转
+	 * @return
+	 */
 	public Imgs rotateDrop(int degree) {
-		image(image.getWidth(), image.getHeight());
-		Graphics2D graphics2d = image.createGraphics();
-		graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		graphics2d.rotate(Math.toRadians(degree), image.getWidth() / 2, image.getHeight() / 2);
-		graphics2d.drawImage(this.oldImage, 0, 0, null);  
-		graphics2d.dispose();
-		return this;
+		int width=image.getWidth(),height=image.getHeight();
+		return rotateRise(degree).scaleRatioBox(width, height);
 	}
 	
-	public Imgs rotateRise(int angle) {
-		/*int width = this.image.getWidth();
-		int height = this.image.getHeight();
-		int new_w = 0, new_h = 0;
-		int new_radian = angle;
-		if (angle <= 90) {
-			new_w = (int) (width * Math.cos(Math.toRadians(new_radian))+ height * Math.sin(Math.toRadians(new_radian)));
-			new_h = (int) (height * Math.cos(Math.toRadians(new_radian))+ width * Math.sin(Math.toRadians(new_radian)));
-		} else if (angle <= 180) {
-			new_radian = angle - 90;
-			new_w = (int) (height * Math.cos(Math.toRadians(new_radian))+ width * Math.sin(Math.toRadians(new_radian)));
-			new_h = (int) (width * Math.cos(Math.toRadians(new_radian))+ height * Math.sin(Math.toRadians(new_radian)));
-		} else if (angle <= 270) {
-			new_radian = angle - 180;
-			new_w = (int) (width * Math.cos(Math.toRadians(new_radian))+ height * Math.sin(Math.toRadians(new_radian)));
-			new_h = (int) (height * Math.cos(Math.toRadians(new_radian))+ width * Math.sin(Math.toRadians(new_radian)));
-		} else {
-			new_radian = angle - 270;
-			new_w = (int) (height * Math.cos(Math.toRadians(new_radian))+ width * Math.sin(Math.toRadians(new_radian)));
-			new_h = (int) (width * Math.cos(Math.toRadians(new_radian))+ height * Math.sin(Math.toRadians(new_radian)));
-		}
-		BufferedImage toStore = new BufferedImage(new_w, new_h, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics2D g = toStore.createGraphics();
-		AffineTransform affineTransform = new AffineTransform();
-		affineTransform.rotate(Math.toRadians(angle), width / 2, height / 2);
-		if (angle != 180) {
-			AffineTransform translationTransform = this.findTranslation(affineTransform, this.image, angle);
-			affineTransform.preConcatenate(translationTransform);
-		}
-		g.setColor(Colors.bTransparent);
-		g.fillRect(0, 0, new_w, new_h);
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.drawRenderedImage(this.image, affineTransform);
-		g.dispose();
-		this.image = toStore;*/
-		
-		
+	/**
+	 * 图片按degree度旋转,旋转后图片尺寸刚好容下原来图片在旋转后所需占用的矩形空间，既旋转后的图片尺寸可能发生改变。
+	 * @param degree 旋转的角度，大于0图片按顺时针旋转,小于0图片按逆时针旋转
+	 * @return
+	 */
+	public Imgs rotateRise(int degree) {
 		int width=image.getWidth(),height=image.getHeight();
 		int new_w=0,new_h=0;
-		double radians=Math.toRadians(angle);
+		double radians=Math.toRadians(degree);
 		double cos=Math.cos(radians);
 		double sin=Math.sin(radians);
 		new_w = (int) (Math.abs(width*cos) + Math.abs(height*sin));
@@ -1206,7 +1205,7 @@ public final class Imgs {
         graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         AffineTransform affineTransform = new AffineTransform();
 		affineTransform.rotate(radians, new_w / 2, new_h / 2);
-		AffineTransform rAffineTransform=this.findTranslation(affineTransform, this.oldImage, angle);
+		AffineTransform rAffineTransform=this.findTranslation(affineTransform, this.oldImage, degree);
 		affineTransform.preConcatenate(rAffineTransform);
 		graphics2d.drawRenderedImage(this.oldImage, affineTransform);
         graphics2d.dispose();
@@ -1215,14 +1214,15 @@ public final class Imgs {
 	
 	/**
 	 * 图片按degree度旋转,旋转后图片内容超出的部分可能会被裁减，旋转后图片尺寸不变
-	 * @param degree 大于0图片按顺时针旋转,小于0图片按逆时针旋转
+	 * @param degree 旋转的角度，大于0图片按顺时针旋转,小于0图片按逆时针旋转
 	 * @return
 	 */
 	public Imgs rotate(int degree) {
-		image(image.getWidth(), image.getHeight());
+		int width=image.getWidth(),height=image.getHeight();
+		image(width, height);
         Graphics2D graphics2d = image.createGraphics();
         graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        graphics2d.rotate(Math.toRadians(degree), image.getWidth() / 2, image.getHeight() / 2);
+        graphics2d.rotate(Math.toRadians(degree), width / 2, height / 2);
         graphics2d.drawImage(this.oldImage, 0, 0, null);  
         graphics2d.dispose();
         return this;
@@ -1292,15 +1292,6 @@ public final class Imgs {
 			p2dout = at.transform(p2din, null);
 			xtrans = p2dout.getX();
 		}
-		/*
-		 * else if(angle<=135){ p2din = new Point2D.Double(0.0, bi.getHeight()); p2dout
-		 * = at.transform(p2din, null); ytrans = p2dout.getY();
-		 * 
-		 * p2din = new Point2D.Double(bi.getWidth(),bi.getHeight()); p2dout =
-		 * at.transform(p2din, null); xtrans = p2dout.getX();
-		 * 
-		 * }
-		 */
 		else if (angle <= 180) {
 			p2din = new Point2D.Double(0.0, bi.getHeight());
 			p2dout = at.transform(p2din, null);
@@ -1311,15 +1302,6 @@ public final class Imgs {
 			xtrans = p2dout.getX();
 
 		}
-		/*
-		 * else if(angle<=225){ p2din = new Point2D.Double(bi.getWidth(),
-		 * bi.getHeight()); p2dout = at.transform(p2din, null); ytrans = p2dout.getY();
-		 * 
-		 * p2din = new Point2D.Double(bi.getWidth(),0.0); p2dout = at.transform(p2din,
-		 * null); xtrans = p2dout.getX();
-		 * 
-		 * }
-		 */
 		else if (angle <= 270) {
 			p2din = new Point2D.Double(bi.getWidth(), bi.getHeight());
 			p2dout = at.transform(p2din, null);
@@ -1341,8 +1323,6 @@ public final class Imgs {
 		}
 		AffineTransform tat = new AffineTransform();
 		tat.translate(-xtrans, -ytrans);
-		System.out.println(xtrans);
-		System.out.println(ytrans);
 		return tat;
 	}
 	

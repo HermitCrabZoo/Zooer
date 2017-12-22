@@ -34,7 +34,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-
 import com.zoo.cons.Images;
 
 import sun.font.FontDesignMetrics;
@@ -48,6 +47,8 @@ public final class Imgs {
 	private BufferedImage image;
 	
 	private BufferedImage oldImage;
+	
+	private boolean written=false;
 	
 	/**
 	 * 灰度图像转换工具
@@ -168,6 +169,22 @@ public final class Imgs {
      */
 	public BufferedImage orElseGet(Supplier<? extends BufferedImage> other) {
 		return image!=null?image:other.get();
+	}
+	
+	/**
+	 * 判断当前关联的图片对象是否为null
+	 * @return
+	 */
+	public boolean empty() {
+		return image==null;
+	}
+	
+	/**
+	 * 获取最近一次将当前对象关联的图片写到某些介质中是否成功的标志
+	 * @return
+	 */
+	public boolean written() {
+		return written;
 	}
 	
 	/**
@@ -1025,6 +1042,24 @@ public final class Imgs {
 		return cutCenter(image.getWidth()-w*2, image.getHeight()-w*2).image(oldImage.getWidth(), oldImage.getHeight(),borderColor).pile(oldImage,w, w);
 	}
 	
+	
+	public Imgs shadow(Color color, int w, double alpha) {
+		BufferedImage bufImg = new BufferedImage(this.image.getWidth() + w, this.image.getHeight() + w,BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g = bufImg.createGraphics();
+		// 画阴影部分
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.XOR, (float) alpha));
+		g.setColor(Color.black);
+		g.fillRect(w, w, this.image.getWidth(), this.image.getHeight());
+		g.dispose();
+		// 画源图像
+		g = bufImg.createGraphics();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+		g.drawImage(this.image, 0, 0, null);
+		g.dispose();
+		update(bufImg);
+		return this;
+	}
+	
 	/**
 	 * 为图片添加背景颜色
 	 * @param bgColor
@@ -1228,6 +1263,19 @@ public final class Imgs {
         return this;
 	}
 	
+	/**
+	 * 将图片透明化
+	 * @param alpha the constant alpha to be multiplied with the alpha of the source. alpha must be a floating point number in the inclusive range [0.0, 1.0].
+	 * @return
+	 */
+	public Imgs transparency(double alpha) {
+		image(this.image.getWidth(), this.image.getHeight());
+		Graphics2D g=this.image.createGraphics();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)alpha));
+		g.drawImage(this.oldImage, 0, 0, null);
+		g.dispose();
+		return this;
+	}
 	
 	/**
 	 * 图片宽
@@ -1275,10 +1323,6 @@ public final class Imgs {
 		}
 		return dimension;
 	}
-	
-	
-	
-	
 	
 	
 	private AffineTransform findTranslation(AffineTransform at, BufferedImage bi, int angle) {

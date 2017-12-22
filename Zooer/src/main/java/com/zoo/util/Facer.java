@@ -405,6 +405,7 @@ public final class Facer {
     	try {
     		String pathFile1 = face1;
     		String pathFile2 = face2;
+    		
     		IplImage image1 = opencv_imgcodecs.cvLoadImage(pathFile1, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
     		IplImage image2 = opencv_imgcodecs.cvLoadImage(pathFile2, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
     		if (null == image1 || null == image2) {
@@ -415,7 +416,6 @@ public final class Facer {
     		int hist_size[] = {l_bins};
     		float v_ranges[] = {0, 255};
     		float ranges[][] = {v_ranges};
-    		
     		IplImage imageArr1[] = {image1};
     		IplImage imageArr2[] = {image2};
     		opencv_core.CvHistogram Histogram1 = opencv_core.CvHistogram.create(1, hist_size, opencv_core.CV_HIST_ARRAY, ranges, 1);

@@ -8,6 +8,7 @@ import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 import org.bytedeco.javacpp.opencv_imgproc;
+import org.bytedeco.javacv.Java2DFrameUtils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -26,8 +27,10 @@ public final class Facer {
 	//左眼
 	private static CascadeClassifier eyeLeftDetector=null;
 	//右眼
+	@SuppressWarnings("unused")
 	private static CascadeClassifier eyeRightDetector=null;
 	
+	@SuppressWarnings("unused")
 	private static CascadeClassifier eyeDetector=null;
 	
 	private static final Size MIN_EYE=new Size(20, 20);
@@ -362,76 +365,66 @@ public final class Facer {
 		return ni;
 	}
 	
+	/**
+	 * 比较两个图片的相似度,比较失败则返回-1
+	 * @param feature1
+	 * @param feature2
+	 * @return 相似度范围[0,100]
+	 */
+	public static double compare(BufferedImage feature1,BufferedImage feature2) {
+		return compare(Java2DFrameUtils.toIplImage(feature1), Java2DFrameUtils.toIplImage(feature2));
+	}
 	
 	/**
-     * 特征对比
-     * @param feature1 人脸特征
-     * @param feature2 人脸特征
-     * @return 相似度
+     * 特征相似度的对比,比较失败则返回-1
+     * @param feature1 特征1
+     * @param feature2 特征2
+     * @return 相似度范围[0,100]
      */
     public static double compare(String feature1, String feature2) {
-        try {
-            String pathFile1 = feature1;
-            String pathFile2 = feature2;
-            //灰度图
-            IplImage image1 = opencv_imgcodecs.cvLoadImage(pathFile1, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-            IplImage image2 = opencv_imgcodecs.cvLoadImage(pathFile2, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-            
-            int l_bins = 256;
-            int hist_size[] = {l_bins};
-            float v_ranges[] = {0, 255};
-            float ranges[][] = {v_ranges};
-
-            IplImage imageArr1[] = {image1};
-            IplImage imageArr2[] = {image2};
-            opencv_core.CvHistogram Histogram1 = opencv_core.CvHistogram.create(1, hist_size, opencv_core.CV_HIST_ARRAY, ranges, 1);
-            opencv_core.CvHistogram Histogram2 = opencv_core.CvHistogram.create(1, hist_size, opencv_core.CV_HIST_ARRAY, ranges, 1);
-            opencv_imgproc.cvCalcHist(imageArr1, Histogram1, 0, null);
-            opencv_imgproc.cvCalcHist(imageArr2, Histogram2, 0, null);
-            opencv_imgproc.cvNormalizeHist(Histogram1, 100.0);
-            opencv_imgproc.cvNormalizeHist(Histogram2, 100.0);
-            double c1 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_CORREL) * 100;
-            double c2 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_INTERSECT);
-            System.out.println(c1);
-            System.out.println(c2);
-            return (c1 + c2) / 2;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-    
-    public static double compare1(String face1, String face2) {
-    	try {
-    		String pathFile1 = face1;
-    		String pathFile2 = face2;
-    		
-    		IplImage image1 = opencv_imgcodecs.cvLoadImage(pathFile1, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-    		IplImage image2 = opencv_imgcodecs.cvLoadImage(pathFile2, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-    		if (null == image1 || null == image2) {
-    			return -1;
-    		}
-    		
-    		int l_bins = 256;
-    		int hist_size[] = {l_bins};
-    		float v_ranges[] = {0, 255};
-    		float ranges[][] = {v_ranges};
-    		IplImage imageArr1[] = {image1};
-    		IplImage imageArr2[] = {image2};
-    		opencv_core.CvHistogram Histogram1 = opencv_core.CvHistogram.create(1, hist_size, opencv_core.CV_HIST_ARRAY, ranges, 1);
-    		opencv_core.CvHistogram Histogram2 = opencv_core.CvHistogram.create(1, hist_size, opencv_core.CV_HIST_ARRAY, ranges, 1);
-    		opencv_imgproc.cvCalcHist(imageArr1, Histogram1, 0, null);
-    		opencv_imgproc.cvCalcHist(imageArr2, Histogram2, 0, null);
-    		opencv_imgproc.cvNormalizeHist(Histogram1, 100.0);
-    		opencv_imgproc.cvNormalizeHist(Histogram2, 100.0);
-    		// 参考：http://blog.csdn.net/nicebooks/article/details/8175002
-    		double c1 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_CORREL) * 100;
-    		double c2 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_INTERSECT);
-    		return (c1 + c2) / 2;
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		return -1;
-    	}
+    	//灰度图
+    	IplImage image1 = opencv_imgcodecs.cvLoadImage(feature1, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+    	IplImage image2 = opencv_imgcodecs.cvLoadImage(feature2, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+        return compare(image1, image2);
     }
 	
+    /**
+     * 比较两个图片的相似度,比较失败则返回-1
+     * @param image1
+     * @param image2
+     * @return 相似度范围[0,100]
+     */
+    public static double compare(IplImage image1,IplImage image2) {
+    	if (image1!=null || image2!=null) {
+    		try {
+    			int l_bins = 256;
+    			int hist_size[] = {l_bins};
+    			float v_ranges[] = {0, 255};
+    			float ranges[][] = {v_ranges};
+    			
+    			IplImage imageArr1[] = {image1};
+    			IplImage imageArr2[] = {image2};
+    			
+    			opencv_core.CvHistogram Histogram1 = opencv_core.CvHistogram.create(1, hist_size, opencv_core.CV_HIST_ARRAY, ranges, 1);
+    			opencv_core.CvHistogram Histogram2 = opencv_core.CvHistogram.create(1, hist_size, opencv_core.CV_HIST_ARRAY, ranges, 1);
+    			
+    			opencv_imgproc.cvCalcHist(imageArr1, Histogram1, 0, null);
+    			opencv_imgproc.cvCalcHist(imageArr2, Histogram2, 0, null);
+    			
+    			opencv_imgproc.cvNormalizeHist(Histogram1, 100.0);
+    			opencv_imgproc.cvNormalizeHist(Histogram2, 100.0);
+    			
+    			double c1 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_CORREL) * 100;
+    			double c2 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_INTERSECT);
+    			
+    			System.out.println(c1);
+    			System.out.println(c2);
+    			
+    			return c1 * 0.4 + c2 * 0.6;
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	}
+		return -1;
+    }
 }

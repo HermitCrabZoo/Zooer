@@ -88,7 +88,12 @@ public final class Videor {
 		return frame;
 	}
 	
-	public static void transToMp4(File file,File target) {
+	/**
+	 * 转换到MP4的封装格式,视音频编码分别为h264、aac
+	 * @param file
+	 * @param target
+	 */
+	public static void toMP4(File file,File target) {
 		try {
 			FFmpegFrameGrabber frameGrabber = FFmpegFrameGrabber.createDefault(file);
 			Frame captured_frame = null;

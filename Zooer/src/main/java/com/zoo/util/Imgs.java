@@ -21,6 +21,9 @@ import java.awt.image.ColorModel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Optional;
@@ -127,6 +130,62 @@ public final class Imgs {
 	}
 	
 	/**
+	 * 从path中读取图片构造一个Imgs对象
+	 * @param path
+	 * @return
+	 */
+	public static Imgs of(Path path) {
+		BufferedImage image=null;
+		try {
+			image=ImageIO.read(path.toFile());
+		} catch (Exception e) {}
+		assertNull(image);
+		return ofNull().set(image);
+	}
+	
+	/**
+	 * 从url中读取图片构造一个Imgs对象
+	 * @param url
+	 * @return
+	 */
+	public static Imgs of(URL url) {
+		BufferedImage image=null;
+		try {
+			image=ImageIO.read(url);
+		} catch (Exception e) {}
+		assertNull(image);
+		return ofNull().set(image);
+	}
+	
+	/**
+	 * 从inputStream中读取图片构造一个Imgs对象
+	 * @param inputStream
+	 * @return
+	 */
+	public static Imgs of(InputStream inputStream) {
+		BufferedImage image=null;
+		try {
+			image=ImageIO.read(inputStream);
+		} catch (Exception e) {}
+		assertNull(image);
+		return ofNull().set(image);
+	}
+	
+	/**
+	 * 从imageInputStream中读取图片构造一个Imgs对象
+	 * @param imageInputStream
+	 * @return
+	 */
+	public static Imgs of(ImageInputStream imageInputStream) {
+		BufferedImage image=null;
+		try {
+			image=ImageIO.read(imageInputStream);
+		} catch (Exception e) {}
+		assertNull(image);
+		return ofNull().set(image);
+	}
+	
+	/**
 	 * 用传入的BufferedImage的拷贝来绑定当前的对象，后续操作不会改变传入的BufferedImage对象
 	 * @param image
 	 * @throws NullPointerException 如果image参数为null，则抛出此异常
@@ -137,6 +196,52 @@ public final class Imgs {
 		this.image=copy(image);
 		return this;
 	}
+	
+	/**
+	 * 将当前关联的图片输出到path中
+	 * @param formatName
+	 * @param path
+	 * @return
+	 */
+	public Imgs write(String formatName, Path path) {
+		try {
+			written=ImageIO.write(image, formatName, path.toFile());
+		} catch (Exception e) {
+			written=false;
+		}
+		return this;
+	}
+	
+	/**
+	 * 将当前关联的图片输出到outputStream中
+	 * @param outputStream
+	 * @param path
+	 * @return
+	 */
+	public Imgs write(String formatName, OutputStream outputStream) {
+		try {
+			written=ImageIO.write(image, formatName, outputStream);
+		} catch (Exception e) {
+			written=false;
+		}
+		return this;
+	}
+	
+	/**
+	 * 将当前关联的图片输出到imageOutputStream中
+	 * @param imageOutputStream
+	 * @param path
+	 * @return
+	 */
+	public Imgs write(String formatName, ImageOutputStream imageOutputStream) {
+		try {
+			written=ImageIO.write(image, formatName, imageOutputStream);
+		} catch (Exception e) {
+			written=false;
+		}
+		return this;
+	}
+	
 	
 	/**
 	 * 返回当前对象关联的BufferedImage实例
@@ -1042,7 +1147,13 @@ public final class Imgs {
 		return cutCenter(image.getWidth()-w*2, image.getHeight()-w*2).image(oldImage.getWidth(), oldImage.getHeight(),borderColor).pile(oldImage,w, w);
 	}
 	
-	
+	/**
+	 * 图片加阴影(未完成)
+	 * @param color
+	 * @param w
+	 * @param alpha
+	 * @return
+	 */
 	public Imgs shadow(Color color, int w, double alpha) {
 		BufferedImage bufImg = new BufferedImage(this.image.getWidth() + w, this.image.getHeight() + w,BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = bufImg.createGraphics();

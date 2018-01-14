@@ -139,7 +139,6 @@ public final class Imgs {
 		try {
 			image=ImageIO.read(path.toFile());
 		} catch (Exception e) {}
-		assertNull(image);
 		return ofNull().set(image);
 	}
 	
@@ -153,7 +152,6 @@ public final class Imgs {
 		try {
 			image=ImageIO.read(url);
 		} catch (Exception e) {}
-		assertNull(image);
 		return ofNull().set(image);
 	}
 	
@@ -167,7 +165,6 @@ public final class Imgs {
 		try {
 			image=ImageIO.read(inputStream);
 		} catch (Exception e) {}
-		assertNull(image);
 		return ofNull().set(image);
 	}
 	
@@ -181,7 +178,6 @@ public final class Imgs {
 		try {
 			image=ImageIO.read(imageInputStream);
 		} catch (Exception e) {}
-		assertNull(image);
 		return ofNull().set(image);
 	}
 	
@@ -290,6 +286,17 @@ public final class Imgs {
 	 */
 	public boolean written() {
 		return written;
+	}
+	
+	/**
+	 * 释放当前关联的图片对象
+	 * @return
+	 */
+	public Imgs release() {
+		image=null;
+		oldImage=null;
+		written=false;
+		return this;
 	}
 	
 	/**

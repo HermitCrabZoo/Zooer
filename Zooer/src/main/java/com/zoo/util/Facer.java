@@ -417,10 +417,7 @@ public final class Facer {
     			double c1 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_CORREL) * 100;
     			double c2 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_INTERSECT);
     			
-    			System.out.println(c1);
-    			System.out.println(c2);
-    			
-    			return c1 * 0.4 + c2 * 0.6;
+    			return c1 * 0.3 + c2 * 0.7;
     		} catch (Exception e) {
     			e.printStackTrace();
     		}

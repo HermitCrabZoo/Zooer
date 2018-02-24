@@ -4,7 +4,7 @@ package com.zoo.util;
  * @author ZOO
  *
  */
-public final class HTTP2 {
-	private HTTP2(){}
+public final class Http2 {
+	private Http2(){}
 	
 }

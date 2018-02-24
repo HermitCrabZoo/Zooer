@@ -19,7 +19,7 @@ public final class CopyResult {
 	private int size=0;
 	private int failed=0;
 	private Map<Path, Exception> pex=new HashMap<Path, Exception>();
-	private int status=-1;
+	private int status=UN_COPIED;
 	
 	/**
 	 * 添加输入和输出的文件或目录，两者都不能为空，不然无法添加成功。

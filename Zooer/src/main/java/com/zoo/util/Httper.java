@@ -76,9 +76,7 @@ public final class Httper {
      * @return 响应结果
      */
     public static String get(String url,Map<String, Object> param,String charset) {
-    	if (url!=null && param!=null) {
-			url+="?"+param(param, charset);
-		}
+    	url+=(Strs.endsWith(url, "?")?"":"?")+param(param, charset);
         String result = "";
         BufferedReader in = null;
         try {

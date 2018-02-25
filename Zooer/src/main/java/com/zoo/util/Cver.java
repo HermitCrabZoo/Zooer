@@ -115,6 +115,42 @@ public class Cver {
 	}
 	
 	/**
+	 * 按x轴垂直翻转图片
+	 * @return
+	 */
+	public Cver flipX() {
+		return flip(0);
+	}
+	
+	/**
+	 * 按y轴水平翻转图片
+	 * @return
+	 */
+	public Cver flipY() {
+		return flip(1);
+	}
+	
+	/**
+	 * x、y轴分别翻转图片(180度旋转)
+	 * @return
+	 */
+	public Cver flipXY() {
+		return flip(-1);
+	}
+	
+	/**
+	 * 图片翻转
+	 * @param flipCode 为0、1、-1分别代表垂直翻转(x轴)、水平翻转(y轴)、垂直水平都翻转
+	 * @return
+	 */
+	private Cver flip(int flipCode) {
+		Mat dst=new Mat(mat.size(), mat.type());
+		Core.flip(mat, dst, flipCode);
+		mat=dst;
+		return this;
+	}
+	
+	/**
 	 * 转成灰度图
 	 * @return
 	 */

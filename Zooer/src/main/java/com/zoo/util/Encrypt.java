@@ -1,15 +1,77 @@
 package com.zoo.util;
 
+import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 
 public class Encrypt {
 
 	private static char hexDigits[]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};    
+	
+	private static Encoder base64Encoder=Base64.getEncoder();
+	private static Decoder base64Decoder=Base64.getDecoder();
+	
+	/**
+	 * 对byte数组进行base64编码
+	 * @param bytes
+	 * @return 编码后的字符串
+	 */
+	public static String base64(byte[] bytes) {
+		return bytes==null?Strs.empty():base64Encoder.encodeToString(bytes);
+	}
+	
+	/**
+	 * 对文件进行base64编码
+	 * @param file
+	 * @return 编码后的byte数组
+	 */
+	public static byte[] base64(Path file) {
+		try {
+			byte[] bytes = Files.readAllBytes(file);
+			return base64Encoder.encode(bytes);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Typer.bytes();
+	}
+	
+	/**
+	 * 对base64字符串进行解码
+	 * @param base64Str
+	 * @return 解码后的byte数组
+	 */
+	public static byte[] unbase64(String base64Str) {
+		try {
+			return base64Decoder.decode(base64Str);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Typer.bytes();
+	}
+	
+	/**
+	 * 将base64编码的byte数组解码到文件输出
+	 * @param bytes
+	 * @param file
+	 * @return 解码后的byte数组
+	 */
+	public static byte[] unbase64(byte[] bytes,Path file) {
+		byte[] decodes=Typer.bytes();
+		try {
+			decodes=base64Decoder.decode(bytes);
+			Files.write(file, decodes, StandardOpenOption.CREATE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return decodes;
+	}
 	
 	/**
 	 * 对字符串进行md5加密16位

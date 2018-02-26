@@ -21,7 +21,6 @@ import sun.font.FontDesignMetrics;
  * @author Administrator
  *
  */
-@SuppressWarnings("restriction")
 public final class ImgCode {
 	private ImgCode(){}
 	/**

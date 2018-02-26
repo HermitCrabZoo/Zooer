@@ -154,6 +154,43 @@ public class Encrypt {
 		return messageDigest(str, "SHA-512");
 	}
 	
+	/**
+	 * SHA3-224加密
+	 * @param str
+	 * @return
+	 */
+	public static String sha3_224(String str) {
+		return messageDigest(str, "SHA3-224");
+	}
+	
+	/**
+	 * SHA3-256加密
+	 * @param str
+	 * @return
+	 */
+	public static String sha3_256(String str) {
+		return messageDigest(str, "SHA3-256");
+	}
+	
+	/**
+	 * SHA3-384加密
+	 * @param str
+	 * @return
+	 */
+	public static String sha3_384(String str) {
+		return messageDigest(str, "SHA3-384");
+	}
+	
+	/**
+	 * SHA3-512加密
+	 * @param str
+	 * @return
+	 */
+	public static String sha3_512(String str) {
+		return messageDigest(str, "SHA3-512");
+	}
+	
+	
 	private static String messageDigest(String str,String algorithm) {
         try {
             MessageDigest digest = MessageDigest.getInstance(algorithm);

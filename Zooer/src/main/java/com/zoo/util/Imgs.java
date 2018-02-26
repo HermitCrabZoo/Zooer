@@ -41,7 +41,6 @@ import com.zoo.cons.Images;
 
 import sun.font.FontDesignMetrics;
 
-@SuppressWarnings("restriction")
 public final class Imgs {
 	
 	/**

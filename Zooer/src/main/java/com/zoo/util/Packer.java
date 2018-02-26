@@ -338,7 +338,7 @@ public final class Packer {
 	 */
 	public static byte[] compress(byte[] bytes,int level) {
 		if (bytes!=null && bytes.length>0) {
-			byte[] output = new byte[bytes.length+10+new Double(Math.ceil(bytes.length*0.25f)).intValue()];
+			byte[] output = new byte[bytes.length+10+Double.valueOf(Math.ceil(bytes.length*0.25f)).intValue()];
 			Deflater compresser = new Deflater();
 			compresser.setLevel(level);
 			compresser.setInput(bytes);

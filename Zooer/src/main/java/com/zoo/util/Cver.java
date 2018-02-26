@@ -2,8 +2,10 @@ package com.zoo.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
@@ -26,6 +28,16 @@ public class Cver {
 	private static final Size defKernelKsize=new Size(3,3);
 	
 	private static final Size defBlurKsize=new Size(9,9);
+	
+	/**
+	 * 直线检测结果
+	 */
+	private Mat edge;
+	
+	/**
+	 * 圆检测结果
+	 */
+	private Mat circle;
 	
 	/**
 	 * 构造一个未关联mat属性的Cver对象，后续对mat的操作前必须先关联当前对象的mat属性到一个已存在的Mat实例。
@@ -66,6 +78,55 @@ public class Cver {
 		assertNull(mat);
 		this.mat=mat.clone();
 		return this;
+	}
+	
+	/**
+	 * 返回当前对象关联的Mat实例
+	 * @return
+	 */
+	public Mat get() {
+		return mat;
+	}
+	
+	/**
+     * Return the mat if present, otherwise return {@code other}.
+     *
+     * @param other the mat to be returned if there is no value present, may
+     * be null
+     * @return the mat, if present, otherwise {@code other}
+     */
+    public Mat orElse(Mat other) {
+        return mat != null ? mat : other;
+    }
+    
+	/**
+     * Return the mat if present, otherwise invoke {@code other} and return
+     * the result of that invocation.
+     *
+     * @param other a {@code Supplier} whose result is returned if no mat
+     * is present
+     * @return the mat if present otherwise the result of {@code other.get()}
+     * @throws NullPointerException if mat is not present and {@code other} is
+     * null
+     */
+	public Mat orElseGet(Supplier<? extends Mat> other) {
+		return mat!=null?mat:other.get();
+	}
+	
+	/**
+	 * 返回直线检测结果的Mat对象
+	 * @return
+	 */
+	public Mat edge() {
+		return edge;
+	}
+	
+	/**
+	 * 返回圆检测结果的Mat对象
+	 * @return
+	 */
+	public Mat circle() {
+		return circle;
 	}
 	
 	/**
@@ -298,7 +359,13 @@ public class Cver {
 	 * @param ksize 内核模板大小,用模板扫描图像中的每一个像素,用模板确定的邻域内像素的加权平均值去替代模板中心像素点的值
 	 * @param sigmaX 高斯内核在X 方向的标准偏差
 	 * @param sigmaY 高斯内核在Y方向的标准偏差。 如果sigmaY为0，他将和sigmaX的值相同，如果他们都为0，那么他们由ksize.width和ksize.height计算得出
-	 * @param borderType 用于判断图像边界的模式({@link Core#BORDER_DEFAULT}...)
+	 * @param borderType 用于判断图像边界的模式,默认{@link Core#BORDER_DEFAULT}<br/>
+	 * 可选<br/>
+	 * {@link Core#BORDER_REPLICATE}：复制法，既是复制最边缘像素，例如aaa|abc|ccc <br/>
+	 * {@link Core#BORDER_REFLECT}：对称法，例如cba|abc|cba <br/>
+	 * {@link Core#BORDER_REFLECT_101}：对称法，最边缘像素不会被复制，例如cb|abc|ba <br/>
+	 * {@link Core#BORDER_CONSTANT}：常量法，默认为0 <br/>
+	 * {@link Core#BORDER_WRAP}：镜像对称复制<br/>
 	 * @return
 	 */
 	public Cver gaussianBlur(Size ksize, double sigmaX, double sigmaY, int borderType) {
@@ -325,4 +392,73 @@ public class Cver {
 		Imgproc.medianBlur(mat, mat, ksize);
 		return this;
 	}
+	
+	/**
+	 * Sobel算子进行边缘检测，并且将检测结果替换当前关联的mat对象
+	 * @return
+	 * @see #sobel()
+	 */
+	public Cver sobelNow() {
+		sobel();
+		mat=edge;
+		return this;
+	}
+	
+	/**
+	 * Sobel算子进行边缘检测，并且将检测结果替换当前关联的mat对象
+	 * @param ddpeth
+	 * @param ksize
+	 * @param scale
+	 * @param delta
+	 * @param borderType
+	 * @return
+	 * @see #sobel(int, int, int, int, int)
+	 */
+	public Cver sobelNow(int ddpeth,int ksize,int scale,int delta,int borderType) {
+		sobel(ddpeth, ksize, scale, delta, borderType);
+		mat=edge;
+		return this;
+	}
+	
+	/**
+	 * Sobel算子:主要是应用于边缘检测的一个离散的一阶差分算子，用来计算图像亮度函数的一阶梯度的近似值<br>
+	 * 默认ddpeth:{@link CvType#CV_16S},ksize:3,scale:1,delta:0,borderType:{@link Core#BORDER_DEFAULT}
+	 * @return
+	 */
+	public Cver sobel() {
+		return sobel(CvType.CV_16S,3,1,0,Core.BORDER_DEFAULT);
+	}
+	
+	/**
+	 * Sobel算子
+	 * @param ddpeth 输出图像深度
+	 * @param ksize 核的大小，默认为3
+	 * @param scale 缩放因子
+	 * @param delta 结果存入输出图像前可选的delta值，默认为0 
+	 * @param borderType 边界模式，默认{@link Core#BORDER_DEFAULT}<br/>
+	 * 可选<br/>
+	 * {@link Core#BORDER_REPLICATE}：复制法，既是复制最边缘像素，例如aaa|abc|ccc <br/>
+	 * {@link Core#BORDER_REFLECT}：对称法，例如cba|abc|cba <br/>
+	 * {@link Core#BORDER_REFLECT_101}：对称法，最边缘像素不会被复制，例如cb|abc|ba <br/>
+	 * {@link Core#BORDER_CONSTANT}：常量法，默认为0 <br/>
+	 * {@link Core#BORDER_WRAP}：镜像对称复制<br/>
+	 * @return 
+	 */
+	public Cver sobel(int ddpeth,int ksize,int scale,int delta,int borderType) {
+        Mat dst_x = new Mat();
+        Mat dst_y = new Mat();
+        Mat abs_dst_x = new Mat();
+        Mat abs_dst_y = new Mat();
+        //计算x、y方向的梯度
+        Imgproc.Sobel(mat, dst_x, ddpeth, 1, 0, ksize, scale, delta, borderType);
+        Imgproc.Sobel(mat, dst_y, ddpeth, 0, 1, ksize,scale, delta, borderType);
+        //计算x、y方向的梯度绝对值
+        Core.convertScaleAbs(dst_x, abs_dst_x);
+        Core.convertScaleAbs(dst_y, abs_dst_y);
+        //计算结果梯度
+        edge=new Mat(mat.size(), mat.type());
+        Core.addWeighted(abs_dst_x, 0.5, abs_dst_y, 0.5, 0, edge);
+        return this;
+	}
+	
 }

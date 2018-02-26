@@ -52,6 +52,8 @@ public final class Imgs {
 	
 	private boolean written=false;
 	
+	private static int type=BufferedImage.TYPE_4BYTE_ABGR;
+	
 	/**
 	 * 灰度图像转换工具
 	 */
@@ -73,7 +75,7 @@ public final class Imgs {
 	private Imgs() {}
 	
 	private Imgs(BufferedImage image) {
-		this.image=image;
+		update(image);
 	}
 	
 	/**
@@ -188,7 +190,7 @@ public final class Imgs {
 	 */
 	public Imgs set(BufferedImage image) {
 		assertNull(image);
-		this.image=copy(image);
+		update(copy(image));
 		return this;
 	}
 	
@@ -393,7 +395,7 @@ public final class Imgs {
 	 * @return
 	 */
 	private static BufferedImage newImg(int x,int y,int width,int height,Color color) {
-		BufferedImage image =new BufferedImage(width, height,BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage image =new BufferedImage(width, height,type);
 		Graphics2D g = image.createGraphics();
 		g.setColor(Optional.ofNullable(color).orElse(Colors.bTransparent));
 		g.fillRect(x, y, width, height);
@@ -420,6 +422,7 @@ public final class Imgs {
 	private Imgs update(BufferedImage image) {
 		this.oldImage=this.image;
 		this.image=image;
+		type=image==null?BufferedImage.TYPE_4BYTE_ABGR:image.getType();
 		return this;
 	}
 	
@@ -1204,7 +1207,7 @@ public final class Imgs {
 	 * @return
 	 */
 	public Imgs gray() {
-		this.image=colorConvertOp.filter(image, null);
+		update(colorConvertOp.filter(image, null));
 		return this;
 	}
 	
@@ -1258,7 +1261,7 @@ public final class Imgs {
 	 */
 	private double density() {
 		try(ByteArrayOutputStream baos=new ByteArrayOutputStream()) {
-			ImageIO.write(this.image, this.image.getType()==BufferedImage.TYPE_4BYTE_ABGR?Images.png:Images.jpeg, baos);
+			ImageIO.write(this.image, this.image.getAlphaRaster()==null?Images.jpeg:Images.png, baos);
 			return baos.toByteArray().length*1.0/(this.image.getWidth()*this.image.getHeight());
 		} catch (IOException e) {
 			return 0.0;

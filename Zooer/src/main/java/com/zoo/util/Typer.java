@@ -186,7 +186,7 @@ public final class Typer {
 	 * @param ls
 	 * @return
 	 */
-	public static Long[] longs(long[] ls) {
+	public static Long[] longs(long...ls) {
 		Long[] nls=null;
 		if (ls!=null) {
 			int len=ls.length;
@@ -201,62 +201,11 @@ public final class Typer {
 	}
 	
 	/**
-	 * int数组转long数组
-	 * @param ints
-	 * @return
-	 */
-	public static long[] longs(int[] ints) {
-		if(ints!=null && ints.length>0) {
-			int len=ints.length;
-			long[] longs=new long[len];
-			for(int i=0;i<len;i++) {
-				longs[i]=ints[i];
-			}
-			return longs;
-		}
-		return longs();
-	}
-	
-	/**
-	 * short数组转long数组
-	 * @param shorts
-	 * @return
-	 */
-	public static long[] longs(short[] shorts) {
-		if(shorts!=null && shorts.length>0) {
-			int len=shorts.length;
-			long[] longs=new long[len];
-			for(int i=0;i<len;i++) {
-				longs[i]=shorts[i];
-			}
-			return longs;
-		}
-		return longs();
-	}
-	
-	/**
-	 * byte数组转long数组
-	 * @param bytes
-	 * @return
-	 */
-	public static long[] longs(byte[] bytes) {
-		if(bytes!=null && bytes.length>0) {
-			int len=bytes.length;
-			long[] longs=new long[len];
-			for(int i=0;i<len;i++) {
-				longs[i]=bytes[i];
-			}
-			return longs;
-		}
-		return longs();
-	}
-	
-	/**
 	 * int型数组转成其包装类型数组
 	 * @param is
 	 * @return
 	 */
-	public static Integer[] ints(int[] is) {
+	public static Integer[] ints(int...is) {
 		Integer[] nis=null;
 		if (is!=null) {
 			int len=is.length;
@@ -271,62 +220,11 @@ public final class Typer {
 	}
 	
 	/**
-	 * long数组转int数组
-	 * @param longs
-	 * @return
-	 */
-	public static int[] ints(long[] longs) {
-		if(longs!=null && longs.length>0) {
-			int len=longs.length;
-			int[] ints=new int[len];
-			for(int i=0;i<len;i++) {
-				ints[i]=(int) longs[i];
-			}
-			return ints;
-		}
-		return ints();
-	}
-	
-	/**
-	 * short数组转int数组
-	 * @param shorts
-	 * @return
-	 */
-	public static int[] ints(short[] shorts) {
-		if(shorts!=null && shorts.length>0) {
-			int len=shorts.length;
-			int[] ints=new int[len];
-			for(int i=0;i<len;i++) {
-				ints[i]=shorts[i];
-			}
-			return ints;
-		}
-		return ints();
-	}
-	
-	/**
-	 * byte数组转int数组
-	 * @param bytes
-	 * @return
-	 */
-	public static int[] ints(byte[] bytes) {
-		if(bytes!=null && bytes.length>0) {
-			int len=bytes.length;
-			int[] ints=new int[len];
-			for(int i=0;i<len;i++) {
-				ints[i]=bytes[i];
-			}
-			return ints;
-		}
-		return ints();
-	}
-	
-	/**
 	 * short型数组转换成其包装类型数组
 	 * @param ss
 	 * @return
 	 */
-	public static Short[] shorts(short[] ss) {
+	public static Short[] shorts(short...ss) {
 		Short[] nss=null;
 		if (ss!=null) {
 			int len=ss.length;
@@ -341,62 +239,11 @@ public final class Typer {
 	}
 	
 	/**
-	 * long数组转short数组
-	 * @param longs
-	 * @return
-	 */
-	public static short[] shorts(long[] longs) {
-		if(longs!=null && longs.length>0) {
-			int len=longs.length;
-			short[] shorts=new short[len];
-			for(int i=0;i<len;i++) {
-				shorts[i]=(short) longs[i];
-			}
-			return shorts;
-		}
-		return shorts();
-	}
-	
-	/**
-	 * int数组转short数组
-	 * @param ints
-	 * @return
-	 */
-	public static short[] shorts(int[] ints) {
-		if(ints!=null && ints.length>0) {
-			int len=ints.length;
-			short[] shorts=new short[len];
-			for(int i=0;i<len;i++) {
-				shorts[i]=(short) ints[i];
-			}
-			return shorts;
-		}
-		return shorts();
-	}
-	
-	/**
-	 * byte数组转short数组
-	 * @param bytes
-	 * @return
-	 */
-	public static short[] shorts(byte[] bytes) {
-		if(bytes!=null && bytes.length>0) {
-			int len=bytes.length;
-			short[] shorts=new short[len];
-			for(int i=0;i<len;i++) {
-				shorts[i]=bytes[i];
-			}
-			return shorts;
-		}
-		return shorts();
-	}
-	
-	/**
 	 * byte型数组转换成其包装类的数组
 	 * @param bs
 	 * @return
 	 */
-	public static Byte[] bytes(byte[] bs) {
+	public static Byte[] bytes(byte...bs) {
 		Byte[] nbs=null;
 		if (bs!=null) {
 			int len=bs.length;
@@ -411,62 +258,11 @@ public final class Typer {
 	}
 	
 	/**
-	 * long数组转byte数组
-	 * @param longs
-	 * @return
-	 */
-	public static byte[] bytes(long[] longs) {
-		if(longs!=null && longs.length>0) {
-			int len=longs.length;
-			byte[] bytes=new byte[len];
-			for(int i=0;i<len;i++) {
-				bytes[i]=(byte) longs[i];
-			}
-			return bytes;
-		}
-		return bytes();
-	}
-	
-	/**
-	 * int数组转byte数组
-	 * @param ints
-	 * @return
-	 */
-	public static byte[] bytes(int[] ints) {
-		if(ints!=null && ints.length>0) {
-			int len=ints.length;
-			byte[] bytes=new byte[len];
-			for(int i=0;i<len;i++) {
-				bytes[i]=(byte) ints[i];
-			}
-			return bytes;
-		}
-		return bytes();
-	}
-	
-	/**
-	 * short数组转byte数组
-	 * @param shorts
-	 * @return
-	 */
-	public static byte[] bytes(short[] shorts) {
-		if(shorts!=null && shorts.length>0) {
-			int len=shorts.length;
-			byte[] bytes=new byte[len];
-			for(int i=0;i<len;i++) {
-				bytes[i]=(byte) shorts[i];
-			}
-			return bytes;
-		}
-		return bytes();
-	}
-	
-	/**
 	 * double型数组转换成其包装类型的数组
 	 * @param ds
 	 * @return
 	 */
-	public static Double[] doubles(double[] ds) {
+	public static Double[] doubles(double...ds) {
 		Double[] nds=null;
 		if (ds!=null) {
 			int len=ds.length;
@@ -481,28 +277,11 @@ public final class Typer {
 	}
 	
 	/**
-	 * float数组转double数组
-	 * @param floats
-	 * @return
-	 */
-	public static double[] doubles(float[] floats) {
-		if(floats!=null && floats.length>0) {
-			int len=floats.length;
-			double[] doubles=new double[len];
-			for(int i=0;i<len;i++) {
-				doubles[i]=floats[i];
-			}
-			return doubles;
-		}
-		return doubles();
-	}
-	
-	/**
 	 * float型数组转换成其包装类型数组
 	 * @param fs
 	 * @return
 	 */
-	public static Float[] floats(float[] fs) {
+	public static Float[] floats(float...fs) {
 		Float[] nfs=null;
 		if (fs!=null) {
 			int len=fs.length;
@@ -517,28 +296,11 @@ public final class Typer {
 	}
 	
 	/**
-	 * double数组转float数组
-	 * @param doubles
-	 * @return
-	 */
-	public static float[] floats(double[] doubles) {
-		if(doubles!=null && doubles.length>0) {
-			int len=doubles.length;
-			float[] floats=new float[len];
-			for(int i=0;i<len;i++) {
-				floats[i]=(float) doubles[i];
-			}
-			return floats;
-		}
-		return floats();
-	}
-	
-	/**
 	 * char型数组转换成其包装类型的数组
 	 * @param cs
 	 * @return
 	 */
-	public static Character[] chars(char[] cs) {
+	public static Character[] chars(char...cs) {
 		Character[] ncs=null;
 		if (cs!=null) {
 			int len=cs.length;
@@ -557,7 +319,7 @@ public final class Typer {
 	 * @param bs
 	 * @return
 	 */
-	public static Boolean[] booleans(boolean[] bs) {
+	public static Boolean[] booleans(boolean...bs) {
 		Boolean[] nbs=null;
 		if (bs!=null) {
 			int len=bs.length;
@@ -569,6 +331,381 @@ public final class Typer {
 			nbs=new Boolean[0];
 		}
 		return nbs;
+	}
+	
+	
+	/**
+	 * Long型数组转成其对应基本类型的数组
+	 * @param ls
+	 * @return
+	 */
+	public static long[] longs(Long...ls) {
+		if (ls!=null) {
+			int len=ls.length;
+			long[] nls=new long[len];
+			for(int i=0;i<len;i++) {
+				nls[i]=ls[i]==null?0:ls[i];
+			}
+			return nls;
+		}
+		return longs();
+	}
+	
+	/**
+	 * Integer型数组转成其对应基本类型的数组
+	 * @param is
+	 * @return
+	 */
+	public static int[] ints(Integer...is) {
+		if (is!=null) {
+			int len=is.length;
+			int[] nis=new int[len];
+			for(int i=0;i<len;i++) {
+				nis[i]=is[i]==null?0:is[i];
+			}
+			return nis;
+		}
+		return ints();
+	}
+	
+	/**
+	 * Short型数组转换成其对应基本类型的数组
+	 * @param ss
+	 * @return
+	 */
+	public static short[] shorts(Short...ss) {
+		if (ss!=null) {
+			int len=ss.length;
+			short[] nss=new short[len];
+			for(int i=0;i<len;i++) {
+				nss[i]=ss[i]==null?0:ss[i];
+			}
+			return nss;
+		}
+		return shorts();
+	}
+	
+	/**
+	 * Byte型数组转换成其对应基本类型的数组
+	 * @param bs
+	 * @return
+	 */
+	public static byte[] bytes(Byte...bs) {
+		if (bs!=null) {
+			int len=bs.length;
+			byte[] nbs=new byte[len];
+			for(int i=0;i<len;i++) {
+				nbs[i]=bs[i]==null?0:bs[i];
+			}
+			return nbs;
+		}
+		return bytes();
+	}
+	
+	/**
+	 * Double型数组转换成其对应基本类型的数组
+	 * @param ds
+	 * @return
+	 */
+	public static double[] doubles(Double...ds) {
+		if (ds!=null) {
+			int len=ds.length;
+			double[] nds=new double[len];
+			for(int i=0;i<len;i++) {
+				nds[i]=ds[i]==null?0.0:ds[i];
+			}
+			return nds;
+		}
+		return doubles();
+	}
+	
+	/**
+	 * Float型数组转换成其对应基本类型的数组
+	 * @param fs
+	 * @return
+	 */
+	public static float[] floats(Float...fs) {
+		if (fs!=null) {
+			int len=fs.length;
+			float[] nfs=new float[len];
+			for(int i=0;i<len;i++) {
+				nfs[i]=fs[i]==null?0.0f:fs[i];
+			}
+			return nfs;
+		}
+		return floats();
+	}
+	
+	/**
+	 * Character型数组转换成其对应基本类型的数组
+	 * @param cs
+	 * @return
+	 */
+	public static char[] chars(Character...cs) {
+		if (cs!=null) {
+			int len=cs.length;
+			char[] ncs=new char[len];
+			for(int i=0;i<len;i++) {
+				ncs[i]=cs[i]==null?'\u0000':cs[i];
+			}
+			return ncs;
+		}
+		return chars();
+	}
+	
+	/**
+	 * Boolean型数组转换成其对应基本类型的数组
+	 * @param bs
+	 * @return
+	 */
+	public static boolean[] booleans(Boolean...bs) {
+		if (bs!=null) {
+			int len=bs.length;
+			boolean[] nbs=new boolean[len];
+			for(int i=0;i<len;i++) {
+				nbs[i]=bs[i]==null?false:bs[i];
+			}
+			return nbs;
+		}
+		return booleans();
+	}
+	
+	/**
+	 * int数组转long数组
+	 * @param ints
+	 * @return
+	 */
+	public static long[] longs(int...ints) {
+		if(ints!=null && ints.length>0) {
+			int len=ints.length;
+			long[] longs=new long[len];
+			for(int i=0;i<len;i++) {
+				longs[i]=ints[i];
+			}
+			return longs;
+		}
+		return longs();
+	}
+	
+	/**
+	 * short数组转long数组
+	 * @param shorts
+	 * @return
+	 */
+	public static long[] longs(short...shorts) {
+		if(shorts!=null && shorts.length>0) {
+			int len=shorts.length;
+			long[] longs=new long[len];
+			for(int i=0;i<len;i++) {
+				longs[i]=shorts[i];
+			}
+			return longs;
+		}
+		return longs();
+	}
+	
+	/**
+	 * byte数组转long数组
+	 * @param bytes
+	 * @return
+	 */
+	public static long[] longs(byte...bytes) {
+		if(bytes!=null && bytes.length>0) {
+			int len=bytes.length;
+			long[] longs=new long[len];
+			for(int i=0;i<len;i++) {
+				longs[i]=bytes[i];
+			}
+			return longs;
+		}
+		return longs();
+	}
+	
+	/**
+	 * long数组转int数组
+	 * @param longs
+	 * @return
+	 */
+	public static int[] ints(long...longs) {
+		if(longs!=null && longs.length>0) {
+			int len=longs.length;
+			int[] ints=new int[len];
+			for(int i=0;i<len;i++) {
+				ints[i]=(int) longs[i];
+			}
+			return ints;
+		}
+		return ints();
+	}
+	
+	/**
+	 * short数组转int数组
+	 * @param shorts
+	 * @return
+	 */
+	public static int[] ints(short...shorts) {
+		if(shorts!=null && shorts.length>0) {
+			int len=shorts.length;
+			int[] ints=new int[len];
+			for(int i=0;i<len;i++) {
+				ints[i]=shorts[i];
+			}
+			return ints;
+		}
+		return ints();
+	}
+	
+	/**
+	 * byte数组转int数组
+	 * @param bytes
+	 * @return
+	 */
+	public static int[] ints(byte...bytes) {
+		if(bytes!=null && bytes.length>0) {
+			int len=bytes.length;
+			int[] ints=new int[len];
+			for(int i=0;i<len;i++) {
+				ints[i]=bytes[i];
+			}
+			return ints;
+		}
+		return ints();
+	}
+	
+	/**
+	 * long数组转short数组
+	 * @param longs
+	 * @return
+	 */
+	public static short[] shorts(long...longs) {
+		if(longs!=null && longs.length>0) {
+			int len=longs.length;
+			short[] shorts=new short[len];
+			for(int i=0;i<len;i++) {
+				shorts[i]=(short) longs[i];
+			}
+			return shorts;
+		}
+		return shorts();
+	}
+	
+	/**
+	 * int数组转short数组
+	 * @param ints
+	 * @return
+	 */
+	public static short[] shorts(int...ints) {
+		if(ints!=null && ints.length>0) {
+			int len=ints.length;
+			short[] shorts=new short[len];
+			for(int i=0;i<len;i++) {
+				shorts[i]=(short) ints[i];
+			}
+			return shorts;
+		}
+		return shorts();
+	}
+	
+	/**
+	 * byte数组转short数组
+	 * @param bytes
+	 * @return
+	 */
+	public static short[] shorts(byte...bytes) {
+		if(bytes!=null && bytes.length>0) {
+			int len=bytes.length;
+			short[] shorts=new short[len];
+			for(int i=0;i<len;i++) {
+				shorts[i]=bytes[i];
+			}
+			return shorts;
+		}
+		return shorts();
+	}
+	
+	/**
+	 * long数组转byte数组
+	 * @param longs
+	 * @return
+	 */
+	public static byte[] bytes(long...longs) {
+		if(longs!=null && longs.length>0) {
+			int len=longs.length;
+			byte[] bytes=new byte[len];
+			for(int i=0;i<len;i++) {
+				bytes[i]=(byte) longs[i];
+			}
+			return bytes;
+		}
+		return bytes();
+	}
+	
+	/**
+	 * int数组转byte数组
+	 * @param ints
+	 * @return
+	 */
+	public static byte[] bytes(int...ints) {
+		if(ints!=null && ints.length>0) {
+			int len=ints.length;
+			byte[] bytes=new byte[len];
+			for(int i=0;i<len;i++) {
+				bytes[i]=(byte) ints[i];
+			}
+			return bytes;
+		}
+		return bytes();
+	}
+	
+	/**
+	 * short数组转byte数组
+	 * @param shorts
+	 * @return
+	 */
+	public static byte[] bytes(short...shorts) {
+		if(shorts!=null && shorts.length>0) {
+			int len=shorts.length;
+			byte[] bytes=new byte[len];
+			for(int i=0;i<len;i++) {
+				bytes[i]=(byte) shorts[i];
+			}
+			return bytes;
+		}
+		return bytes();
+	}
+	
+	/**
+	 * float数组转double数组
+	 * @param floats
+	 * @return
+	 */
+	public static double[] doubles(float...floats) {
+		if(floats!=null && floats.length>0) {
+			int len=floats.length;
+			double[] doubles=new double[len];
+			for(int i=0;i<len;i++) {
+				doubles[i]=floats[i];
+			}
+			return doubles;
+		}
+		return doubles();
+	}
+	
+	/**
+	 * double数组转float数组
+	 * @param doubles
+	 * @return
+	 */
+	public static float[] floats(double...doubles) {
+		if(doubles!=null && doubles.length>0) {
+			int len=doubles.length;
+			float[] floats=new float[len];
+			for(int i=0;i<len;i++) {
+				floats[i]=(float) doubles[i];
+			}
+			return floats;
+		}
+		return floats();
 	}
 	
 	/**

@@ -115,7 +115,7 @@ public class Encrypt {
 	 * @return
 	 */
 	public static String sha1(String str) {
-		return messageDigest(str, "SHA");
+		return messageDigest(str, "SHA1");
 	}
 	
 	/**

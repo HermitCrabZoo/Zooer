@@ -16,21 +16,26 @@ import java.util.stream.Collectors;
 public final class Arrs {
 	private Arrs(){}
 	
+	
 	/**
-	 * 生成一个可增删改的list
+	 * 生成一个可增删改的list,传入参数中为null的将被过滤掉
 	 * @param ts
 	 * @return
 	 */
 	@SafeVarargs
 	public static <T>List<T> of(T...ts){
-		List<T> list=new ArrayList<T>();
+		List<T> list=null;
 		if (ts!=null) {
+			list=new ArrayList<T>(ts.length);
 			for (T t : ts) {
 				list.add(t);
 			}
+		}else {
+			list=new ArrayList<T>();
 		}
 		return list;
 	}
+	
 	
 	/**
 	 * 将total平均分成len份的数组返回,若total不是len的整数倍,
@@ -59,6 +64,7 @@ public final class Arrs {
 		return Typer.longs();
 	}
 	
+	
 	/**
 	 * 为数组中的每个元素增step
 	 * @param array
@@ -74,6 +80,8 @@ public final class Arrs {
 		}
 		return Typer.longs();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step
 	 * @param array
@@ -89,6 +97,8 @@ public final class Arrs {
 		}
 		return Typer.ints();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step
 	 * @param array
@@ -104,6 +114,8 @@ public final class Arrs {
 		}
 		return Typer.shorts();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step
 	 * @param array
@@ -119,6 +131,8 @@ public final class Arrs {
 		}
 		return Typer.bytes();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step
 	 * @param array
@@ -134,6 +148,8 @@ public final class Arrs {
 		}
 		return Typer.doubles();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step
 	 * @param array
@@ -149,6 +165,8 @@ public final class Arrs {
 		}
 		return Typer.floats();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step
 	 * @param array
@@ -164,6 +182,8 @@ public final class Arrs {
 		}
 		return Typer.longs();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step
 	 * @param array
@@ -179,6 +199,8 @@ public final class Arrs {
 		}
 		return Typer.ints();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step
 	 * @param array
@@ -194,6 +216,8 @@ public final class Arrs {
 		}
 		return Typer.shorts();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step
 	 * @param array
@@ -209,6 +233,8 @@ public final class Arrs {
 		}
 		return Typer.bytes();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step
 	 * @param array
@@ -224,6 +250,8 @@ public final class Arrs {
 		}
 		return doubles;
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step
 	 * @param array
@@ -239,6 +267,8 @@ public final class Arrs {
 		}
 		return  Typer.floats();
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step,返回新数组
 	 * @param longs
@@ -248,6 +278,8 @@ public final class Arrs {
 	public static long[] raiseNew(long[] longs,long step){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().map(l->l+step).toArray()).orElse(longs);
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step,返回新数组
 	 * @param ints
@@ -257,6 +289,8 @@ public final class Arrs {
 	public static int[] raiseNew(int[] ints,int step){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().map(i->i+step).toArray()).orElse(ints);
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step,返回新数组
 	 * @param shorts
@@ -266,6 +300,8 @@ public final class Arrs {
 	public static short[] raiseNew(short[] shorts,short step){
 		return Optional.ofNullable(shorts).map(ss->Typer.shorts(raiseNew(Typer.ints(ss), step))).orElse(Typer.shorts());
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step,返回新数组
 	 * @param bytes
@@ -275,6 +311,8 @@ public final class Arrs {
 	public static byte[] raiseNew(byte[] bytes,byte step){
 		return Optional.ofNullable(bytes).map(bs->Typer.bytes(raiseNew(Typer.ints(bs), step))).orElse(Typer.bytes());
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step,返回新数组
 	 * @param doubles
@@ -284,6 +322,8 @@ public final class Arrs {
 	public static double[] raiseNew(double[] doubles,double step){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().map(d->d+step).toArray()).orElse(doubles);
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素增step,返回新数组
 	 * @param floats
@@ -293,6 +333,8 @@ public final class Arrs {
 	public static float[] raiseNew(float[] floats,float step){
 		return Optional.ofNullable(floats).map(fs->Typer.floats(raiseNew(Typer.doubles(fs), step))).orElse(Typer.floats());
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step,返回新数组
 	 * @param longs
@@ -302,6 +344,8 @@ public final class Arrs {
 	public static long[] reduceNew(long[] longs,long step){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().map(l->l-step).toArray()).orElse(longs);
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step,返回新数组
 	 * @param ints
@@ -311,6 +355,8 @@ public final class Arrs {
 	public static int[] reduceNew(int[] ints,int step){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().map(i->i-step).toArray()).orElse(ints);
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step,返回新数组
 	 * @param shorts
@@ -320,6 +366,8 @@ public final class Arrs {
 	public static short[] reduceNew(short[] shorts,short step){
 		return Optional.ofNullable(shorts).map(ss->Typer.shorts(reduceNew(Typer.ints(ss), step))).orElse(Typer.shorts());
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step,返回新数组
 	 * @param bytes
@@ -329,6 +377,8 @@ public final class Arrs {
 	public static byte[] reduceNew(byte[] bytes,byte step){
 		return Optional.ofNullable(bytes).map(bs->Typer.bytes(reduceNew(Typer.ints(bs), step))).orElse(Typer.bytes());
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step,返回新数组
 	 * @param doubles
@@ -338,6 +388,8 @@ public final class Arrs {
 	public static double[] reduceNew(double[] doubles,double step){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().map(d->d-step).toArray()).orElse(doubles);
 	}
+	
+	
 	/**
 	 * 为数组中的每个元素减step,返回新数组
 	 * @param floats
@@ -348,6 +400,7 @@ public final class Arrs {
 		return Optional.ofNullable(floats).map(fs->Typer.floats(reduceNew(Typer.doubles(fs), step))).orElse(Typer.floats());
 	}
 	
+	
 	/**
 	 * 去重复
 	 * @param longs
@@ -357,6 +410,7 @@ public final class Arrs {
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().distinct().toArray()).orElse(Typer.longs());
 	}
 	
+	
 	/**
 	 * 去重复
 	 * @param ints
@@ -365,6 +419,8 @@ public final class Arrs {
 	public static int[] distinct(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().distinct().toArray()).orElse(Typer.ints());
 	}
+	
+	
 	/**
 	 * 去重复
 	 * @param shorts
@@ -373,6 +429,8 @@ public final class Arrs {
 	public static short[] distinct(short[] shorts){
 		return Optional.ofNullable(shorts).map(ss->Typer.shorts(distinct(Typer.ints(ss)))).orElse(Typer.shorts());
 	}
+	
+	
 	/**
 	 * 去重复
 	 * @param bytes
@@ -382,6 +440,7 @@ public final class Arrs {
 		return Optional.ofNullable(bytes).map(bs->Typer.bytes(distinct(Typer.ints(bs)))).orElse(Typer.bytes());
 	}
 	
+	
 	/**
 	 * 去重复
 	 * @param doubles
@@ -390,6 +449,8 @@ public final class Arrs {
 	public static double[] distinct(double[] doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().distinct().toArray()).orElse(Typer.doubles());
 	}
+	
+	
 	/**
 	 * 去重复
 	 * @param floats
@@ -398,6 +459,7 @@ public final class Arrs {
 	public static float[] distinct(float[] floats){
 		return Optional.ofNullable(floats).map(fs->Typer.floats(distinct(Typer.doubles(fs)))).orElse(Typer.floats());
 	}
+	
 	
 	/**
 	 * 去重复
@@ -408,6 +470,7 @@ public final class Arrs {
 		return Optional.ofNullable(strings).map(ds->Arrays.stream(ds).parallel().distinct().toArray(String[]::new)).orElse(Typer.strings());
 	}
 	
+	
 	/**
 	 * 求平均值
 	 * @param longs
@@ -417,6 +480,7 @@ public final class Arrs {
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().average().orElse(0.0)).orElse(0.0);
 	}
 	
+	
 	/**
 	 * 求平均值
 	 * @param ints
@@ -425,6 +489,8 @@ public final class Arrs {
 	public static double avg(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().average().orElse(0.0)).orElse(0.0);
 	}
+	
+	
 	/**
 	 * 求平均值
 	 * @param shorts
@@ -433,6 +499,8 @@ public final class Arrs {
 	public static double avg(short[] shorts){
 		return Optional.ofNullable(shorts).map(ss->avg(Typer.ints(ss))).orElse(0.0);
 	}
+	
+	
 	/**
 	 * 求平均值
 	 * @param bytes
@@ -441,6 +509,8 @@ public final class Arrs {
 	public static double avg(byte[] bytes){
 		return Optional.ofNullable(bytes).map(bs->avg(Typer.ints(bs))).orElse(0.0);
 	}
+	
+	
 	/**
 	 * 求平均值
 	 * @param doubles
@@ -449,6 +519,8 @@ public final class Arrs {
 	public static double avg(double[] doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().average().orElse(0.0)).orElse(0.0);
 	}
+	
+	
 	/**
 	 * 求平均值
 	 * @param floats
@@ -457,6 +529,7 @@ public final class Arrs {
 	public static double avg(float[] floats){
 		return Optional.ofNullable(floats).map(fs->avg(Typer.doubles(fs))).orElse(0.0);
 	}
+	
 	
 	/**
 	 * 求和
@@ -467,6 +540,7 @@ public final class Arrs {
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().sum()).orElse(0L);
 	}
 	
+	
 	/**
 	 * 求和
 	 * @param ints
@@ -475,6 +549,8 @@ public final class Arrs {
 	public static long sum(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().sum()).orElse(0);
 	}
+	
+	
 	/**
 	 * 求和
 	 * @param shorts
@@ -483,6 +559,8 @@ public final class Arrs {
 	public static long sum(short[] shorts){
 		return Optional.ofNullable(shorts).map(ss->sum(Typer.ints(ss))).orElse(0L);
 	}
+	
+	
 	/**
 	 * 求和
 	 * @param bytes
@@ -492,6 +570,7 @@ public final class Arrs {
 		return Optional.ofNullable(bytes).map(bs->sum(Typer.ints(bs))).orElse(0L);
 	}
 	
+	
 	/**
 	 * 求和
 	 * @param doubles
@@ -500,6 +579,8 @@ public final class Arrs {
 	public static double sum(double[] doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().sum()).orElse(0.0);
 	}
+	
+	
 	/**
 	 * 求和
 	 * @param floats
@@ -508,6 +589,7 @@ public final class Arrs {
 	public static double sum(float[] floats){
 		return Optional.ofNullable(floats).map(fs->sum(Typer.doubles(fs))).orElse(0.0);
 	}
+	
 	
 	/**
 	 * 求最大值
@@ -518,6 +600,7 @@ public final class Arrs {
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().max().orElse(0L)).orElse(0L);
 	}
 	
+	
 	/**
 	 * 求最大值
 	 * @param ints
@@ -526,6 +609,8 @@ public final class Arrs {
 	public static int max(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().max().orElse(0)).orElse(0);
 	}
+	
+	
 	/**
 	 * 求最大值
 	 * @param shorts
@@ -534,6 +619,8 @@ public final class Arrs {
 	public static short max(short[] shorts){
 		return Optional.ofNullable(shorts).map(ss->(short) max(Typer.ints(ss))).orElse((short)0);
 	}
+	
+	
 	/**
 	 * 求最大值
 	 * @param bytes
@@ -542,6 +629,8 @@ public final class Arrs {
 	public static byte max(byte[] bytes){
 		return Optional.ofNullable(bytes).map(bs->(byte) max(Typer.ints(bs))).orElse((byte)0);
 	}
+	
+	
 	/**
 	 * 求最大值
 	 * @param doubles
@@ -550,6 +639,8 @@ public final class Arrs {
 	public static double max(double[] doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().max().orElse(0.0)).orElse(0.0);
 	}
+	
+	
 	/**
 	 * 求最大值
 	 * @param floats
@@ -558,6 +649,7 @@ public final class Arrs {
 	public static float max(float[] floats){
 		return Optional.ofNullable(floats).map(fs->(float) max(Typer.doubles(fs))).orElse(0.0f);
 	}
+	
 	
 	/**
 	 * 求最小值
@@ -568,6 +660,7 @@ public final class Arrs {
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().min().orElse(0L)).orElse(0L);
 	}
 	
+	
 	/**
 	 * 求最小值
 	 * @param ints
@@ -576,6 +669,8 @@ public final class Arrs {
 	public static int min(int[] ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().min().orElse(0)).orElse(0);
 	}
+	
+	
 	/**
 	 * 求最小值
 	 * @param shorts
@@ -584,6 +679,8 @@ public final class Arrs {
 	public static short min(short[] shorts){
 		return Optional.ofNullable(shorts).map(ss->(short) min(Typer.ints(ss))).orElse((short)0);
 	}
+	
+	
 	/**
 	 * 求最小值
 	 * @param bytes
@@ -592,6 +689,8 @@ public final class Arrs {
 	public static byte min(byte[] bytes){
 		return Optional.ofNullable(bytes).map(bs->(byte) min(Typer.ints(bs))).orElse((byte)0);
 	}
+	
+	
 	/**
 	 * 求最小值
 	 * @param doubles
@@ -600,6 +699,8 @@ public final class Arrs {
 	public static double min(double[] doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().min().orElse(0.0)).orElse(0.0);
 	}
+	
+	
 	/**
 	 * 求最小值
 	 * @param floats
@@ -608,6 +709,7 @@ public final class Arrs {
 	public static float min(float[] floats){
 		return Optional.ofNullable(floats).map(fs->(float) min(Typer.doubles(fs))).orElse(0.0f);
 	}
+	
 	
 	/**
 	 * 传入int类型的数组，返回将int数组每个元素用连接符连接起来的字符串
@@ -619,6 +721,7 @@ public final class Arrs {
 		return join(separator, toStrings(ints));
 	}
 	
+	
 	/**
 	 * 传入long类型的数组，返回将long数组每个元素用连接符连接起来的字符串
 	 * @param separator
@@ -628,6 +731,7 @@ public final class Arrs {
 	public static String join(String separator,long... longs){
 		return join(separator, toStrings(longs));
 	}
+	
 	
 	/**
 	 * 传入short类型数组，返回将short数组每个元素用连接符连接起来的字符串
@@ -639,6 +743,7 @@ public final class Arrs {
 		return join(separator, toStrings(shorts));
 	}
 	
+	
 	/**
 	 * 传入byte类型数组，返回将byte数组每个元素用连接符连接起来的字符串
 	 * @param separator
@@ -648,6 +753,7 @@ public final class Arrs {
 	public static String join(String separator,byte... bytes){
 		return join(separator, toStrings( bytes));
 	}
+	
 	
 	/**
 	 * 传入char类型数组，返回将char数组每个元素用连接符连接起来的字符串
@@ -659,6 +765,7 @@ public final class Arrs {
 		return join(separator, toStrings(chars));
 	}
 	
+	
 	/**
 	 * 传入boolean数组，返回将boolean数组每个元素用连接符连接起来的字符串
 	 * @param separator
@@ -668,6 +775,8 @@ public final class Arrs {
 	public static String join(String separator,boolean... booleans){
 		return join(separator, toStrings(booleans));
 	}
+	
+	
 	/**
 	 * 传入double数组，返回将double数组每个元素用连接符连接起来的字符串
 	 * @param separator
@@ -677,6 +786,8 @@ public final class Arrs {
 	public static String join(String separator,double... doubles){
 		return join(separator, toStrings(doubles));
 	}
+	
+	
 	/**
 	 * 传入float数组，返回将float数组每个元素用连接符连接起来的字符串
 	 * @param separator
@@ -686,6 +797,7 @@ public final class Arrs {
 	public static String join(String separator,float... floats){
 		return join(separator, toStrings(floats));
 	}
+	
 	
 	/**
 	 * 传入连接符，将字符串数组的每个元素之间用连接符连接起来
@@ -705,6 +817,8 @@ public final class Arrs {
 		}
 		return stringBuffer.toString();
 	}
+	
+	
 	/**
 	 * 传入T数组，返回将T数组每个元素用连接符连接起来的字符串
 	 * @param separator
@@ -715,6 +829,8 @@ public final class Arrs {
 	public static <T>String join(String separator,T... array){
 		return join(separator, toStrings(array));
 	}
+	
+	
 	/**
 	 * 传入T型的List，返回将List每个元素用连接符连接起来的字符串
 	 * @param separator
@@ -732,6 +848,7 @@ public final class Arrs {
 		}
 		return join(separator, strings);
 	}
+	
 	
 	/**
 	 * 将obj对象转换成String数组返回,若obj对象为null或者obj对象不是数组类型那么将返回一个空数组(长度为0)
@@ -751,6 +868,8 @@ public final class Arrs {
 		Optional.ofNullable(obj).map(o->o.getClass().isArray()).orElse(false);
 		return strs;
 	}
+	
+	
 	/**
 	 * 获取list中每个元素的field属性的值，并返回，若list中的元素是Map的子类的实例，那么将获取该map的key为field的值。
 	 * @param list
@@ -760,6 +879,8 @@ public final class Arrs {
 	public static <T>List<Object> fields(List<T> list,String field){
 		return Beaner.values(list, field);
 	}
+	
+	
 	/**
 	 * 判断elements中的元素是否都在onlys中，如果是返回true(即elements是onlys的可重复元素的子集)，否则elements存在非onlys集合里的元素返回false
 	 * @param elements
@@ -777,6 +898,8 @@ public final class Arrs {
 		}
 		return false;
 	}
+	
+	
 	/**
 	 * 判断elements是否包含anys中的任一元素，如果包含返回true(即elements与anys有交集)，否则不包含anys中任一元素返回false
 	 * @param elements
@@ -793,6 +916,8 @@ public final class Arrs {
 		}
 		return false;
 	}
+	
+	
 	/**
 	 * 将String型数组中的null值转换成空字符串，返回新生成的String数组
 	 * @param strings
@@ -802,6 +927,7 @@ public final class Arrs {
 		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().map(s->Strs.nullToEmpty(s)).toArray(String[]::new)).orElse(Strs.emptys());
 	}
 	
+	
 	/**
 	 * 将String型字符串数组中的null去除，返回新生成的String数组
 	 * @param strings
@@ -810,6 +936,8 @@ public final class Arrs {
 	public static String[] removeNull(String[] strings) {
 		return Optional.ofNullable(strings).map(ss->Arrays.stream(ss).parallel().filter(s->Objects.nonNull(s)).toArray(String[]::new)).orElse(Strs.emptys());
 	}
+	
+	
 	/**
 	 * 将List对象里的null元素去除，返回新生成的List对象
 	 * @param strings
@@ -819,6 +947,7 @@ public final class Arrs {
 		return Optional.ofNullable(list).map(ss->ss.parallelStream().filter(i->Objects.nonNull(i)).collect(Collectors.toList())).orElse(Collections.emptyList());
 	}
 	
+	
 	/**
 	 * 将T型数组转换成List<T>返回
 	 * @param array
@@ -827,6 +956,8 @@ public final class Arrs {
 	public static <T>List<T> toList(T[] array){
 		return Optional.ofNullable(array).map(arr->Arrays.stream(arr).parallel().collect(Collectors.toList())).orElse(Collections.emptyList());
 	}
+	
+	
 	/**
 	 * 判断list是否不为null并且不为empty(有元素)，为null或没有元素都会返回false。
 	 * @param list
@@ -835,6 +966,8 @@ public final class Arrs {
 	public static <T>boolean notEmpty(List<T> list) {
 		return !(list==null||list.isEmpty());
 	}
+	
+	
 	/**
 	 * 判断arr是否不为null并且长度大于0，为null或长度小于0都会返回false。
 	 * @param arr
@@ -843,6 +976,8 @@ public final class Arrs {
 	public static <T>boolean notEmpty(T[] arr) {
 		return !(arr==null||arr.length==0);
 	}
+	
+	
 	/**
 	 * 判断longs是否不为null并且长度大于0，为null或长度小于0都会返回false。
 	 * @param longs
@@ -851,6 +986,8 @@ public final class Arrs {
 	public static boolean notEmpty(long[] longs) {
 		return !(longs==null||longs.length==0);
 	}
+	
+	
 	/**
 	 * 判断ints是否不为null并且长度大于0，为null或长度小于0都会返回false。
 	 * @param ints
@@ -859,6 +996,8 @@ public final class Arrs {
 	public static boolean notEmpty(int[] ints) {
 		return !(ints==null||ints.length==0);
 	}
+	
+	
 	/**
 	 * 判断shorts是否不为null并且长度大于0，为null或长度小于0都会返回false。
 	 * @param shorts
@@ -867,6 +1006,8 @@ public final class Arrs {
 	public static boolean notEmpty(short[] shorts) {
 		return !(shorts==null||shorts.length==0);
 	}
+	
+	
 	/**
 	 * 判断bytes是否不为null并且长度大于0，为null或长度小于0都会返回false。
 	 * @param bytes
@@ -875,6 +1016,8 @@ public final class Arrs {
 	public static boolean notEmpty(byte[] bytes) {
 		return !(bytes==null||bytes.length==0);
 	}
+	
+	
 	/**
 	 * 判断doubles是否不为null并且长度大于0，为null或长度小于0都会返回false。
 	 * @param doubles
@@ -883,6 +1026,8 @@ public final class Arrs {
 	public static boolean notEmpty(double[] doubles) {
 		return !(doubles==null||doubles.length==0);
 	}
+	
+	
 	/**
 	 * 判断floats是否不为null并且长度大于0，为null或长度小于0都会返回false。
 	 * @param floats
@@ -891,6 +1036,8 @@ public final class Arrs {
 	public static boolean notEmpty(float[] floats) {
 		return !(floats==null||floats.length==0);
 	}
+	
+	
 	/**
 	 * 判断chars是否不为null并且长度大于0，为null或长度小于0都会返回false。
 	 * @param chars
@@ -899,6 +1046,8 @@ public final class Arrs {
 	public static boolean notEmpty(char[] chars) {
 		return !(chars==null||chars.length==0);
 	}
+	
+	
 	/**
 	 * list深度拷贝的方法，返回新list，若src为null或拷贝失败则返回空list(empty)
 	 * @param src
@@ -923,6 +1072,8 @@ public final class Arrs {
 		}
 	    return dest;  
 	}
+	
+	
 	/**
 	 * 查到list中第一个字段名为equalKey，对应字段值为equalValue的元素并返回。
 	 * 若list中的元素是Map或Map的子类的实例，那么上述的equalKey对应了Map实例的Key。
@@ -941,6 +1092,8 @@ public final class Arrs {
 		}
 		return null;
 	}
+	
+	
 	/**
 	 * 查找list中所有字段名为equalKey，，对应字段值为equalValue的元素，并返回这些元素的集合，
 	 * 若list中的元素是Map或Map的子类的实例，那么上述的equalKey对应了Map实例的Key。
@@ -960,6 +1113,7 @@ public final class Arrs {
 		}
 		return items;
 	}
+	
 	/**
 	 * 查找list中第一个字段名为equalKey，对应字段值为equalValue的元素，并返回该元素字段名为valueKey的字段值，
 	 * 若list中的元素是Map或Map的子类的实例，那么上述的equalKey、valueKey对应了Map实例的Key。
@@ -972,6 +1126,8 @@ public final class Arrs {
 	public static <T>Object firstValueIf(List<T> list,Object equalKey,Object equalValue,Object valueKey){
 		return Beaner.value(firstEqualIf(list, equalKey, equalValue),valueKey);
 	}
+	
+	
 	/**
 	 * 查找list中所有字段名为equalKey，对应字段值为equalValue的元素，并返回这些元素的字段名为valueKey对应的字段值的集合，
 	 * 若list中的元素是Map或Map的子类的实例，那么上述的equalKey、valueKey对应了Map实例的Key。
@@ -984,6 +1140,160 @@ public final class Arrs {
 	public static <T>List<Object> valuesIf(List<T> list,Object equalKey,Object equalValue,Object valueKey){
 		return Beaner.values(equalsIf(list, equalKey, equalValue), valueKey);
 	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ts
+	 * @param t
+	 * @return
+	 */
+	public static <T>boolean contains(T[] ts,T t) {
+		if (ts!=null) {
+			for (T t1 : ts) {
+				if (Objects.equals(t1, t)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ls
+	 * @param l
+	 * @return
+	 */
+	public static boolean contains(long[] ls,long l) {
+		if (ls!=null) {
+			for (long l1 : ls) {
+				if (l1==l) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ls
+	 * @param l
+	 * @return
+	 */
+	public static boolean contains(int[] ls,int l) {
+		if (ls!=null) {
+			for (int l1 : ls) {
+				if (l1==l) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ls
+	 * @param l
+	 * @return
+	 */
+	public static boolean contains(short[] ls,short l) {
+		if (ls!=null) {
+			for (short l1 : ls) {
+				if (l1==l) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ls
+	 * @param l
+	 * @return
+	 */
+	public static boolean contains(byte[] ls,byte l) {
+		if (ls!=null) {
+			for (byte l1 : ls) {
+				if (l1==l) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ls
+	 * @param l
+	 * @return
+	 */
+	public static boolean contains(double[] ls,double l) {
+		if (ls!=null) {
+			for (double l1 : ls) {
+				if (l1==l) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ls
+	 * @param l
+	 * @return
+	 */
+	public static boolean contains(float[] ls,float l) {
+		if (ls!=null) {
+			for (float l1 : ls) {
+				if (l1==l) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ls
+	 * @param l
+	 * @return
+	 */
+	public static boolean contains(char[] ls,char l) {
+		if (ls!=null) {
+			for (char l1 : ls) {
+				if (l1==l) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断数组中是否包含某个元素
+	 * @param ls
+	 * @param l
+	 * @return
+	 */
+	public static boolean contains(boolean[] ls,boolean l) {
+		if (ls!=null) {
+			for (boolean l1 : ls) {
+				if (l1==l) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * 将数组按参数中出现的先后顺序合并为一个数组返回。
@@ -1013,23 +1323,252 @@ public final class Arrs {
 	}
 	
 	/**
-	 * 将数组按参数中出现的先后顺序合并为一个数组返回。
-	 * @param array
+	 * 将多个数组合并为一个新的数组输出,若全部数组为null则返回一个包含0个元素的空数组对象
 	 * @param mores
 	 * @return
 	 */
-	public static byte[] concat(byte[] array, byte[]... mores) {
-		int start = array.length;
-		int len = start;
-		for (byte[] arr : mores) {
-			len += arr.length;
+	public static long[] concat(long[]...mores) {
+		if (mores!=null) {
+			int len=0;
+			for(long[] arr:mores) {
+				if (arr!=null) {
+					len+=arr.length;
+				}
+			}
+			if (len>0) {
+				int start=0,cpLen=0;
+				long[] result=new long[len];
+				for(long[] arr:mores) {
+					if (arr!=null) {
+						cpLen=arr.length;
+						System.arraycopy(arr, 0, result, start, cpLen);
+						start+=cpLen;
+					}
+				}
+				return result;
+			}
 		}
-		byte[] result = Arrays.copyOf(array, len);
-		for (byte[] arr : mores) {
-			int cpLen=arr.length;
-			System.arraycopy(arr, 0, result, start, cpLen);
-			start += cpLen;
-		}
-		return result;
+		return Typer.longs();
 	}
+	
+	
+	
+	/**
+	 * 将多个数组合并为一个新的数组输出,若全部数组为null则返回一个包含0个元素的空数组对象
+	 * @param mores
+	 * @return
+	 */
+	public static int[] concat(int[]...mores) {
+		if (mores!=null) {
+			int len=0;
+			for(int[] arr:mores) {
+				if (arr!=null) {
+					len+=arr.length;
+				}
+			}
+			if (len>0) {
+				int start=0,cpLen=0;
+				int[] result=new int[len];
+				for(int[] arr:mores) {
+					if (arr!=null) {
+						cpLen=arr.length;
+						System.arraycopy(arr, 0, result, start, cpLen);
+						start+=cpLen;
+					}
+				}
+				return result;
+			}
+		}
+		return Typer.ints();
+	}
+	
+	
+	/**
+	 * 将多个数组合并为一个新的数组输出,若全部数组为null则返回一个包含0个元素的空数组对象
+	 * @param mores
+	 * @return
+	 */
+	public static short[] concat(short[]...mores) {
+		if (mores!=null) {
+			int len=0;
+			for(short[] arr:mores) {
+				if (arr!=null) {
+					len+=arr.length;
+				}
+			}
+			if (len>0) {
+				int start=0,cpLen=0;
+				short[] result=new short[len];
+				for(short[] arr:mores) {
+					if (arr!=null) {
+						cpLen=arr.length;
+						System.arraycopy(arr, 0, result, start, cpLen);
+						start+=cpLen;
+					}
+				}
+				return result;
+			}
+		}
+		return Typer.shorts();
+	}
+	
+	
+	/**
+	 * 将多个数组合并为一个新的数组输出,若全部数组为null则返回一个包含0个元素的空数组对象
+	 * @param mores
+	 * @return
+	 */
+	public static byte[] concat(byte[]...mores) {
+		if (mores!=null) {
+			int len=0;
+			for(byte[] arr:mores) {
+				if (arr!=null) {
+					len+=arr.length;
+				}
+			}
+			if (len>0) {
+				int start=0,cpLen=0;
+				byte[] result=new byte[len];
+				for(byte[] arr:mores) {
+					if (arr!=null) {
+						cpLen=arr.length;
+						System.arraycopy(arr, 0, result, start, cpLen);
+						start+=cpLen;
+					}
+				}
+				return result;
+			}
+		}
+		return Typer.bytes();
+	}
+	
+	
+	/**
+	 * 将多个数组合并为一个新的数组输出,若全部数组为null则返回一个包含0个元素的空数组对象
+	 * @param mores
+	 * @return
+	 */
+	public static double[] concat(double[]...mores) {
+		if (mores!=null) {
+			int len=0;
+			for(double[] arr:mores) {
+				if (arr!=null) {
+					len+=arr.length;
+				}
+			}
+			if (len>0) {
+				int start=0,cpLen=0;
+				double[] result=new double[len];
+				for(double[] arr:mores) {
+					if (arr!=null) {
+						cpLen=arr.length;
+						System.arraycopy(arr, 0, result, start, cpLen);
+						start+=cpLen;
+					}
+				}
+				return result;
+			}
+		}
+		return Typer.doubles();
+	}
+	
+	
+	/**
+	 * 将多个数组合并为一个新的数组输出,若全部数组为null则返回一个包含0个元素的空数组对象
+	 * @param mores
+	 * @return
+	 */
+	public static float[] concat(float[]...mores) {
+		if (mores!=null) {
+			int len=0;
+			for(float[] arr:mores) {
+				if (arr!=null) {
+					len+=arr.length;
+				}
+			}
+			if (len>0) {
+				int start=0,cpLen=0;
+				float[] result=new float[len];
+				for(float[] arr:mores) {
+					if (arr!=null) {
+						cpLen=arr.length;
+						System.arraycopy(arr, 0, result, start, cpLen);
+						start+=cpLen;
+					}
+				}
+				return result;
+			}
+		}
+		return Typer.floats();
+	}
+	
+	
+	/**
+	 * 将多个数组合并为一个新的数组输出,若全部数组为null则返回一个包含0个元素的空数组对象
+	 * @param mores
+	 * @return
+	 */
+	public static char[] concat(char[]...mores) {
+		if (mores!=null) {
+			int len=0;
+			for(char[] arr:mores) {
+				if (arr!=null) {
+					len+=arr.length;
+				}
+			}
+			if (len>0) {
+				int start=0,cpLen=0;
+				char[] result=new char[len];
+				for(char[] arr:mores) {
+					if (arr!=null) {
+						cpLen=arr.length;
+						System.arraycopy(arr, 0, result, start, cpLen);
+						start+=cpLen;
+					}
+				}
+				return result;
+			}
+		}
+		return Typer.chars();
+	}
+	
+	
+	/**
+	 * 将多个数组合并为一个新的数组输出,若全部数组为null则返回一个包含0个元素的空数组对象
+	 * @param mores
+	 * @return
+	 */
+	public static boolean[] concat(boolean[]...mores) {
+		if (mores!=null) {
+			int len=0;
+			for(boolean[] arr:mores) {
+				if (arr!=null) {
+					len+=arr.length;
+				}
+			}
+			if (len>0) {
+				int start=0,cpLen=0;
+				boolean[] result=new boolean[len];
+				for(boolean[] arr:mores) {
+					if (arr!=null) {
+						cpLen=arr.length;
+						System.arraycopy(arr, 0, result, start, cpLen);
+						start+=cpLen;
+					}
+				}
+				return result;
+			}
+		}
+		return Typer.booleans();
+	}
+	
+	/**
+	 * 判断对象是否是一个数组对象。
+	 * @param obj
+	 * @return 是:true,否:false
+	 */
+	public static boolean isArray(Object obj) {
+		return obj!=null&&obj.getClass().isArray();
+	}
+	
 }

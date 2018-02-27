@@ -18,7 +18,7 @@ public class Cver {
 	private Cver() {}
 	
 	private Cver(Mat mat) {
-		this.mat=mat;
+		update(mat);
 	}
 	
 	private Mat mat;
@@ -30,7 +30,7 @@ public class Cver {
 	private static final Size defBlurKsize=new Size(9,9);
 	
 	/**
-	 * 直线检测结果
+	 * 边缘检测结果
 	 */
 	private Mat edge;
 	
@@ -38,6 +38,7 @@ public class Cver {
 	 * 圆检测结果
 	 */
 	private Mat circle;
+	
 	
 	/**
 	 * 构造一个未关联mat属性的Cver对象，后续对mat的操作前必须先关联当前对象的mat属性到一个已存在的Mat实例。
@@ -76,7 +77,7 @@ public class Cver {
 	 */
 	public Cver set(Mat mat) {
 		assertNull(mat);
-		this.mat=mat.clone();
+		update(mat.clone());
 		return this;
 	}
 	
@@ -156,12 +157,32 @@ public class Cver {
 	}
 	
 	/**
-	 * 释放当前关联的Mat对象
+	 * 释放当前关联的Mat对象和一系列操作过程中产生的各种Mat结果对象
 	 * @return
 	 */
 	public Cver release() {
 		mat=null;
 		written=false;
+		edge=null;
+		circle=null;
+		return this;
+	}
+	
+	/**
+	 * 使用原关联的Mat对象构造新的具有相同尺寸和类型的Mat对象
+	 * @return
+	 */
+	private Mat newMat() {
+		return new Mat(mat.size(), mat.type());
+	}
+	
+	/**
+	 * 使用传入参数更新当前关联的mat对象
+	 * @param mat
+	 * @return
+	 */
+	private Cver update(Mat mat) {
+		this.mat=mat;
 		return this;
 	}
 
@@ -205,9 +226,9 @@ public class Cver {
 	 * @return
 	 */
 	private Cver flip(int flipCode) {
-		Mat dst=new Mat(mat.size(), mat.type());
+		Mat dst=newMat();
 		Core.flip(mat, dst, flipCode);
-		mat=dst;
+		update(dst);
 		return this;
 	}
 	
@@ -393,15 +414,29 @@ public class Cver {
 		return this;
 	}
 	
+	
+	/**
+	 * 直方图均衡化:通过拉伸像素强度分布范围来增强图像对比度
+	 * @return
+	 */
+	public Cver equalizeHist() {
+		List<Mat> mvs = new ArrayList<Mat>();
+        Core.split(mat, mvs);
+        for (int i = 0; i < mat.channels(); i++){
+            Imgproc.equalizeHist(mvs.get(i), mvs.get(i));
+        }
+        Core.merge(mvs, mat);
+        return this;
+	}
+	
+	
 	/**
 	 * Sobel算子进行边缘检测，并且将检测结果替换当前关联的mat对象
 	 * @return
 	 * @see #sobel()
 	 */
 	public Cver sobelNow() {
-		sobel();
-		mat=edge;
-		return this;
+		return sobel().update(edge);
 	}
 	
 	/**
@@ -412,18 +447,17 @@ public class Cver {
 	 * @param delta
 	 * @param borderType
 	 * @return
-	 * @see #sobel(int, int, int, int, int)
+	 * @see #sobel(int, int, double, int, int)
 	 */
-	public Cver sobelNow(int ddpeth,int ksize,int scale,int delta,int borderType) {
-		sobel(ddpeth, ksize, scale, delta, borderType);
-		mat=edge;
-		return this;
+	public Cver sobelNow(int ddpeth,int ksize,double scale,int delta,int borderType) {
+		return sobel(ddpeth, ksize, scale, delta, borderType).update(edge);
 	}
 	
 	/**
 	 * Sobel算子:主要是应用于边缘检测的一个离散的一阶差分算子，用来计算图像亮度函数的一阶梯度的近似值<br>
 	 * 默认ddpeth:{@link CvType#CV_16S},ksize:3,scale:1,delta:0,borderType:{@link Core#BORDER_DEFAULT}
 	 * @return
+	 * @see #sobel(int, int, double, int, int)
 	 */
 	public Cver sobel() {
 		return sobel(CvType.CV_16S,3,1,0,Core.BORDER_DEFAULT);
@@ -444,7 +478,7 @@ public class Cver {
 	 * {@link Core#BORDER_WRAP}：镜像对称复制<br/>
 	 * @return 
 	 */
-	public Cver sobel(int ddpeth,int ksize,int scale,int delta,int borderType) {
+	public Cver sobel(int ddpeth,int ksize,double scale,int delta,int borderType) {
         Mat dst_x = new Mat();
         Mat dst_y = new Mat();
         Mat abs_dst_x = new Mat();
@@ -456,9 +490,172 @@ public class Cver {
         Core.convertScaleAbs(dst_x, abs_dst_x);
         Core.convertScaleAbs(dst_y, abs_dst_y);
         //计算结果梯度
-        edge=new Mat(mat.size(), mat.type());
+        edge=newMat();
         Core.addWeighted(abs_dst_x, 0.5, abs_dst_y, 0.5, 0, edge);
         return this;
 	}
+	
+	/**
+	 * Canny进行多级边缘检测,并且将检测结果替换当前关联的mat对象
+	 * @return
+	 * @see #canny()
+	 */
+	public Cver cannyNow() {
+		return canny().update(edge);
+	}
+	
+	/**
+	 * Canny进行多级边缘检测,并且将检测结果替换当前关联的mat对象
+	 * @param threshold1
+	 * @param threshold2
+	 * @param apertureSize
+	 * @param l2gradient
+	 * @return
+	 * @see #canny(double, double, int, boolean)
+	 */
+	public Cver cannyNow(double threshold1,double threshold2,int apertureSize,boolean l2gradient) {
+		return canny(threshold1, threshold2, apertureSize, l2gradient).update(edge);
+	}
+	
+	
+	/**
+	 * Canny多级边缘检测算法<br/>
+	 * 默认值threshold1:40,threshold2:100,apertureSize:3,l2gradient:false
+	 * @return
+	 * @see #canny(double, double, int, boolean)
+	 */
+	public Cver canny() {
+		return canny(40, 100, 3, false);
+	}
+	
+	/**
+	 * Canny多级边缘检测算法<br/>
+	 * 滞后阈值（高阈值和低阈值），若某一像素位置的幅值超过高阈值，该像素被保留为边缘像素；若小于低阈值，则被排除；若在两者之间，该像素仅在连接到高阈值像素时被保留。推荐高低阈值比在2:1和3:1之间
+	 * @param threshold1 低阀值
+	 * @param threshold2 高阀值
+	 * @param apertureSize 算子模板大小
+	 * @param L2gradient 计算图像梯度幅值的标识,梯度幅值指沿某方向的方向导数最大的值，即梯度的模
+	 * @return
+	 */
+	public Cver canny(double threshold1,double threshold2,int apertureSize,boolean l2gradient) {
+		edge=newMat();
+		Imgproc.Canny(mat, edge, threshold1, threshold2, apertureSize, l2gradient);
+		return this;
+	}
+	
+	/**
+	 * 拉普拉斯算子边缘检测,并且将检测结果替换当前关联的mat对象
+	 * @return
+	 * @see #laplacian()
+	 */
+	public Cver laplacianNow() {
+		return laplacian().update(edge);
+	}
+	
+	/**
+	 * 拉普拉斯算子边缘检测,并且将检测结果替换当前关联的mat对象
+	 * @param ddepth
+	 * @param ksize
+	 * @param scale
+	 * @param delta
+	 * @param borderType
+	 * @return
+	 * @see #laplacian(int, int, double, double, int)
+	 */
+	public Cver laplacianNow(int ddepth, int ksize, double scale, double delta, int borderType) {
+		return laplacian(ddepth, ksize, scale, delta, borderType).update(edge);
+	}
+	
+	/**
+	 * 拉普拉斯算子边缘检测<br/>
+	 * 默认值ddepth:-1,ksize:3,scale:1,delta:0,borderType:{@link Core#BORDER_DEFAULT}
+	 * @return
+	 * @see #laplacian(int, int, double, double, int)
+	 */
+	public Cver laplacian() {
+		return laplacian(-1, 3, 1, 0, Core.BORDER_DEFAULT);
+	}
+	
+	/**
+	 * 拉普拉斯算子边缘检测:是n维欧几里德空间中的一个二阶微分算子，定义为梯度（▽f）的散度（▽·f）,因此如果f是二阶可微的实函数.
+	 * @param ddepth 目标图像的深度 
+	 * @param ksize 计算二阶导数的滤波器的孔径大小，必须为正奇数，默认为1 
+	 * @param scale 计算Laplacian的时候可选的比例因子，默认为1 
+	 * @param delta 结果存入目标图之前可选的detla值，默认为0 
+	 * @param borderType 边界模式，默认{@link Core#BORDER_DEFAULT}<br/>
+	 * 可选<br/>
+	 * {@link Core#BORDER_REPLICATE}：复制法，既是复制最边缘像素，例如aaa|abc|ccc <br/>
+	 * {@link Core#BORDER_REFLECT}：对称法，例如cba|abc|cba <br/>
+	 * {@link Core#BORDER_REFLECT_101}：对称法，最边缘像素不会被复制，例如cb|abc|ba <br/>
+	 * {@link Core#BORDER_CONSTANT}：常量法，默认为0 <br/>
+	 * {@link Core#BORDER_WRAP}：镜像对称复制<br/>
+	 * @return
+	 */
+	public Cver laplacian(int ddepth, int ksize, double scale, double delta, int borderType) {
+		Imgproc.Laplacian(mat, edge, ddepth, ksize, scale, delta, borderType);
+		return this;
+	}
+	
+	/**
+	 * Scharr滤波器进行边缘检测,并且将检测结果替换当前关联的mat对象
+	 * @return
+	 * @see #scharr()
+	 */
+	public Cver scharrNow() {
+		return scharr().update(edge);
+	}
+	
+	/**
+	 * Scharr滤波器进行边缘检测,并且将检测结果替换当前关联的mat对象
+	 * @param ddepth
+	 * @param scale
+	 * @param delta
+	 * @param borderType
+	 * @return
+	 * @see #scharr(int, double, double, int)
+	 */
+	public Cver scharrNow(int ddepth, double scale, double delta, int borderType) {
+		return scharr(ddepth, scale, delta, borderType).update(edge);
+	}
+	
+	
+	/**
+	 * Scharr滤波器进行边缘检测<br/>
+	 * 默认值 ddepth:-1,scale:1,delta:0,borderType:{@link Core#BORDER_DEFAULT}
+	 * @return
+	 * @see #scharr(int, double, double, int)
+	 */
+	public Cver scharr() {
+		return scharr(-1, 1, 0, Core.BORDER_DEFAULT);
+	}
+	
+	/**
+	 * Scharr滤波器进行边缘检测,是配合Sobel算子的运算而存在的。当Sobel内核为3时，结果可能会产生比较明显的误差，针对这一问题，提供了scharr函数。该函数只针对大小为3的核，并且运算速率和Sobel函数一样快，结果更加精确，但抗噪性不如Sobel函数。 
+	 * @param ddepth 输出图像的深度 
+	 * @param scale 缩放因子 
+	 * @param delta 结果存入输出图像前可选的delta值
+	 * @param borderType 边界模式，默认{@link Core#BORDER_DEFAULT}<br/>
+	 * 可选<br/>
+	 * {@link Core#BORDER_REPLICATE}：复制法，既是复制最边缘像素，例如aaa|abc|ccc <br/>
+	 * {@link Core#BORDER_REFLECT}：对称法，例如cba|abc|cba <br/>
+	 * {@link Core#BORDER_REFLECT_101}：对称法，最边缘像素不会被复制，例如cb|abc|ba <br/>
+	 * {@link Core#BORDER_CONSTANT}：常量法，默认为0 <br/>
+	 * {@link Core#BORDER_WRAP}：镜像对称复制<br/>
+	 * @return
+	 */
+	public Cver scharr(int ddepth, double scale, double delta, int borderType) {
+		Mat dst = newMat();
+        Mat dstx = newMat();
+        Mat dsty = newMat();
+        //计算x、y方向的梯度
+        Imgproc.Scharr(dst, dstx, ddepth, 1, 0, scale, delta, borderType);
+        Imgproc.Scharr(dst, dsty, ddepth, 0, 1, scale, delta, borderType);
+        edge=newMat();
+        Core.addWeighted(dstx, 0.5, dsty, 0.5, 0, edge);
+		return this;
+	}
+	
+	
+	
 	
 }

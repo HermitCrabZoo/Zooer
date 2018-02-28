@@ -20,9 +20,20 @@ public final class CvBridge {
 	private CvBridge() {}
 	
 	/**
-	 * 是否
+	 * 存在4通道的BufferedImage类型
+	 */
+	private static final int[] JAVA_IMG_TYPE_4CHANNELS= {BufferedImage.TYPE_4BYTE_ABGR,BufferedImage.TYPE_4BYTE_ABGR_PRE,BufferedImage.TYPE_INT_ARGB,BufferedImage.TYPE_INT_ARGB_PRE};
+	
+	/**
+	 * 存在4通道的Mat类型
+	 */
+	private static final int[] OPENCV_MAT_TYPE_4CHANNELS= {CvType.CV_8UC4,CvType.CV_8SC4,CvType.CV_16UC4,CvType.CV_16SC4,CvType.CV_32SC4,CvType.CV_32FC4,CvType.CV_64FC4};
+	
+	/**
+	 * 是否未加载opencv库文件
 	 */
 	private static boolean unload=true;
+	
 	
 	static {loadOpenCv();}
 	
@@ -111,8 +122,7 @@ public final class CvBridge {
 	 * @return
 	 */
 	private static String imgExt(Mat mat) {
-		mat.type();
-		if (mat.type()==CvType.CV_8UC4) {
+		if (Arrs.contains(OPENCV_MAT_TYPE_4CHANNELS, mat.type())) {
 			return ".png";
 		}
 		return ".jpg";
@@ -124,7 +134,7 @@ public final class CvBridge {
 	 * @return
 	 */
 	private static int matType(BufferedImage image) {
-		if (image.getType()==BufferedImage.TYPE_4BYTE_ABGR) {
+		if (Arrs.contains(JAVA_IMG_TYPE_4CHANNELS, image.getType())) {
 			return CvType.CV_8UC4;
 		}
 		return CvType.CV_8UC3;

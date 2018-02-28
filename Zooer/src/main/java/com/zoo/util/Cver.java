@@ -8,6 +8,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -29,6 +30,10 @@ public class Cver {
 	
 	private static final Size defBlurKsize=new Size(9,9);
 	
+	private static final Scalar scalar=new Scalar(0, 0, 255);
+	
+	private Scalar color=scalar;
+	
 	/**
 	 * 边缘检测结果
 	 */
@@ -38,6 +43,16 @@ public class Cver {
 	 * 圆检测结果
 	 */
 	private Mat circle;
+	
+	/**
+	 * 标准Hough直线检测结果
+	 */
+	private Mat line;
+	
+	/**
+	 * 累计概率Hough直线检测结果
+	 */
+	private Mat lineP;
 	
 	
 	/**
@@ -78,6 +93,24 @@ public class Cver {
 	public Cver set(Mat mat) {
 		assertNull(mat);
 		update(mat.clone());
+		return this;
+	}
+	
+	/**
+	 * 获取当前对象的画笔颜色
+	 * @return
+	 */
+	public Scalar color() {
+		return this.color;
+	}
+	
+	/**
+	 * 设置当前对象的画笔颜色
+	 * @param color
+	 * @return
+	 */
+	public Cver color(Scalar color) {
+		this.color=color==null?scalar:color;
 		return this;
 	}
 	
@@ -129,6 +162,24 @@ public class Cver {
 	public Mat circle() {
 		return circle;
 	}
+	
+	/**
+	 * 返回标准Hough直线检测结果的Mat对象
+	 * @return
+	 */
+	public Mat line() {
+		return line;
+	}
+	
+	/**
+	 * 返回累计概率Hough直线检测结果的Mat对象
+	 * @return
+	 */
+	public Mat lineP() {
+		return lineP;
+	}
+	
+	
 	
 	/**
 	 * 将当前关联的对象输出到入参指向的文件
@@ -238,6 +289,24 @@ public class Cver {
 	 */
 	public Cver gray() {
 		Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+		return this;
+	}
+	
+	/**
+	 * 转换为HSV颜色空间,这个模型中颜色的参数分别是:色调(H),饱和度(S),明度(V)
+	 * @return
+	 */
+	public Cver hsv() {
+		Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2HSV);
+		return this;
+	}
+	
+	/**
+	 * 转换为HLS颜色空间,这个模型中颜色的参数分别是:色调(H),亮度(L),饱和度(S)
+	 * @return
+	 */
+	public Cver hls() {
+		Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2HLS);
 		return this;
 	}
 	
@@ -592,6 +661,7 @@ public class Cver {
 	 * @return
 	 */
 	public Cver laplacian(int ddepth, int ksize, double scale, double delta, int borderType) {
+        edge=newMat();
 		Imgproc.Laplacian(mat, edge, ddepth, ksize, scale, delta, borderType);
 		return this;
 	}
@@ -644,17 +714,256 @@ public class Cver {
 	 * @return
 	 */
 	public Cver scharr(int ddepth, double scale, double delta, int borderType) {
-		Mat dst = newMat();
         Mat dstx = newMat();
         Mat dsty = newMat();
         //计算x、y方向的梯度
-        Imgproc.Scharr(dst, dstx, ddepth, 1, 0, scale, delta, borderType);
-        Imgproc.Scharr(dst, dsty, ddepth, 0, 1, scale, delta, borderType);
+        Imgproc.Scharr(mat, dstx, ddepth, 1, 0, scale, delta, borderType);
+        Imgproc.Scharr(mat, dsty, ddepth, 0, 1, scale, delta, borderType);
         edge=newMat();
         Core.addWeighted(dstx, 0.5, dsty, 0.5, 0, edge);
 		return this;
 	}
 	
+	/**
+	 * Hough圆检测,并且将检测结果画到当前的mat对象上
+	 * @return
+	 * @see #houghCircle()
+	 */
+	public Cver houghCircleNow() {
+		return houghCircle().drawCircle();
+	}
+	
+	/**
+	 * Hough圆检测,并且将检测结果画到当前的mat对象上
+	 * @param method
+	 * @param dp
+	 * @param minDist
+	 * @param param1
+	 * @param param2
+	 * @param minRadius
+	 * @param maxRadius
+	 * @return
+	 * @see #houghCircle(int, double, double, double, double, int, int)
+	 */
+	public Cver houghCircleNow(int method, double dp, double minDist, double param1, double param2, int minRadius, int maxRadius) {
+		return houghCircle(method, dp, minDist, param1, param2, minRadius, maxRadius).drawCircle();
+	}
+	
+	/**
+	 * Hough圆检测<br/>
+	 * 默认值method:{@link Imgproc#HOUGH_GRADIENT},dp:1,minDist:100,param1:440,param2:50,minRadius:0,maxRadius:0 
+	 * @return
+	 * @see #houghCircle(int, double, double, double, double, int, int)
+	 */
+	public Cver houghCircle() {
+		return houghCircle(Imgproc.HOUGH_GRADIENT, 1, 100, 440, 50, 0, 0);
+	}
+	
+	/**
+	 * Hough圆检测
+	 * @param method 检测方法,目前唯一可用 {@link Imgproc#HOUGH_GRADIENT}
+	 * @param dp 如果dp=1,Hough空间的叠加器就和输入图片的分辨率一致。如果dp=2，Hough空间叠加器就只有一半大小.
+	 * @param minDist 检测的圆心最小距离间隔.如果设置太小,一些旁边的圆可能就被错误的检测,而正确的就没检测出来.如果设置太大,可能就漏掉很多圆.
+	 * @param param1 它是第三个参数method设置的检测方法的对应的参数。对当前唯一的方法霍夫梯度法HOUGH_GRADIENT，它表示传递给canny边缘检测算子的高阈值，而低阈值为高阈值的一半
+	 * @param param2 它是第三个参数method设置的检测方法的对应的参数。对当前唯一的方法霍夫梯度法HOUGH_GRADIENT，它表示在检测阶段圆心的累加器阈值。它越小的话，就可以检测到更多根本不存在的圆，而它越大的话，能通过检测的圆就更加接近完美的圆形了
+	 * @param minRadius 圆最小半径
+	 * @param maxRadius 圆最大半径(若minRadius和maxRadius都为0，则函数会自动计算半径)
+	 * @return
+	 */
+	public Cver houghCircle(int method, double dp, double minDist, double param1, double param2, int minRadius, int maxRadius) {
+		Mat src=singleChannel();
+		circle=newMat();
+        Imgproc.HoughCircles(src, circle, method, dp, minDist, param1, param2, minRadius, maxRadius);
+		return this;
+	}
+	
+	/**
+	 * 在关联的mat对象上把检测到的圆圈画上去
+	 * @return
+	 */
+	private Cver drawCircle() {
+		for (int i = 0; i < circle.cols(); i++){
+            double[] vCircle = circle.get(0, i);
+            Point center = new Point(vCircle[0], vCircle[1]);
+            int radius = (int) Math.round(vCircle[2]);
+            // circle center
+            Imgproc.circle(mat, center, 3, color, -1, Imgproc.LINE_4, 0);
+            // circle outline
+            Imgproc.circle(mat, center, radius, color, 3, Imgproc.LINE_4, 0);
+        }
+		return this;
+	}
+	
+	/**
+	 * 标准Hough直线检测,并且将检测结果画到当前的mat对象上
+	 * @return
+	 * @see #houghLine()
+	 */
+	public Cver houghLineNow() {
+		return houghLine().drawLine();
+	}
+	
+	
+	/**
+	 * 标准Hough直线检测,并且将检测结果画到当前的mat对象上
+	 * @param rho
+	 * @param theta
+	 * @param threshold
+	 * @param srn
+	 * @param stn
+	 * @param min_theta
+	 * @param max_theta
+	 * @return
+	 * @see #houghLine(double, double, int, double, double, double, double)
+	 */
+	public Cver houghLineNow(double rho, double theta, int threshold, double srn, double stn, double min_theta, double max_theta) {
+		return houghLine(rho, theta, threshold, srn, stn, min_theta, max_theta).drawLine();
+	}
+	
+	/**
+	 * 标准Hough直线检测<br/>
+	 * 默认值rho:1,theta:{@link Math#PI}/180,threshold:200,srn:0, stn:0,min_theta:0,max_theta:90
+	 * @return
+	 * @see #houghLine(double, double, int, double, double, double, double)
+	 */
+	public Cver houghLine() {
+		return houghLine(1, Math.PI / 180, 200, 0, 0, 0, 90);
+	}
+	
+	
+	/**
+	 * 标准Hough直线检测:Hough变换是图像处理中的一种特征提取技术,该过程在一个参数空间中通过计算累计结果的局部最大值得到一个符合特定形状的集合作为hough变换结果.
+	 * @param rho 以像素为单位的距离精度 
+	 * @param theta 以弧度为单位的角度精度 
+	 * @param threshold 累加平面的阈值参数《即识别某部分为图中的一条直线时它在累加平面中必须达到的值，大于阈值threshold的线段才可以被检测通过并返回到结果中。
+	 * @param srn 对于多尺度的霍夫变换,这是参数rho的除数距离,粗略的累加器进步尺寸直接是参数rho，而精确的累加器进步尺寸为rho/srn
+	 * @param stn 对于多尺度霍夫变换,srn表示参数theta的除数距离,且如果srn和stn同时为0,就表示使用经典的霍夫变换.否则,这两个参数应该都为正数.
+	 * @param min_theta 检测到的直线的最小角度 
+	 * @param max_theta 检测到的直线的最大角度
+	 * @return
+	 */
+	public Cver houghLine(double rho, double theta, int threshold, double srn, double stn, double min_theta, double max_theta) {
+		Mat src=cannyMat();
+		line=newMat();
+        Imgproc.HoughLines(src, line, rho, theta, threshold, srn, stn, min_theta, max_theta);
+        return this;
+	}
+	
+	
+	/**
+	 * 累计概率Hough直线检测,并且将检测结果画到当前的mat对象上
+	 * @return
+	 * @see #houghLineP()
+	 */
+	public Cver houghLinePNow() {
+		return houghLineP().drawLineP();
+	}
+	
+	
+	/**
+	 * 累计概率Hough直线检测,并且将检测结果画到当前的mat对象上
+	 * @param rho
+	 * @param theta
+	 * @param threshold
+	 * @param minLineLength
+	 * @param maxLineGap
+	 * @return
+	 * @see #houghLineP(double, double, int, double, double)
+	 */
+	public Cver houghLinePNow(double rho, double theta, int threshold, double minLineLength, double maxLineGap) {
+		return houghLineP(rho, theta, threshold, minLineLength, maxLineGap).drawLineP();
+	}
+	
+	/**
+	 * 累计概率Hough直线检测<br/>
+	 * 默认值rho:1,theta:{@link Math#PI}/180,threshold:50,minLineLength:1, maxLineGap:1
+	 * @return
+	 * @see #houghLineP(double, double, int, double, double)
+	 */
+	public Cver houghLineP() {
+		return houghLineP(1, Math.PI / 180, 50, 1, 1);
+	}
+	
+	
+	/**
+	 * 累计概率Hough直线检测:采用累计概率霍夫变换(PPHT)来找出二值图像中的直线.
+	 * @param rho 以像素为单位的距离精度 
+	 * @param theta 以弧度为单位的角度精度 
+	 * @param threshold 累加平面的阈值参数《即识别某部分为图中的一条直线时它在累加平面中必须达到的值，大于阈值threshold的线段才可以被检测通过并返回到结果中。
+	 * @param minLineLength 最低线段长度 
+	 * @param maxLineGap 允许将同一行点与点之间连接起来的最大的距离
+	 * @return
+	 */
+	public Cver houghLineP(double rho, double theta, int threshold, double minLineLength, double maxLineGap) {
+		Mat src=cannyMat();
+		lineP=newMat();
+        Imgproc.HoughLinesP(src, lineP, rho, theta, threshold, minLineLength, maxLineGap);
+        return this;
+	}
+	
+	/**
+	 * 将标准Hough检测出来的直线画到Mat上
+	 * @return
+	 */
+	private Cver drawLine() {
+		for (int x = 0; x < line.rows(); x++) {
+			double[] vec = line.get(x, 0);
+			double rho = vec[0],theta = vec[1];
+			if (theta >= 0) {
+				Point pt1 = new Point(),pt2 = new Point();
+				double a = Math.cos(theta),b = Math.sin(theta);
+				double x0 = a * rho,y0 = b * rho;
+				pt1.x = Math.round(x0 + 1000 * (-b));
+				pt1.y = Math.round(y0 + 1000 * (a));
+				pt2.x = Math.round(x0 - 1000 * (-b));
+				pt2.y = Math.round(y0 - 1000 * (a));
+				Imgproc.line(mat, pt1, pt2, color, 1, Imgproc.LINE_4, 0);
+			}
+		}
+		return this;
+	}
+	
+	/**
+	 * 将累计概率Hough检测出来的直线画到Mat上
+	 * @return
+	 */
+	private Cver drawLineP() {
+		for (int x = 0; x < lineP.rows(); x++){
+            double[] vec = lineP.get(x, 0);
+            double x1 = vec[0], y1 = vec[1], x2 = vec[2], y2 = vec[3];
+            Point start = new Point(x1, y1);
+            Point end = new Point(x2, y2);
+            Imgproc.line(mat, start, end, color, 1, Imgproc.LINE_4, 0);
+        }
+		return this;
+	}
+	
+	/**
+	 * 若当前的mat是单通道时返回当前mat,否则返回当前mat转换为灰度图后的新mat对象
+	 * @return
+	 */
+	private Mat singleChannel() {
+		Mat src=null;
+		if (mat.channels()==1) {
+			src=mat;
+		}else {
+			src=newMat();
+			Imgproc.cvtColor(mat, src, Imgproc.COLOR_BGR2GRAY);
+		}
+		return src;
+	}
+	
+	/**
+	 * 获取当前mat用Canny算子检测边缘产生的edge结果对象,并且不改变原edge的引用
+	 * @return
+	 */
+	private Mat cannyMat() {
+		Mat oldEdge=edge;
+		canny();
+		Mat newEdge=edge;
+		edge=oldEdge;
+		return newEdge;
+	}
 	
 	
 	

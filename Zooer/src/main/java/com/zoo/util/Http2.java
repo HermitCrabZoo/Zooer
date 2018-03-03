@@ -72,8 +72,8 @@ public final class Http2 {
      */
 	public static String get(String url,Map<String, Object> param,String charset) {
 		String uri=url+(Strs.endsWith(url, "?")?"":"?")+param(param, charset);
-		HttpClient client = HttpClient.newHttpClient();
 		try {
+			HttpClient client = getClient();
 			HttpRequest request = HttpRequest.newBuilder(URI.create(uri))
 					.header("accept", "*/*")
 		            .header("connection", "Keep-Alive")
@@ -96,8 +96,8 @@ public final class Http2 {
      * @return 响应结果
      */
     public static String post(String url, Map<String, Object> param,Charset charset) {
-    	HttpClient client = HttpClient.newHttpClient();
 		try {
+			HttpClient client = getClient();
 			BodyProcessor body=BodyProcessor.fromString(param(param), Optional.ofNullable(charset).orElse(Charset.defaultCharset()));//请求体
 			HttpRequest request = HttpRequest.newBuilder(URI.create(url))
 					.header("accept", "*/*")
@@ -114,6 +114,21 @@ public final class Http2 {
 		return Strs.empty();
     }
 	
+    /**
+     * 内部私有静态类用于构造安全的单例
+     * @author ZOO
+     */
+    private static class HttpClienter{
+    	private static final HttpClient CLIENT = HttpClient.newHttpClient();
+    }
+    
+    /**
+     * 获取HttpClient单例
+     * @return
+     */
+    private static HttpClient getClient() {
+    	return HttpClienter.CLIENT;
+    }
 	
 	/**
      * 将map编成http类型的参数返回(key1=value1&key2=value2)

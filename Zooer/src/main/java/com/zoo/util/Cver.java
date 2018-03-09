@@ -335,31 +335,33 @@ public class Cver {
 	 * @return
 	 */
 	public Cver whiteBalance() {
-		List<Mat> channels=new ArrayList<>();
-		//分离颜色通道
-		Core.split(mat, channels);
-		Mat cb=channels.get(0);
-		Mat cg=channels.get(1);
-		Mat cr=channels.get(2);
-		
-		//对通道求平均值
-		double ab=Core.mean(cb).val[0];
-		double ag=Core.mean(cg).val[0];
-		double ar=Core.mean(cr).val[0];
-		
-		//计算通道的分量增益
-		double sum=ab+ag+ar;
-		double b=sum/(3*ab);
-		double g=sum/(3*ag);
-		double r=sum/(3*ar);
-		
-		//调整各通道值
-		Core.addWeighted(cb, b, cb, 0, 0, cb);
-		Core.addWeighted(cg, g, cg, 0, 0, cg);
-		Core.addWeighted(cr, r, cr, 0, 0, cr);
-		
-		//合成
-		Core.merge(channels, mat);
+		if (mat.channels()>=3) {
+			List<Mat> channels=new ArrayList<>();
+			//分离颜色通道
+			Core.split(mat, channels);
+			Mat cb=channels.get(0);
+			Mat cg=channels.get(1);
+			Mat cr=channels.get(2);
+			
+			//对通道求平均值
+			double ab=Core.mean(cb).val[0];
+			double ag=Core.mean(cg).val[0];
+			double ar=Core.mean(cr).val[0];
+			
+			//计算通道的分量增益
+			double sum=ab+ag+ar;
+			double b=sum/(3*ab);
+			double g=sum/(3*ag);
+			double r=sum/(3*ar);
+			
+			//调整各通道值
+			Core.addWeighted(cb, b, cb, 0, 0, cb);
+			Core.addWeighted(cg, g, cg, 0, 0, cg);
+			Core.addWeighted(cr, r, cr, 0, 0, cr);
+			
+			//合成
+			Core.merge(channels, mat);
+		}
 		return this;
 	}
 	

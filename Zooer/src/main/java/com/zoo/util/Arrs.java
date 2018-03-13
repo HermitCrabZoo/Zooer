@@ -14,7 +14,86 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class Arrs {
+	
 	private Arrs(){}
+	
+	/**
+	 * 构造long型数组,无传入参数则返回一个空数组(0个元素)
+	 * @param ls
+	 * @return
+	 */
+	public static long[] of(long...ls) {
+		return ls==null?Typer.longs():ls;
+	}
+	
+	/**
+	 * 构造int型数组,无传入参数则返回一个空数组(0个元素)
+	 * @param is
+	 * @return
+	 */
+	public static int[] of(int...is) {
+		return is==null?Typer.ints():is;
+	}
+	
+	
+	/**
+	 * 构造short型数组,无传入参数则返回一个空数组(0个元素)
+	 * @param ss
+	 * @return
+	 */
+	public static short[] of(short...ss) {
+		return ss==null?Typer.shorts():ss;
+	}
+	
+	
+	/**
+	 * 构造byte型数组,无传入参数则返回一个空数组(0个元素)
+	 * @param bs
+	 * @return
+	 */
+	public static byte[] of(byte...bs) {
+		return bs==null?Typer.bytes():bs;
+	}
+	
+	
+	/**
+	 * 构造double型数组,无传入参数则返回一个空数组(0个元素)
+	 * @param ds
+	 * @return
+	 */
+	public static double[] of(double...ds) {
+		return ds==null?Typer.doubles():ds;
+	}
+	
+	
+	/**
+	 * 构造float型数组,无传入参数则返回一个空数组(0个元素)
+	 * @param fs
+	 * @return
+	 */
+	public static float[] of(float...fs) {
+		return fs==null?Typer.floats():fs;
+	}
+	
+	
+	/**
+	 * 构造char型数组,无传入参数则返回一个空数组(0个元素)
+	 * @param cs
+	 * @return
+	 */
+	public static char[] of(char...cs) {
+		return cs==null?Typer.chars():cs;
+	}
+	
+	
+	/**
+	 * 构造boolean型数组,无传入参数则返回一个空数组(0个元素)
+	 * @param bs
+	 * @return
+	 */
+	public static boolean[] of(boolean...bs) {
+		return bs==null?Typer.booleans():bs;
+	}
 	
 	
 	/**

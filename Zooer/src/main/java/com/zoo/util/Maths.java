@@ -1,9 +1,12 @@
 package com.zoo.util;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public final class Maths {
 	private Maths(){}
+	
+	
 	/**
 	 * 获取传入值的位数
 	 * @param num
@@ -12,6 +15,8 @@ public final class Maths {
 	public static int digit(long num){
 		return String.valueOf(num).length();
 	}
+	
+	
 	/**
 	 * 获取传入值的位数
 	 * @param num
@@ -20,6 +25,7 @@ public final class Maths {
 	public static int digit(double num){
 		return new BigDecimal(num).toPlainString().split(".")[0].length();
 	}
+	
 	
 	/**
 	 * 通过数量级获取该数量级最大的值,
@@ -37,6 +43,8 @@ public final class Maths {
 		}
 		return max-1L;
 	}
+	
+	
 	/**
 	 * 判断是否是正数
 	 * @param num
@@ -96,4 +104,36 @@ public final class Maths {
 	    }  
 	    return true;  
 	}
+	
+	
+	/**
+	 * 计算数组的方差:每个元素与所有元素的平均数之差的平方值的平均数
+	 * @param arr
+	 * @return
+	 */
+	public static double variance(double[] arr) {
+		double c=0.0;
+		if (Objects.nonNull(arr)) {
+			int len=arr.length;
+			double[] squares=new double[len];
+			double avg=Arrs.avg(arr);
+			for(int i=0;i<len;i++) {
+				squares[i]=Math.pow(arr[i]-avg,2);
+			}
+			c=Arrs.avg(squares);
+		}
+		
+		return c;
+	}
+	
+	
+	/**
+	 * 计算数组的标准差:方差的算术平方根
+	 * @param arr
+	 * @return
+	 */
+	public static double standardDeviation(double[] arr) {
+		return Math.sqrt(variance(arr));
+	}
+	
 }

@@ -215,10 +215,10 @@ public final class Strs {
 	 * @see {@link String#split(String)}
 	 */
 	public static String[] split(String str,String regex){
-		if (str==null || regex==null) {
-			return new String[]{};
+		if (Typer.notNull(str,regex)) {
+			return str.split(regex);
 		}
-		return str.split(regex);
+		return emptys();
 	}
 	
 	/**
@@ -230,10 +230,10 @@ public final class Strs {
 	 * @see {@link String#split(String, int)}
 	 */
 	public static String[] split(String str,String regex,int limit){
-		if (str==null || regex==null) {
-			return new String[]{};
+		if (Typer.notNull(str,regex)) {
+			return str.split(regex,limit);
 		}
-		return str.split(regex,limit);
+		return emptys();
 	}
 	
 	/**
@@ -245,10 +245,10 @@ public final class Strs {
 	 * @see {@link String#replace(CharSequence, CharSequence)}
 	 */
 	public static String replace(String str,CharSequence target,CharSequence replacement) {
-		if (str==null || target==null || replacement==null) {
-			return str;
+		if (Typer.notNull(str,target,replacement)) {
+			return str.replace(target, replacement);
 		}
-		return str.replace(target, replacement);
+		return str;
 	}
 	
 	/**
@@ -260,10 +260,10 @@ public final class Strs {
 	 * @see {@link String#replaceFirst(String, String)}
 	 */
 	public static String replaceFirst(String str,String regex,String replacement) {
-		if (str==null || regex==null || replacement==null) {
-			return str;
+		if (Typer.notNull(str,regex,replacement)) {
+			return str.replaceFirst(regex, replacement);
 		}
-		return str.replaceFirst(regex, replacement);
+		return str;
 	}
 	
 	/**
@@ -275,10 +275,10 @@ public final class Strs {
 	 * @see {@link String#replaceAll(String, String)}
 	 */
 	public static String replaceAll(String str,String regex,String replacement) {
-		if (str==null || regex==null || replacement==null) {
-			return str;
+		if (Typer.notNull(str,regex,replacement)) {
+			return str.replaceAll(regex, replacement);
 		}
-		return str.replaceAll(regex, replacement);
+		return str;
 	}
 	
 	/**
@@ -359,5 +359,55 @@ public final class Strs {
 	public static boolean hasChineseOnly(String str) {
 		return Optional.ofNullable(str).map(s->PATTERN_CHINESE.matcher(s).matches()).orElse(false);
 	}
+	
+	/**
+	 * 获取字符串的长度
+	 * @param str
+	 * @return 若传入参数str为null,则返回0
+	 */
+	public static int len(String str) {
+		return str==null?0:str.length();
+	}
+	
+	/**
+	 * 字符串左对齐,用fillchar从右边补足字符串长度到len.
+	 * @param str
+	 * @param len
+	 * @param fillchar
+	 * @return 若传入参数str为null则返回null
+	 */
+	public static String ljust(String str,int len,Character fillchar) {
+		int l=len-len(str);
+		if (Typer.notNull(str,fillchar) && l>0) {
+			StringBuilder sb=new StringBuilder(str);
+			for(int i=0;i<l;i++) {
+				sb.append(fillchar);
+			}
+			str=sb.toString();
+		}
+		return str;
+	}
+	
+	/**
+	 * 字符串右对齐,用fillchar从左边补足字符串长度到len.
+	 * @param str
+	 * @param len
+	 * @param fillchar
+	 * @return 若传入参数str为null则返回null
+	 */
+	public static String rjust(String str,int len,Character fillchar) {
+		int l=len-len(str);
+		if (Typer.notNull(str,fillchar) && l>0) {
+			StringBuilder sb=new StringBuilder();
+			for(int i=0;i<l;i++) {
+				sb.append(fillchar);
+			}
+			sb.append(str);
+			str=sb.toString();
+			
+		}
+		return str;
+	}
+	
 	
 }

@@ -11,6 +11,9 @@ import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 public class Encrypt {
 
 	private static char hexDigits[]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};    
@@ -102,7 +105,7 @@ public class Encrypt {
 			MappedByteBuffer byteBuffer = in.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(file));
 			MessageDigest md5 = MessageDigest.getInstance("MD5");
 			md5.update(byteBuffer);
-            return digest(md5);
+            return hex(md5.digest());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -195,16 +198,98 @@ public class Encrypt {
         try {
             MessageDigest digest = MessageDigest.getInstance(algorithm);
             digest.update(str.getBytes());
-            return digest(digest);
+            return hex(digest.digest());
         } catch (Exception e) {
             e.printStackTrace();
         }
         return Strs.empty();
     }
 	
-	private static String digest(MessageDigest digest) {
+	/**
+	 * HmacMD5加密
+	 * @param str
+	 * @param key
+	 * @return
+	 */
+	public static String hmacMd5(String str,String key) {
+		return hmac(str, key, "HmacMD5");
+	}
+
+	
+	/**
+	 * HmacSHA1加密
+	 * @param str
+	 * @param key
+	 * @return
+	 */
+	public static String hmacSha1(String str,String key) {
+		return hmac(str, key, "HmacSHA1");
+	}
+
+	
+	/**
+	 * HmacSHA224加密
+	 * @param str
+	 * @param key
+	 * @return
+	 */
+	public static String hmacSha224(String str,String key) {
+		return hmac(str, key, "HmacSHA224");
+	}
+
+	
+	/**
+	 * HmacSHA256加密
+	 * @param str
+	 * @param key
+	 * @return
+	 */
+	public static String hmacSha256(String str,String key) {
+		return hmac(str, key, "HmacSHA256");
+	}
+
+	
+	/**
+	 * HmacSHA384加密
+	 * @param str
+	 * @param key
+	 * @return
+	 */
+	public static String hmacSha384(String str,String key) {
+		return hmac(str, key, "HmacSHA384");
+	}
+
+	
+	/**
+	 * HmacSHA512加密
+	 * @param str
+	 * @param key
+	 * @return
+	 */
+	public static String hmacSha512(String str,String key) {
+		return hmac(str, key, "HmacSHA512");
+	}
+	
+	
+	private static String hmac(String str,String key,String algorithm) {
+		try {
+			SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), algorithm);
+			Mac mac = Mac.getInstance(algorithm);
+			mac.init(signingKey);
+			return hex(mac.doFinal(str.getBytes()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Strs.empty();
+	}
+	
+	/**
+	 * 将byte[]转为十六进制字符串
+	 * @param md
+	 * @return
+	 */
+	private static String hex(byte[] md) {
 		// 获得密文  
-		byte[] md = digest.digest();  
         // 把密文转换成十六进制的字符串形式  
         int j = md.length;  
         char chars[] = new char[j * 2];  

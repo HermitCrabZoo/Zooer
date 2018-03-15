@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.opencv.core.Core;
+import org.opencv.core.Core.MinMaxLocResult;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -12,6 +13,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+
 
 
 public class Cver {
@@ -53,6 +55,16 @@ public class Cver {
 	 * 累计概率Hough直线检测结果
 	 */
 	private Mat lineP;
+	
+	/**
+	 * 模板匹配结果
+	 */
+	private Mat matched;
+	
+	/**
+	 * 通过模板匹配结果计算出来坐标信息,该对象代表矩形的定位,maxLoc属性为左上角,minLoc属性为右下角
+	 */
+	private MinMaxLocResult minMaxLocResult;
 	
 	
 	/**
@@ -179,7 +191,21 @@ public class Cver {
 		return lineP;
 	}
 	
+	/**
+	 * 返回模板匹配结果对象(建议使用{@link #minMaxLocResult()}函数直接获取匹配结果的坐标信息)
+	 * @return
+	 */
+	public Mat matched() {
+		return matched;
+	}
 	
+	/**
+	 * 获取通过模板匹配结果计算出来坐标信息,返回MinMaxLocResult的对象,该对象代表矩形的定位,maxLoc属性为左上角坐标,minLoc属性为右下角坐标
+	 * @return
+	 */
+	public MinMaxLocResult minMaxLocResult() {
+		return minMaxLocResult;
+	}
 	
 	/**
 	 * 将当前关联的对象输出到入参指向的文件
@@ -967,6 +993,77 @@ public class Cver {
 		return newEdge;
 	}
 	
+	/**
+	 * 模板匹配,并把当前mat匹配到的区域标记(用矩形线框起来)<br/>
+	 * 默认使用归一化相关匹配法,
+	 * 默认值method:{@link Imgproc#TM_CCORR_NORMED}
+	 * @param templ 要匹配的模板
+	 * @return
+	 */
+	public Cver matchTemplateNow(Mat templ) {
+		return matchTemplate(templ).drawMatched();
+	}
 	
+	
+	/**
+	 * 模板匹配,并把当前mat匹配到的区域标记(用矩形线框起来)
+	 * @param templ 要匹配的模板
+	 * @param method 匹配算法<br/>
+	 * 可选<br/>
+	 * {@link Imgproc#TM_CCORR}：相关匹配法,该方法采用乘法操作；数值越大表明匹配程度越好。<br/>
+	 * {@link Imgproc#TM_CCORR_NORMED}：归一化相关匹配法<br/>
+	 * {@link Imgproc#TM_SQDIFF}：平方差匹配法,该方法采用平方差来进行匹配,最好的匹配值为0,匹配越差,匹配值越大。<br/>
+	 * {@link Imgproc#TM_SQDIFF_NORMED}： 归一化平方差匹配法<br/>
+	 * {@link Imgproc#TM_CCOEFF}：相关系数匹配法,1表示完美的匹配,-1表示最差的匹配. <br/>
+	 * {@link Imgproc#TM_CCOEFF_NORMED}：归一化相关系数匹配法 <br/>
+	 * @return
+	 */
+	public Cver matchTemplateNow(Mat templ, int method) {
+		return matchTemplate(templ, method).drawMatched();
+	}
+	
+	
+	/**
+	 * 模板匹配<br/>
+	 * 默认使用归一化相关匹配法,
+	 * 默认值method:{@link Imgproc#TM_CCORR_NORMED}
+	 * @param templ 要匹配的模板
+	 * @return
+	 */
+	public Cver matchTemplate(Mat templ) {
+		return matchTemplate(templ,Imgproc.TM_CCOEFF_NORMED);
+	}
+	
+	
+	/**
+	 * 模板匹配
+	 * @param templ 要匹配的模板
+	 * @param method 匹配算法<br/>
+	 * 可选<br/>
+	 * {@link Imgproc#TM_CCORR}：相关匹配法,该方法采用乘法操作；数值越大表明匹配程度越好。<br/>
+	 * {@link Imgproc#TM_CCORR_NORMED}：归一化相关匹配法<br/>
+	 * {@link Imgproc#TM_SQDIFF}：平方差匹配法,该方法采用平方差来进行匹配,最好的匹配值为0,匹配越差,匹配值越大。<br/>
+	 * {@link Imgproc#TM_SQDIFF_NORMED}： 归一化平方差匹配法<br/>
+	 * {@link Imgproc#TM_CCOEFF}：相关系数匹配法,1表示完美的匹配,-1表示最差的匹配. <br/>
+	 * {@link Imgproc#TM_CCOEFF_NORMED}：归一化相关系数匹配法 <br/>
+	 * @return
+	 */
+	public Cver matchTemplate(Mat templ, int method) {
+		matched=new Mat(mat.rows()-templ.rows(), mat.cols()-templ.cols(), mat.type());
+		Imgproc.matchTemplate(mat, templ, matched, method);
+        MinMaxLocResult mmlr = Core.minMaxLoc(matched);
+        if (method==Imgproc.TM_SQDIFF || method==Imgproc.TM_SQDIFF_NORMED) {
+			mmlr.maxLoc=mmlr.minLoc;
+		}
+		mmlr.minLoc=new Point(mmlr.maxLoc.x+templ.cols(),mmlr.maxLoc.y+templ.rows());
+		minMaxLocResult=mmlr;
+		return this;
+	}
+	
+	
+	private Cver drawMatched() {
+        Imgproc.rectangle(mat, minMaxLocResult.maxLoc,minMaxLocResult.minLoc,color);
+		return this;
+	}
 	
 }

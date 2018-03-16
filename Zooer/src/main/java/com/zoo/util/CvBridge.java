@@ -2,16 +2,11 @@ package com.zoo.util;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Optional;
-import javax.imageio.ImageIO;
-
 import org.bytedeco.javacv.Frame;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
@@ -43,8 +38,6 @@ public final class CvBridge {
 	public static final void loadOpenCv() {
 		if (unload) {
 			try {
-				//windows平台的库文件
-//				System.load("E:\\GitRepositories\\Zooer\\Zooer\\lib\\opencv_java331.dll");
 				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 				unload=false;
 			} catch (Exception e) {
@@ -98,23 +91,50 @@ public final class CvBridge {
 		return mat;
 	}
 	
+	
+	public static Mat toMat(BufferedImage image) {
+		byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		Mat mat=Mat.eye(new Size(image.getWidth(), image.getHeight()), matType(image));
+		mat.put(0, 0, pixels);
+		return mat;
+	}
+	
+	
 	/**
 	 * 将OpenCV的Mat对象转换为BufferedImage对象
 	 * @param frame
 	 * @return
 	 */
 	public static BufferedImage image(Mat mat) {
-		BufferedImage image=null;
-		MatOfByte buf=new MatOfByte();
-		Imgcodecs.imencode(imgExt(mat), mat, buf);
-		byte[] arr=buf.toArray();
-		try (ByteArrayInputStream in = new ByteArrayInputStream(arr)){
-			image=ImageIO.read(in);
-		} catch (IOException e) {
-			e.printStackTrace();
+		
+		int channel=mat.channels(),row=mat.rows(),col=mat.cols();
+		int bufferSize = channel*row*col;
+		
+		int type = BufferedImage.TYPE_BYTE_GRAY;
+        if ( channel > 3 ) {
+        	type = BufferedImage.TYPE_4BYTE_ABGR;
+        }else if (channel>1) {
+        	type = BufferedImage.TYPE_3BYTE_BGR;
 		}
-		return image;
+        
+        byte [] b = new byte[bufferSize];
+        mat.get(0,0,b); // get all the pixels
+        
+        BufferedImage image = new BufferedImage(col,row, type);
+        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        
+        if (type == BufferedImage.TYPE_4BYTE_ABGR) {
+        	//拷贝像素值,并将每个像素分量排布从BGRA转为ABGR
+            for(int i=0;i<bufferSize;i+=4) {
+            	targetPixels[i]=b[i+3];
+            	System.arraycopy(b, i, targetPixels, i+1, 3);
+            }
+		}else {//直接拷贝
+        	System.arraycopy(b, 0, targetPixels, 0, bufferSize);
+		}
+        return image;
 	}
+	
 	
 	/**
 	 * 通过Mat的图片类型返回输入图片的后缀

@@ -2,6 +2,9 @@ package com.zoo.util;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferUShort;
+import java.util.Arrays;
 import java.util.Optional;
 import org.bytedeco.javacv.Frame;
 import org.opencv.core.Core;
@@ -15,17 +18,43 @@ public final class CvBridge {
 	private CvBridge() {}
 	
 	/**
-	 * 存在4通道的BufferedImage类型
+	 * BufferedImage的类型
 	 */
-	private static final int[] JAVA_IMG_TYPE_4CHANNELS= {BufferedImage.TYPE_4BYTE_ABGR,BufferedImage.TYPE_4BYTE_ABGR_PRE,BufferedImage.TYPE_INT_ARGB,BufferedImage.TYPE_INT_ARGB_PRE};
+	private static final int[] JAVA_IMG_TYPES= {BufferedImage.TYPE_CUSTOM,
+												BufferedImage.TYPE_INT_RGB,
+												BufferedImage.TYPE_INT_ARGB,
+												BufferedImage.TYPE_INT_ARGB_PRE,
+												BufferedImage.TYPE_INT_BGR,
+												BufferedImage.TYPE_3BYTE_BGR,
+												BufferedImage.TYPE_4BYTE_ABGR,
+												BufferedImage.TYPE_4BYTE_ABGR_PRE,
+												BufferedImage.TYPE_BYTE_GRAY,
+												BufferedImage.TYPE_BYTE_BINARY,
+												BufferedImage.TYPE_BYTE_INDEXED,
+												BufferedImage.TYPE_USHORT_GRAY,
+												BufferedImage.TYPE_USHORT_565_RGB,
+												BufferedImage.TYPE_USHORT_555_RGB};
 	
 	/**
-	 * 存在4通道的Mat类型
+	 * OpenCV中Mat的类型,与{@link #JAVA_IMG_TYPES}中的值一一对应
 	 */
-	private static final int[] OPENCV_MAT_TYPE_4CHANNELS= {CvType.CV_8UC4,CvType.CV_8SC4,CvType.CV_16UC4,CvType.CV_16SC4,CvType.CV_32SC4,CvType.CV_32FC4,CvType.CV_64FC4};
+	private static final int[] OPENCV_IMG_TYPES= {0,
+													CvType.CV_32SC3,
+													CvType.CV_32SC4,
+													CvType.CV_32SC4,
+													CvType.CV_32SC3,
+													CvType.CV_8UC3,
+													CvType.CV_8UC4,
+													CvType.CV_8UC4,
+													CvType.CV_8UC1,
+													CvType.CV_8UC3,
+													CvType.CV_8UC3,
+													CvType.CV_16UC1,
+													CvType.CV_16UC3,
+													CvType.CV_16UC3};
 	
 	/**
-	 * 是否未加载opencv库文件
+	 * 是否未加载OpenCV库文件
 	 */
 	private static boolean unload=true;
 	
@@ -47,7 +76,7 @@ public final class CvBridge {
 	}
 	
 	/**
-	 * 使用opencv将图片翻转保存到新图片，其中图片读写部分较快，单纯的图片翻转操作建议使用此方法。
+	 * 使用OpenCV将图片翻转保存到新图片，其中图片读写部分较快，单纯的图片翻转操作建议使用此方法。
 	 * 图片翻转，flipCode为0、1、-1分别代表垂直翻转(x轴)、水平翻转(y轴)、垂直水平都翻转
 	 * @param sourceFileName 原始文件路径
 	 * @param destFileName 反转后的输出文件路径
@@ -85,16 +114,86 @@ public final class CvBridge {
 	 * @return
 	 */
 	public static Mat mat(BufferedImage image) {
-		byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-		Mat mat=Mat.eye(new Size(image.getWidth(), image.getHeight()), matType(image));
-		mat.put(0, 0, pixels);
+		int type=image.getType();
+		Mat mat=new Mat(image.getHeight(),image.getWidth(), OPENCV_IMG_TYPES[Arrs.index(JAVA_IMG_TYPES, type)]);
+		
+		if (Arrs.contains(type, BufferedImage.TYPE_BYTE_GRAY,BufferedImage.TYPE_3BYTE_BGR)) {
+			
+			byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+			mat.put(0, 0, pixels);
+			
+		}else if (Arrs.contains(type, BufferedImage.TYPE_4BYTE_ABGR,BufferedImage.TYPE_4BYTE_ABGR_PRE)) {
+			
+			byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+			int len=pixels.length;
+			byte[] npixels=new byte[len];
+			//拷贝像素值,并将每个像素分量排布从ABGR转为BGRA
+            for(int i=0;i<len;i+=4) {
+            	npixels[i+3]=pixels[i];
+            	System.arraycopy(pixels, i+1, npixels, i, 3);
+            }
+			mat.put(0, 0, npixels);
+			
+		}else if (Arrs.contains(type, BufferedImage.TYPE_BYTE_BINARY,BufferedImage.TYPE_BYTE_INDEXED)) {
+			
+			byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+			int len=image.getWidth()*image.getHeight()*3;
+			byte[] npixels=new byte[len];
+			//反转拷贝*3
+			for (int i = 0,j=pixels.length-1; j > -1;i+=3,j--) {
+            	Arrays.fill(npixels, i, i+3, pixels[j]);
+			}
+			mat.put(0, 0, npixels);
+			
+		}else if (type==BufferedImage.TYPE_USHORT_GRAY) {
+			
+			short[] pixels = ((DataBufferUShort) image.getRaster().getDataBuffer()).getData();
+			mat.put(0, 0, pixels);
+			
+		}else if (Arrs.contains(type, BufferedImage.TYPE_USHORT_565_RGB,BufferedImage.TYPE_USHORT_555_RGB)) {
+			
+			short[] pixels = ((DataBufferUShort) image.getRaster().getDataBuffer()).getData();
+			int len=pixels.length*3;
+			short[] npixels=new short[len];
+			//反转拷贝
+			for (int i = 0,j=pixels.length-1; i < len; i+=3,j--) {
+            	System.arraycopy(Typer.shorts(Colors.bgra(pixels[j])), 0, npixels, i, 3);
+			}
+			mat.put(0, 0, npixels);
+			
+		}else if (Arrs.contains(type, BufferedImage.TYPE_INT_RGB,BufferedImage.TYPE_INT_ARGB,BufferedImage.TYPE_INT_ARGB_PRE)) {
+			
+			int channel=type==BufferedImage.TYPE_INT_RGB?3:4;
+			int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+			int len=pixels.length*channel;
+			int[] npixels=new int[len];
+			//反转拷贝
+			for (int i = 0,j=pixels.length-1; i < len; i+=channel,j--) {
+            	System.arraycopy(Colors.bgra(pixels[j]), 0, npixels, i, channel);
+			}
+			mat.put(0, 0, npixels);
+			
+		}else if (type==BufferedImage.TYPE_INT_BGR) {
+			
+			int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+			int len2=pixels.length*3;
+			int[] npixels=new int[len2];
+			for (int i = 0,j=0; i < len2;j++) {
+				npixels[i++] = (pixels[j] & 0xff0000) >> 16;
+				npixels[i++] = (pixels[j] & 0xff00) >> 8;
+				npixels[i++] = (pixels[j] & 0xff);
+			}
+			mat.put(0, 0, npixels);
+		}
+		
 		return mat;
 	}
 	
 	
 	public static Mat toMat(BufferedImage image) {
+		
 		byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-		Mat mat=Mat.eye(new Size(image.getWidth(), image.getHeight()), matType(image));
+		Mat mat=Mat.eye(new Size(image.getWidth(), image.getHeight()), CvType.CV_8UC3);
 		mat.put(0, 0, pixels);
 		return mat;
 	}
@@ -116,7 +215,7 @@ public final class CvBridge {
         }else if (channel>1) {
         	type = BufferedImage.TYPE_3BYTE_BGR;
 		}
-        
+        mat=bytelize(mat, row, col,CvType.CV_8UC(channel));
         byte [] b = new byte[bufferSize];
         mat.get(0,0,b); // get all the pixels
         
@@ -129,7 +228,8 @@ public final class CvBridge {
             	targetPixels[i]=b[i+3];
             	System.arraycopy(b, i, targetPixels, i+1, 3);
             }
-		}else {//直接拷贝
+		}else {
+			//直接拷贝
         	System.arraycopy(b, 0, targetPixels, 0, bufferSize);
 		}
         return image;
@@ -137,26 +237,20 @@ public final class CvBridge {
 	
 	
 	/**
-	 * 通过Mat的图片类型返回输入图片的后缀
+	 * 判断传入的mat数据类型是否是byte类型,若是则返回原mat对象,若不是则返回:原mat对象转为数据类型为byte的新mat对象
 	 * @param mat
+	 * @param rows
+	 * @param cols
 	 * @return
 	 */
-	private static String imgExt(Mat mat) {
-		if (Arrs.contains(OPENCV_MAT_TYPE_4CHANNELS, mat.type())) {
-			return ".png";
+	private static Mat bytelize(Mat mat,int rows,int cols,int channel) {
+		int t=mat.type();
+		if (!(CvType.depth(t) == CvType.CV_8U || CvType.depth(t) == CvType.CV_8S)) {
+			int type=CvType.CV_8UC(channel);//将通道转类型值
+			Mat byteMat=new Mat(rows, cols, type);
+			mat.convertTo(byteMat, type);
+			return byteMat;
 		}
-		return ".jpg";
-	}
-	
-	/**
-	 * 通过BufferedImage的图片类型返回对应的OpenCV里Mat对应的类型
-	 * @param image
-	 * @return
-	 */
-	private static int matType(BufferedImage image) {
-		if (Arrs.contains(JAVA_IMG_TYPE_4CHANNELS, image.getType())) {
-			return CvType.CV_8UC4;
-		}
-		return CvType.CV_8UC3;
+		return mat;
 	}
 }

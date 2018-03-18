@@ -5,8 +5,11 @@ import java.util.Optional;
 import java.util.Random;
 
 public final class Colors {
+	
 	private Colors(){}
+	
 	private static Random random=new Random();
+	
 	/**
 	 * 白透明
 	 */
@@ -15,6 +18,8 @@ public final class Colors {
 	 * 黑透明
 	 */
 	public static Color bTransparent=new Color(0,0,0,0);
+	
+	
 	/**
 	 * 生成一种随机颜色
 	 * @return
@@ -23,6 +28,8 @@ public final class Colors {
 	{
 		return new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
+	
+	
 	/**
 	 * 随机生成给定色系中的一种颜色
 	 * @return
@@ -46,6 +53,8 @@ public final class Colors {
 	public static boolean isChroma(Color color,Chroma chroma){
         return color!=null&&chroma!=null?chroma.in(getYuv(color).getY()):false;
 	}
+	
+	
 	/**
 	 * 返回颜色的YUV值的封装对象
 	 */
@@ -58,6 +67,8 @@ public final class Colors {
 			return yuv;
 		}).orElse(yuv);
 	}
+	
+	
 	/**
 	 * 返回颜色的YCbCr值的封装对象
 	 */
@@ -70,6 +81,8 @@ public final class Colors {
 			return yCbCr;
 		}).orElse(yCbCr);
 	}
+	
+	
 	/**
 	 * 将颜色的YUV值转换为RGB值储存到Color对象中,并返回Color对象
 	 * @param yuv
@@ -78,6 +91,8 @@ public final class Colors {
 	public static Color getColor(Yuv yuv) {
 		return new Color((int) (yuv.getY()+yuv.getV()*1.140),(int) (yuv.getY()- yuv.getU()*0.394 - yuv.getV()*0.581),(int) (yuv.getY() + yuv.getU()*2.032));
 	}
+	
+	
 	/**
 	 * 将颜色的YCbCr值转换为RGB值储存到Color对象中,并返回Color对象
 	 * @param yCbCr
@@ -88,4 +103,33 @@ public final class Colors {
 				(int) (1.164*(yCbCr.getY()-16) - 0.392*(yCbCr.getCb()-128) - 0.813*(yCbCr.getCr()-128)),
 				(int) (1.164*(yCbCr.getY()-16) + 2.017*(yCbCr.getCb()-128)));
 	}
+	
+	/**
+	 * 获取Alpha、Red、Green、Blue各分量的值
+	 * @param argb
+	 * @return
+	 */
+	public static int[] argb(int argb) {
+		int[] v=new int[4];
+		v[0] = (argb & 0xff000000) >>> 24;
+		v[1] = (argb & 0xff0000) >> 16;
+		v[2] = (argb & 0xff00) >> 8;
+		v[3] = (argb & 0xff);
+		return v;
+	}
+	
+	/**
+	 * 获取Blue、Green、Red、Alpha各分量的值
+	 * @param argb
+	 * @return
+	 */
+	public static int[] bgra(int argb) {
+		int[] v=new int[4];
+		v[3] = (argb & 0xff000000) >>> 24;
+		v[2] = (argb & 0xff0000) >> 16;
+		v[1] = (argb & 0xff00) >> 8;
+		v[0] = (argb & 0xff);
+		return v;
+	}
+	
 }

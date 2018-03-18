@@ -1226,7 +1226,8 @@ public final class Arrs {
 	 * @param t
 	 * @return
 	 */
-	public static <T>boolean contains(T[] ts,T t) {
+	@SuppressWarnings("unchecked")
+	public static <T>boolean contains(T t,T...ts) {
 		if (ts!=null) {
 			for (T t1 : ts) {
 				if (Objects.equals(t1, t)) {
@@ -1243,7 +1244,7 @@ public final class Arrs {
 	 * @param l
 	 * @return
 	 */
-	public static boolean contains(long[] ls,long l) {
+	public static boolean contains(long l,long...ls) {
 		if (ls!=null) {
 			for (long l1 : ls) {
 				if (l1==l) {
@@ -1260,7 +1261,7 @@ public final class Arrs {
 	 * @param l
 	 * @return
 	 */
-	public static boolean contains(int[] ls,int l) {
+	public static boolean contains(int l,int...ls) {
 		if (ls!=null) {
 			for (int l1 : ls) {
 				if (l1==l) {
@@ -1277,7 +1278,7 @@ public final class Arrs {
 	 * @param l
 	 * @return
 	 */
-	public static boolean contains(short[] ls,short l) {
+	public static boolean contains(short l,short...ls) {
 		if (ls!=null) {
 			for (short l1 : ls) {
 				if (l1==l) {
@@ -1294,7 +1295,7 @@ public final class Arrs {
 	 * @param l
 	 * @return
 	 */
-	public static boolean contains(byte[] ls,byte l) {
+	public static boolean contains(byte l,byte...ls) {
 		if (ls!=null) {
 			for (byte l1 : ls) {
 				if (l1==l) {
@@ -1311,7 +1312,7 @@ public final class Arrs {
 	 * @param l
 	 * @return
 	 */
-	public static boolean contains(double[] ls,double l) {
+	public static boolean contains(double l,double...ls) {
 		if (ls!=null) {
 			for (double l1 : ls) {
 				if (l1==l) {
@@ -1328,7 +1329,7 @@ public final class Arrs {
 	 * @param l
 	 * @return
 	 */
-	public static boolean contains(float[] ls,float l) {
+	public static boolean contains(float l,float...ls) {
 		if (ls!=null) {
 			for (float l1 : ls) {
 				if (l1==l) {
@@ -1345,7 +1346,7 @@ public final class Arrs {
 	 * @param l
 	 * @return
 	 */
-	public static boolean contains(char[] ls,char l) {
+	public static boolean contains(char l,char...ls) {
 		if (ls!=null) {
 			for (char l1 : ls) {
 				if (l1==l) {
@@ -1362,7 +1363,7 @@ public final class Arrs {
 	 * @param l
 	 * @return
 	 */
-	public static boolean contains(boolean[] ls,boolean l) {
+	public static boolean contains(boolean l,boolean...ls) {
 		if (ls!=null) {
 			for (boolean l1 : ls) {
 				if (l1==l) {
@@ -1649,5 +1650,331 @@ public final class Arrs {
 	public static boolean isArray(Object obj) {
 		return obj!=null&&obj.getClass().isArray();
 	}
+	
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回null.
+	 * @param original
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T[] copyReverse(T[] original) {
+		T[] copy =null;
+		if (original!=null) {
+			int newLength=original.length;
+			copy = ((Object)original.getClass() == (Object)Object[].class)? (T[]) new Object[newLength]: (T[]) Array.newInstance(original.getClass().getComponentType(), newLength);
+			for (int i = 0; i < newLength; i++) {
+				copy[newLength-i-1]=original[i];
+			}
+		}
+		return copy;
+	}
+	
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
+	 * @param original
+	 * @return
+	 */
+	public static long[] copyReverse(long[] original) {
+		if (original!=null) {
+			int len=original.length;
+			long[] tos=new long[len];
+			for(int i=0;i<len;i++) {
+				tos[i]=original[len-i-1];
+			}
+			return tos;
+		}
+		return Typer.longs();
+	}
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
+	 * @param original
+	 * @return
+	 */
+	public static int[] copyReverse(int[] original) {
+		if (original!=null) {
+			int len=original.length;
+			int[] tos=new int[len];
+			for(int i=0;i<len;i++) {
+				tos[i]=original[len-i-1];
+			}
+			return tos;
+		}
+		return Typer.ints();
+	}
+	
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
+	 * @param original
+	 * @return
+	 */
+	public static short[] copyReverse(short[] original) {
+		if (original!=null) {
+			int len=original.length;
+			short[] tos=new short[len];
+			for(int i=0;i<len;i++) {
+				tos[i]=original[len-i-1];
+			}
+			return tos;
+		}
+		return Typer.shorts();
+	}
+	
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
+	 * @param original
+	 * @return
+	 */
+	public static byte[] copyReverse(byte[] original) {
+		if (original!=null) {
+			int len=original.length;
+			byte[] tos=new byte[len];
+			for(int i=0;i<len;i++) {
+				tos[i]=original[len-i-1];
+			}
+			return tos;
+		}
+		return Typer.bytes();
+	}
+	
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
+	 * @param original
+	 * @return
+	 */
+	public static double[] copyReverse(double[] original) {
+		if (original!=null) {
+			int len=original.length;
+			double[] tos=new double[len];
+			for(int i=0;i<len;i++) {
+				tos[i]=original[len-i-1];
+			}
+			return tos;
+		}
+		return Typer.doubles();
+	}
+	
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
+	 * @param original
+	 * @return
+	 */
+	public static float[] copyReverse(float[] original) {
+		if (original!=null) {
+			int len=original.length;
+			float[] tos=new float[len];
+			for(int i=0;i<len;i++) {
+				tos[i]=original[len-i-1];
+			}
+			return tos;
+		}
+		return Typer.floats();
+	}
+	
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
+	 * @param original
+	 * @return
+	 */
+	public static char[] copyReverse(char[] original) {
+		if (original!=null) {
+			int len=original.length;
+			char[] tos=new char[len];
+			for(int i=0;i<len;i++) {
+				tos[i]=original[len-i-1];
+			}
+			return tos;
+		}
+		return Typer.chars();
+	}
+	
+	
+	/**
+	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
+	 * @param original
+	 * @return
+	 */
+	public static boolean[] copyReverse(boolean[] original) {
+		if (original!=null) {
+			int len=original.length;
+			boolean[] tos=new boolean[len];
+			for(int i=0;i<len;i++) {
+				tos[i]=original[len-i-1];
+			}
+			return tos;
+		}
+		return Typer.booleans();
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static <T>int index(T[] array,T ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (Objects.equals(array[i], ele)) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static int index(long[] array,long ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (array[i]==ele) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static int index(int[] array,int ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (array[i]==ele) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static int index(short[] array,short ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (array[i]==ele) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static int index(byte[] array,byte ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (array[i]==ele) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static int index(double[] array,double ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (array[i]==ele) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static int index(float[] array,float ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (array[i]==ele) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static int index(char[] array,char ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (array[i]==ele) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * ele在数组array中首次出现的索引,未出现则返回-1
+	 * @param array
+	 * @param ele
+	 * @return
+	 */
+	public static int index(boolean[] array,boolean ele) {
+		if (array!=null) {
+			for (int i = 0,len=array.length; i < len; i++) {
+				if (array[i]==ele) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
 	
 }

@@ -10,7 +10,6 @@ import org.bytedeco.javacv.Frame;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
 public final class CvBridge {
@@ -186,15 +185,6 @@ public final class CvBridge {
 			mat.put(0, 0, npixels);
 		}
 		
-		return mat;
-	}
-	
-	
-	public static Mat toMat(BufferedImage image) {
-		
-		byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-		Mat mat=Mat.eye(new Size(image.getWidth(), image.getHeight()), CvType.CV_8UC3);
-		mat.put(0, 0, pixels);
 		return mat;
 	}
 	

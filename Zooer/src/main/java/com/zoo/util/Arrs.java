@@ -1652,166 +1652,212 @@ public final class Arrs {
 	}
 	
 	
+	
 	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回null.
-	 * @param original
-	 * @return
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T>T[] copyReverse(T[] original) {
-		T[] copy =null;
-		if (original!=null) {
-			int newLength=original.length;
-			copy = ((Object)original.getClass() == (Object)Object[].class)? (T[]) new Object[newLength]: (T[]) Array.newInstance(original.getClass().getComponentType(), newLength);
-			for (int i = 0; i < newLength; i++) {
-				copy[newLength-i-1]=original[i];
+	public static <T>T[] reverse(T[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			T[] target=null;
+			if (isNew) {
+				target = ((Object)array.getClass() == (Object)Object[].class)? (T[]) new Object[len]: (T[]) Array.newInstance(array.getClass().getComponentType(), len);
+			}else {
+				target = array;
 			}
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				T temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
+			}
+			return target;
 		}
-		return copy;
+		return null;
+	}
+	
+	
+	
+	/**
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
+	 */
+	public static long[] reverse(long[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			long[] target=isNew?new long[len]:array;
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				long temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
+			}
+			return target;
+		}
+		return isNew?Typer.longs():array;
 	}
 	
 	
 	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
-	 * @param original
-	 * @return
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
 	 */
-	public static long[] copyReverse(long[] original) {
-		if (original!=null) {
-			int len=original.length;
-			long[] tos=new long[len];
-			for(int i=0;i<len;i++) {
-				tos[i]=original[len-i-1];
+	public static int[] reverse(int[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			int[] target=isNew?new int[len]:array;
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				int temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
 			}
-			return tos;
+			return target;
 		}
-		return Typer.longs();
-	}
-	
-	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
-	 * @param original
-	 * @return
-	 */
-	public static int[] copyReverse(int[] original) {
-		if (original!=null) {
-			int len=original.length;
-			int[] tos=new int[len];
-			for(int i=0;i<len;i++) {
-				tos[i]=original[len-i-1];
-			}
-			return tos;
-		}
-		return Typer.ints();
+		return isNew?Typer.ints():array;
 	}
 	
 	
 	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
-	 * @param original
-	 * @return
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
 	 */
-	public static short[] copyReverse(short[] original) {
-		if (original!=null) {
-			int len=original.length;
-			short[] tos=new short[len];
-			for(int i=0;i<len;i++) {
-				tos[i]=original[len-i-1];
+	public static short[] reverse(short[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			short[] target=isNew?new short[len]:array;
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				short temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
 			}
-			return tos;
+			return target;
 		}
-		return Typer.shorts();
+		return isNew?Typer.shorts():array;
 	}
 	
 	
 	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
-	 * @param original
-	 * @return
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
 	 */
-	public static byte[] copyReverse(byte[] original) {
-		if (original!=null) {
-			int len=original.length;
-			byte[] tos=new byte[len];
-			for(int i=0;i<len;i++) {
-				tos[i]=original[len-i-1];
+	public static byte[] reverse(byte[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			byte[] target=isNew?new byte[len]:array;
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				byte temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
 			}
-			return tos;
+			return target;
 		}
-		return Typer.bytes();
+		return isNew?Typer.bytes():array;
 	}
 	
 	
 	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
-	 * @param original
-	 * @return
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
 	 */
-	public static double[] copyReverse(double[] original) {
-		if (original!=null) {
-			int len=original.length;
-			double[] tos=new double[len];
-			for(int i=0;i<len;i++) {
-				tos[i]=original[len-i-1];
+	public static double[] reverse(double[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			double[] target=isNew?new double[len]:array;
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				double temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
 			}
-			return tos;
+			return target;
 		}
-		return Typer.doubles();
+		return isNew?Typer.doubles():array;
 	}
 	
 	
 	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
-	 * @param original
-	 * @return
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
 	 */
-	public static float[] copyReverse(float[] original) {
-		if (original!=null) {
-			int len=original.length;
-			float[] tos=new float[len];
-			for(int i=0;i<len;i++) {
-				tos[i]=original[len-i-1];
+	public static float[] reverse(float[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			float[] target=isNew?new float[len]:array;
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				float temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
 			}
-			return tos;
+			return target;
 		}
-		return Typer.floats();
+		return isNew?Typer.floats():array;
 	}
 	
 	
 	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
-	 * @param original
-	 * @return
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
 	 */
-	public static char[] copyReverse(char[] original) {
-		if (original!=null) {
-			int len=original.length;
-			char[] tos=new char[len];
-			for(int i=0;i<len;i++) {
-				tos[i]=original[len-i-1];
+	public static char[] reverse(char[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			char[] target=isNew?new char[len]:array;
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				char temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
 			}
-			return tos;
+			return target;
 		}
-		return Typer.chars();
+		return isNew?Typer.chars():array;
 	}
 	
 	
 	/**
-	 * 将original里的反向元素拷贝到新的长度与original相同的数组中,并返回新数组,若传入数组为null,那么将返回一个空数组(0个元素).
-	 * @param original
-	 * @return
+	 * 将array里的元素'反转'或'拷贝到新的长度与array相同的数组中,并将新数组里的元素反转'
+	 * @param array 需要被拷贝或反转的数组,取决于isNew的值
+	 * @param isNew 是否反转拷贝到新数组,true:拷贝到新数组并将新数组元素反转;false:反转原来的数组元素
+	 * @return isNew为true时返回新数组,为false时返回原来的数组,若array为null,isNew为true时,那么将返回一个空数组(0个元素).
 	 */
-	public static boolean[] copyReverse(boolean[] original) {
-		if (original!=null) {
-			int len=original.length;
-			boolean[] tos=new boolean[len];
-			for(int i=0;i<len;i++) {
-				tos[i]=original[len-i-1];
+	public static boolean[] reverse(boolean[] array,boolean isNew) {
+		if (array!=null) {
+			int len=array.length;
+			boolean[] target=isNew?new boolean[len]:array;
+			if (len%2!=0)target[len/2]=array[len/2];
+			for (int start = 0, end = array.length - 1; start < end; start++, end--) {
+				boolean temp = array[end];
+				target[end] = array[start];
+				target[start] = temp;
 			}
-			return tos;
+			return target;
 		}
-		return Typer.booleans();
+		return isNew?Typer.booleans():array;
 	}
+	
+	
 	
 	
 	/**

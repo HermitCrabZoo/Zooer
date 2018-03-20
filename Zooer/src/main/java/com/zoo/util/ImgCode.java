@@ -3,7 +3,6 @@ package com.zoo.util;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,8 +12,6 @@ import java.util.Optional;
 import javax.imageio.ImageIO;
 
 import com.zoo.cons.Images;
-
-import sun.font.FontDesignMetrics;
 
 /**
  *验证码生成类
@@ -151,9 +148,9 @@ public final class ImgCode {
 		BufferedImage image=imgs.get();
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
-			FontMetrics fm=FontDesignMetrics.getMetrics(font);
-			long[] units=xInWidth(fm.stringWidth(surface), surface.length(), image.getWidth());
-			int x=0,y=(image.getHeight()+fm.getAscent()-fm.getDescent())/2;
+			Dimension dimen=Fonts.size(surface, font);
+			long[] units=xInWidth(dimen.width, surface.length(), image.getWidth());
+			int x=0,y=(image.getHeight()-dimen.height)/2;
 			for(int i=0;i<units.length;i++){
 				x+=units[i];
 				imgs.pile(surface.charAt(i)+"",x,y, Colors.randColor(fgChroma), font);
@@ -211,9 +208,9 @@ public final class ImgCode {
 		BufferedImage image=imgs.get();
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
-			FontMetrics fm=FontDesignMetrics.getMetrics(font);
-			long[] units=xInWidth(fm.stringWidth(surface), surface.length(), image.getWidth());
-			int x=0,y=(image.getHeight()+fm.getAscent()-fm.getDescent())/2;
+			Dimension dimen=Fonts.size(surface, font);
+			long[] units=xInWidth(dimen.width, surface.length(), image.getWidth());
+			int x=0,y=(image.getHeight()-dimen.height)/2;
 			for(int i=0;i<units.length;i++){
 				x+=units[i];
 				imgs.pile(surface.charAt(i)+"",x,y, fgColor, font);

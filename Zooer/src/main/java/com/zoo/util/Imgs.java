@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
@@ -38,8 +37,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import com.zoo.cons.Images;
-
-import sun.font.FontDesignMetrics;
 
 public final class Imgs {
 	
@@ -472,8 +469,8 @@ public final class Imgs {
 	 */
 	public Imgs pile(String surface,Color color,Font font){
 		if (Strs.notEmpty(surface)) {
-			FontMetrics fm=FontDesignMetrics.getMetrics(Optional.ofNullable(font).orElse(image.getGraphics().getFont()));
-			pile(surface, (image.getWidth()-fm.stringWidth(surface))/2,(image.getHeight()+fm.getAscent()-fm.getDescent())/2,color, font);
+			Dimension dimen=Fonts.size(surface, Optional.ofNullable(font).orElse(image.getGraphics().getFont()));
+			pile(surface, (image.getWidth()-dimen.width)/2,(image.getHeight()-dimen.height)/2,color, font);
 		}
 		return this;
 	}

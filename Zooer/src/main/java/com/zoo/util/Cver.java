@@ -93,7 +93,7 @@ public class Cver {
 	 * @return
 	 */
 	public static Cver of(String fileName) {
-		return new Cver(Imgcodecs.imread(fileName));
+		return new Cver(Imgcodecs.imread(fileName,Imgcodecs.CV_LOAD_IMAGE_UNCHANGED));
 	}
 	
 	/**
@@ -1065,5 +1065,58 @@ public class Cver {
         Imgproc.rectangle(mat, minMaxLocResult.maxLoc,minMaxLocResult.minLoc,color);
 		return this;
 	}
+	
+	/**
+	 * 高斯金字塔:向上采样<br/>
+	 * 默认行列变为原来的2倍,borderType:{@link Core#BORDER_DEFAULT}
+	 * @return
+	 */
+	public Cver pyrUp() {
+		return pyrUp(Core.BORDER_DEFAULT);
+	}
+	
+	/**
+	 * 高斯金字塔:向上采样,行列变为原来的2倍
+	 * @param borderType 边界模式<br/>
+	 * 可选<br/>
+	 * {@link Core#BORDER_REPLICATE}：复制法，既是复制最边缘像素，例如aaa|abc|ccc <br/>
+	 * {@link Core#BORDER_REFLECT}：对称法，例如cba|abc|cba <br/>
+	 * {@link Core#BORDER_REFLECT_101}：对称法，最边缘像素不会被复制，例如cb|abc|ba <br/>
+	 * {@link Core#BORDER_CONSTANT}：常量法，默认为0 <br/>
+	 * {@link Core#BORDER_WRAP}：镜像对称复制<br/>
+	 * @return
+	 */
+	public Cver pyrUp(int borderType) {
+		Imgproc.pyrUp(mat, mat, new Size(mat.cols()*2, mat.rows()*2), borderType);
+		return this;
+	}
+	
+	
+	/**
+	 * 高斯金字塔:向下采样<br/>
+	 * 默认行列变为原来的一半,borderType:{@link Core#BORDER_DEFAULT}
+	 * @return
+	 */
+	public Cver pyrDown() {
+		return pyrDown(Core.BORDER_DEFAULT);
+	}
+	
+	
+	/**
+	 * 高斯金字塔:向下采样,行列变为原来的一半
+	 * @param borderType 边界模式<br/>
+	 * 可选<br/>
+	 * {@link Core#BORDER_REPLICATE}：复制法，既是复制最边缘像素，例如aaa|abc|ccc <br/>
+	 * {@link Core#BORDER_REFLECT}：对称法，例如cba|abc|cba <br/>
+	 * {@link Core#BORDER_REFLECT_101}：对称法，最边缘像素不会被复制，例如cb|abc|ba <br/>
+	 * {@link Core#BORDER_CONSTANT}：常量法，默认为0 <br/>
+	 * {@link Core#BORDER_WRAP}：镜像对称复制<br/>
+	 * @return
+	 */
+	public Cver pyrDown(int borderType) {
+		Imgproc.pyrDown(mat, mat, new Size(mat.cols()/2, mat.rows()/2), borderType);
+		return this;
+	}
+	
 	
 }

@@ -1,6 +1,5 @@
 package com.zoo.util;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -82,7 +81,7 @@ public final class Http2 {
 			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandler.asString());
 			String result=response.body();//响应结果
 			return result;
-		} catch (IOException | InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return Strs.empty();
@@ -108,7 +107,7 @@ public final class Http2 {
 			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandler.asString());
 			String result=response.body();//响应结果
 			return result;
-		} catch (IOException | InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return Strs.empty();

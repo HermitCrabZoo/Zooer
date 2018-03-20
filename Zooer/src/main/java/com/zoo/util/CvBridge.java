@@ -10,7 +10,6 @@ import org.bytedeco.javacv.Frame;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
 
 public final class CvBridge {
 
@@ -74,20 +73,6 @@ public final class CvBridge {
 		}
 	}
 	
-	/**
-	 * 使用OpenCV将图片翻转保存到新图片，其中图片读写部分较快，单纯的图片翻转操作建议使用此方法。
-	 * 图片翻转，flipCode为0、1、-1分别代表垂直翻转(x轴)、水平翻转(y轴)、垂直水平都翻转
-	 * @param sourceFileName 原始文件路径
-	 * @param destFileName 反转后的输出文件路径
-	 * @param flipCode
-	 * @return
-	 */
-	public static boolean flip(String sourceFileName,String destFileName,int flipCode) {
-		Mat mat=Imgcodecs.imread(sourceFileName);
-		Mat dst=new Mat(mat.size(), mat.type());
-		Core.flip(mat, dst, flipCode);
-		return Imgcodecs.imwrite(destFileName, dst);
-	}
 	
 	/**
 	 * 将BufferedImage对象转换为JavaCV的Frame对象

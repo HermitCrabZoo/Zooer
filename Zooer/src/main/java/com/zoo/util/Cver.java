@@ -1119,4 +1119,49 @@ public class Cver {
 	}
 	
 	
+	/**
+	 * 形态学运算
+	 * @param op 形态学运算类型<br/>
+	 * {@link Imgproc#MORPH_OPEN} – 开运算(Opening operation),先腐蚀后膨胀:放大裂缝和低密度区域，消除小物体，在平滑较大物体的边界时，不改变其面积<br/>
+	 * {@link Imgproc#MORPH_CLOSE} – 闭运算(Closing operation),先膨胀后腐蚀:排除小型黑洞，突触了比原图轮廓区域更暗的区域<br/>
+	 * {@link Imgproc#MORPH_GRADIENT} -形态学梯度(Morphological gradient),膨胀图-腐蚀图:保留图像边缘<br/>
+	 * {@link Imgproc#MORPH_TOPHAT} - 顶帽(Top hat),原图-开运算:分离邻近点亮一些的斑块，进行背景提取<br/>
+	 * {@link Imgproc#MORPH_BLACKHAT} - 黑帽(Black hat),闭运算-原图:用来分离比邻近点暗一些的斑块<br/>
+	 * @param kernel 运算的核
+	 * @param anchor 锚的位置(-1，-1)，表示锚位于中心。
+	 * @param iterations 迭代使用函数的次数。
+	 * @param borderType 边界模式<br/>
+	 * 可选<br/>
+	 * {@link Core#BORDER_REPLICATE}：复制法，既是复制最边缘像素，例如aaa|abc|ccc <br/>
+	 * {@link Core#BORDER_REFLECT}：对称法，例如cba|abc|cba <br/>
+	 * {@link Core#BORDER_REFLECT_101}：对称法，最边缘像素不会被复制，例如cb|abc|ba <br/>
+	 * {@link Core#BORDER_CONSTANT}：常量法，默认为0 <br/>
+	 * {@link Core#BORDER_WRAP}：镜像对称复制<br/>
+	 * @param borderValue 边界值
+	 * @return
+	 */
+	public Cver morphologyEx(int op, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue) {
+		Imgproc.morphologyEx(mat,mat,op, kernel, anchor, iterations, borderType, borderValue);
+		return this;
+	}
+	
+	
+	/**
+	 * 形态学运算<br/>
+	 * 默认kernel:@{@link Imgproc#MORPH_RECT}、{@link Cver#defKernelKsize} 3x3,anchor:(-1,-1),iterations:1,borderType:{@linkplain Core#BORDER_CONSTANT}
+	 * @param op 形态学运算类型<br/>
+	 * {@link Imgproc#MORPH_OPEN} – 开运算(Opening operation),先腐蚀后膨胀:放大裂缝和低密度区域，消除小物体，在平滑较大物体的边界时，不改变其面积<br/>
+	 * {@link Imgproc#MORPH_CLOSE} – 闭运算(Closing operation),先膨胀后腐蚀:排除小型黑洞，突触了比原图轮廓区域更暗的区域<br/>
+	 * {@link Imgproc#MORPH_GRADIENT} -形态学梯度(Morphological gradient),膨胀图-腐蚀图:保留图像边缘<br/>
+	 * {@link Imgproc#MORPH_TOPHAT} - 顶帽(Top hat),原图-开运算:分离邻近点亮一些的斑块，进行背景提取<br/>
+	 * {@link Imgproc#MORPH_BLACKHAT} - 黑帽(Black hat),闭运算-原图:用来分离比邻近点暗一些的斑块<br/>
+	 * @return
+	 */
+	public Cver morphologyEx(int op) {
+		Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, defKernelKsize);
+		Imgproc.morphologyEx(mat, mat, op, kernel);
+		return this;
+	}
+	
+	
 }

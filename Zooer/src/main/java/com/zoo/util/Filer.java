@@ -372,6 +372,16 @@ public final class Filer {
 	}
 	
 	/**
+	 * 获取目录下的所有目录和文件(包含当前传入目录)。
+	 * @param directory
+	 * @return
+	 */
+	public static List<Path> paths(Path directory){
+		return paths(directory, null);
+	}
+	
+	
+	/**
 	 * 获取文件的MIME信息
 	 * @param file
 	 * @return

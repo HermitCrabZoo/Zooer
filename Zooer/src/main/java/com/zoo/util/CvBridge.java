@@ -67,6 +67,7 @@ public final class CvBridge {
 			try {
 				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 				unload=false;
+				System.out.println("Usage OpenCV "+Core.VERSION);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -3,9 +3,16 @@ package com.zoo.util;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
+import java.nio.IntBuffer;
+import java.nio.file.Path;
+import java.util.List;
+import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacpp.opencv_core.MatVector;
+import org.bytedeco.javacpp.opencv_face;
+import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacv.Java2DFrameUtils;
@@ -397,7 +404,7 @@ public final class Facer {
     public static double compare(IplImage image1,IplImage image2) {
     	if (image1!=null || image2!=null) {
     		try {
-    			int l_bins = 256;
+    			int l_bins = 20;
     			int hist_size[] = {l_bins};
     			float v_ranges[] = {0, 255};
     			float ranges[][] = {v_ranges};
@@ -414,14 +421,40 @@ public final class Facer {
     			opencv_imgproc.cvNormalizeHist(Histogram1, 100.0);
     			opencv_imgproc.cvNormalizeHist(Histogram2, 100.0);
     			
-    			double c1 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_CORREL) * 100;
+//    			double c1 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_CORREL) * 100;
     			double c2 = opencv_imgproc.cvCompareHist(Histogram1, Histogram2, opencv_imgproc.CV_COMP_INTERSECT);
     			
-    			return c1 * 0.3 + c2 * 0.7;
+//    			return c1 * 0.3 + c2 * 0.7;
+    			return c2;
+    			
     		} catch (Exception e) {
     			e.printStackTrace();
     		}
     	}
 		return -1;
     }
+    
+    public static int trainPredict(List<Path> faceList,org.bytedeco.javacpp.opencv_core.Mat face) {
+        FaceRecognizer fr = opencv_face.createFisherFaceRecognizer(); 
+        MatVector mv = new MatVector(faceList.size());
+        org.bytedeco.javacpp.opencv_core.Mat mat=new org.bytedeco.javacpp.opencv_core.Mat(faceList.size(), 1, opencv_core.CV_32SC1);
+        IntBuffer intBuffer=mat.createBuffer();
+        for (int i = 0; i < faceList.size(); i++) {
+        	org.bytedeco.javacpp.opencv_core.Mat img = opencv_imgcodecs.imread(faceList.get(i).toString(), opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+            mv.put(i, img);
+            intBuffer.put(i, i);
+        }
+        fr.train(mv, mat);
+        if (face.channels()>1) {
+        	org.bytedeco.javacpp.opencv_core.Mat face2=new org.bytedeco.javacpp.opencv_core.Mat(face.rows(), face.cols(), opencv_core.CV_32SC1);
+			opencv_imgproc.cvtColor(face, face2, face.channels()>3?opencv_imgproc.COLOR_BGRA2GRAY:opencv_imgproc.COLOR_BGR2GRAY);
+			face=face2;
+		}
+    	IntPointer result = new IntPointer(1);
+        DoublePointer confidence = new DoublePointer(1);
+    	fr.predict(face, result, confidence);
+    	System.out.println("confidence:"+confidence.get());
+    	return result.get();
+    }
+    
 }

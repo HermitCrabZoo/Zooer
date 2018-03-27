@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
-import java.nio.file.Path;
 import java.util.List;
+
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.opencv_core;
@@ -434,27 +434,47 @@ public final class Facer {
 		return -1;
     }
     
-    public static int trainPredict(List<Path> faceList,org.bytedeco.javacpp.opencv_core.Mat face) {
-        FaceRecognizer fr = opencv_face.createFisherFaceRecognizer(); 
-        MatVector mv = new MatVector(faceList.size());
-        org.bytedeco.javacpp.opencv_core.Mat mat=new org.bytedeco.javacpp.opencv_core.Mat(faceList.size(), 1, opencv_core.CV_32SC1);
+    /**
+     * 使用mats和labels来训练，再对face进行预测，返回预测出来的label值，mats与labels长度应相等里面的元素应该是一一对应。
+     * @param mats
+     * @param labels
+     * @param face
+     * @return
+     */
+    public static int trainPredict(List<org.bytedeco.javacpp.opencv_core.Mat> mats,int[] labels,org.bytedeco.javacpp.opencv_core.Mat face) {
+    	
+    	int size=labels.length;
+    	
+    	MatVector mv=new MatVector(size);
+    	org.bytedeco.javacpp.opencv_core.Mat mat=new org.bytedeco.javacpp.opencv_core.Mat(size, 1, opencv_core.CV_32SC1);
         IntBuffer intBuffer=mat.createBuffer();
-        for (int i = 0; i < faceList.size(); i++) {
-        	org.bytedeco.javacpp.opencv_core.Mat img = opencv_imgcodecs.imread(faceList.get(i).toString(), opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-            mv.put(i, img);
-            intBuffer.put(i, i);
-        }
-        fr.train(mv, mat);
-        if (face.channels()>1) {
-        	org.bytedeco.javacpp.opencv_core.Mat face2=new org.bytedeco.javacpp.opencv_core.Mat(face.rows(), face.cols(), opencv_core.CV_32SC1);
-			opencv_imgproc.cvtColor(face, face2, face.channels()>3?opencv_imgproc.COLOR_BGRA2GRAY:opencv_imgproc.COLOR_BGR2GRAY);
-			face=face2;
+        
+        for (int i = 0; i < size; i++) {
+        	
+			mv.put(i, gray(mats.get(i),true));
+			intBuffer.put(i, labels[i]);
 		}
-    	IntPointer result = new IntPointer(1);
+        
+        face=gray(face, true);
+        
+        IntPointer result = new IntPointer(1);
         DoublePointer confidence = new DoublePointer(1);
+    	
+        FaceRecognizer fr = opencv_face.createFisherFaceRecognizer();
+        fr.train(mv, mat);
     	fr.predict(face, result, confidence);
-    	System.out.println("confidence:"+confidence.get());
+    	
     	return result.get();
+    }
+    
+    private static org.bytedeco.javacpp.opencv_core.Mat gray(org.bytedeco.javacpp.opencv_core.Mat mat,boolean clone){
+    	if (mat!=null && !mat.empty() && mat.channels()>1) {
+    		if (clone) {
+    			mat=mat.clone();
+			}
+    		opencv_imgproc.cvtColor(mat, mat, mat.channels()>3?opencv_imgproc.COLOR_BGRA2GRAY:opencv_imgproc.COLOR_BGR2GRAY);
+		}
+    	return mat;
     }
     
 }

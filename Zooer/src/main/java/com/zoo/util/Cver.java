@@ -20,6 +20,8 @@ public class Cver {
 
 	private Cver() {}
 	
+	static {CvBridge.loadOpenCv();}
+	
 	private Cver(Mat mat) {
 		update(mat);
 	}
@@ -314,15 +316,31 @@ public class Cver {
 	 * @return
 	 */
 	public Cver gray() {
-		Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+		int c=mat.channels();
+		if (c==3 || c==4) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+		}
 		return this;
 	}
+	
+	/**
+	 * 灰度图转为BGR图
+	 * @return
+	 */
+	public Cver bgr() {
+		if (mat.channels()==1) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGR);
+		}
+		return this;
+	}
+	
 	
 	/**
 	 * 转换为HSV颜色空间,这个模型中颜色的参数分别是:色调(H),饱和度(S),明度(V)
 	 * @return
 	 */
 	public Cver hsv() {
+		bgr();
 		Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2HSV);
 		return this;
 	}
@@ -332,6 +350,7 @@ public class Cver {
 	 * @return
 	 */
 	public Cver hls() {
+		bgr();
 		Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2HLS);
 		return this;
 	}

@@ -4,6 +4,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferUShort;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Optional;
 import org.bytedeco.javacv.Frame;
@@ -64,8 +69,19 @@ public final class CvBridge {
 	 */
 	public static final void loadOpenCv() {
 		if (unload) {
-			try {
-				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+			String name=Core.NATIVE_LIBRARY_NAME+Platform.jniSuffix();
+			try(
+					InputStream in = Core.class.getClassLoader().getResourceAsStream("x64/"+name);
+					){
+				//先将文件抽取到临时目录再加载
+				String nativeTempDir = System.getProperty("java.io.tmpdir");
+				Path extractedLibFile = Paths.get(nativeTempDir,name);
+				
+				Files.copy(in, extractedLibFile, StandardCopyOption.REPLACE_EXISTING);
+				
+				System.load(extractedLibFile.toString());
+//				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+				
 				unload=false;
 				System.out.println("Usage OpenCV "+Core.VERSION);
 			} catch (Exception e) {

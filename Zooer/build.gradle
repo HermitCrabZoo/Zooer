@@ -23,7 +23,7 @@ repositories {
     // Or Maven local central
     //mavenLocal()
 }
-//由于有些子依赖可能在运行时用不到,所以默认不下载子依赖
+//由于有些子依赖可能在运行时用不到,true代表下载子依赖，false代表不下载子依赖
 configurations.all{
 	transitive=false
 }
@@ -35,8 +35,12 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:22.0'
     
-    compile 'junit:junit:4.12'
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+    
     compile fileTree(dir:'lib',include:['*.jar'])
+    
+    compile 'junit:junit:4.12'
 	compile group: 'cglib', name: 'cglib', version: '3.2.5'
     compile group: 'org.ow2.asm', name: 'asm', version: '5.2'
     compile group: 'com.google.zxing', name: 'core', version: '3.3.0'
@@ -68,8 +72,26 @@ dependencies {
 	//compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
 
 	//compile group: 'org.projectlombok', name: 'lombok', version: '1.16.18'
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+	
+
+	compile('net.sourceforge.tess4j:tess4j:3.4.6@jar'){//只下载主依赖jar
+		transitive=true//下载子依赖
+		//不添加以下子依赖到项目(需要下载的子依赖:jai-imageio-core-1.3.1,jna-4.1.0)
+		exclude module: 'logback-classic'
+		exclude module: 'pdfbox'
+		exclude module: 'pdfbox-tools'
+		exclude module: 'jbig2-imageio'
+		exclude module: 'ghost4j'
+		exclude module: 'jboss-vfs'
+		exclude module: 'jcl-over-slf4j'
+		exclude module: 'log4j-over-slf4j'
+	}
+	compile group: 'net.sourceforge.lept4j', name: 'lept4j', version: '1.6.3'
+	compile group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.3.1'
+	compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
+	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+	compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.25'
+	
 }
 tasks.withType(JavaCompile) {  
     options.encoding = "UTF-8"

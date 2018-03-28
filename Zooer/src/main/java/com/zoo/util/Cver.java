@@ -2,6 +2,7 @@ package com.zoo.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import org.opencv.core.Core;
@@ -274,6 +275,17 @@ public class Cver {
 			throw new NullPointerException("Argument mat cant not be null!");
 		}
 	}
+	
+	/**
+	 * 做某些额外的操作,参数freedom的accept方法的第一个参数为当前绑定的Mat对象,第二个参数为当前的Cver对象
+	 * @param freedom
+	 * @return
+	 */
+	public Cver free(BiConsumer<Mat, Cver> freedom) {
+		freedom.accept(mat, this);
+		return this;
+	}
+	
 	
 	/**
 	 * 按x轴垂直翻转图片

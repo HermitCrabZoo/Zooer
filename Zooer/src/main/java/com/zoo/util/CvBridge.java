@@ -71,7 +71,7 @@ public final class CvBridge {
 		if (unload) {
 			String name=Core.NATIVE_LIBRARY_NAME+Platform.jniSuffix();
 			try(
-					InputStream in = Core.class.getClassLoader().getResourceAsStream("x64/"+name);
+					InputStream in = Core.class.getClassLoader().getResourceAsStream("lib/"+name);
 					){
 				//先将文件抽取到临时目录再加载
 				String nativeTempDir = System.getProperty("java.io.tmpdir");

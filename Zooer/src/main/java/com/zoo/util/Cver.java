@@ -1182,5 +1182,52 @@ public class Cver {
 		return this;
 	}
 	
+	/**
+	 * 形态学运算-开运算<br/>
+	 * 先腐蚀后膨胀:放大裂缝和低密度区域，消除小物体，在平滑较大物体的边界时，不改变其面积
+	 * @return
+	 */
+	public Cver morphologyOpen() {
+		return morphologyEx(Imgproc.MORPH_OPEN);
+	}
+	
+	/**
+	 * 形态学运算-闭运算<br/>
+	 * 先膨胀后腐蚀:排除小型黑洞，突触了比原图轮廓区域更暗的区域
+	 * @return
+	 */
+	public Cver morphologyClose() {
+		return morphologyEx(Imgproc.MORPH_CLOSE);
+	}
+	
+	/**
+	 * 形态学运算-形态学梯度<br/>
+	 * 膨胀图-腐蚀图:保留图像边缘
+	 * @return
+	 */
+	public Cver morphologyGradient() {
+		return morphologyEx(Imgproc.MORPH_GRADIENT);
+	}
+	
+	/**
+	 * 形态学运算-顶帽<br/>
+	 * 原图-开运算:分离邻近点亮一些的斑块，进行背景提取
+	 * @return
+	 */
+	public Cver morphologyTopHat() {
+		return morphologyEx(Imgproc.MORPH_TOPHAT);
+	}
+	
+	/**
+	 * 形态学运算-黑帽<br/>
+	 * 闭运算-原图:用来分离比邻近点暗一些的斑块
+	 * @return
+	 */
+	public Cver morphologyBlackHat() {
+		return morphologyEx(Imgproc.MORPH_BLACKHAT);
+	}
+	
+	
+	
 	
 }

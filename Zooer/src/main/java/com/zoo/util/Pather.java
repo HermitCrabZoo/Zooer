@@ -5,21 +5,27 @@ public final class Pather {
 	
 	/**
 	 * 组合路径和文件名组合成文件路径
-	 * @param path
+	 * @param parent
 	 * @param fileName
 	 * @return
 	 */
-	public static String join(String path, String fileName) {
-		if (Strs.notEmpty(path)||Strs.notEmpty(fileName)) {
-			String tempPath = toPath(path);
-			String tempFileName=toPath(fileName);
-			StringBuilder sb=new StringBuilder(3).append(tempPath);
-			if (!tempPath.isEmpty() && !tempFileName.isEmpty()) {
-				if (!tempPath.endsWith(Platform.slash()) && !tempFileName.startsWith(Platform.slash())) {
-					sb.append(Platform.slash());
+	public static String join(String...mores) {
+		if (Arrs.notEmpty(mores)) {
+			final String slash=Platform.slash();
+			int len=mores.length;
+			StringBuilder sb=new StringBuilder(len*2);
+			boolean prevHadSlash=true;
+			for (String one : mores) {
+				if (one !=null && !one.isEmpty() && !one.trim().isEmpty()) {
+					one=toPath(one);
+					if (!prevHadSlash && !one.startsWith(slash)) {
+						sb.append(slash);
+					}
+					sb.append(one);
+					prevHadSlash=one.endsWith(slash);
 				}
 			}
-			return sb.append(tempFileName).toString();
+			return sb.toString();
 		}
 		return Strs.empty();
 	}

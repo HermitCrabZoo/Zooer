@@ -7,11 +7,11 @@ public final class Platform {
 	
 	public static final String BACKSLASH="\\";
 	
-	private static String CERTAIN_SLASH="";
+	private static String CERTAIN_SLASH;
 	
-	private static final String DLL=".dll";
+	public static final String DLL=".dll";
 	
-	private static final String SO=".so";
+	public static final String SO=".so";
 	
 	
 	
@@ -20,7 +20,7 @@ public final class Platform {
 	 * @return
 	 */
 	public static String slash(){
-		if (CERTAIN_SLASH.isEmpty()) {
+		if (CERTAIN_SLASH==null) {
 			CERTAIN_SLASH=Syss.isWindows()?BACKSLASH:SLASH;
 		}
 		return CERTAIN_SLASH;

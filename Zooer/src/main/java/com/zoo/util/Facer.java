@@ -16,6 +16,7 @@ import org.bytedeco.javacpp.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacv.Java2DFrameUtils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -435,6 +436,40 @@ public final class Facer {
     }
     
     /**
+     * 比较两个图片的相似度[0.0,100]
+     * @param finename1
+     * @param finename2
+     * @return
+     */
+    public static double compareHist(String finename1,String finename2) {
+    	Mat mat1=Imgcodecs.imread(finename1, Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+    	Mat mat2=Imgcodecs.imread(finename2, Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+    	if (mat1.empty() || mat2.empty()) {
+			return 0.0;
+		}
+    	return compareHist(mat1, mat2);
+    }
+    
+    
+    /**
+     * 比较两个mat的相似度[0.0,100]
+     * @param mat1
+     * @param mat2
+     * @return
+     */
+    public static double compareHist(Mat mat1, Mat mat2) {
+        Mat srcMat = gray(mat1, true);
+        Mat desMat = gray(mat2, true);
+        srcMat.convertTo(srcMat, CvType.CV_32F);
+        desMat.convertTo(desMat, CvType.CV_32F);
+        double target = Imgproc.compareHist(srcMat, desMat,Imgproc.CV_COMP_CORREL)*100;
+        return target;
+    }
+    
+    
+    
+    
+    /**
      * 使用mats和labels来训练，再对face进行预测，返回预测出来的label值，mats与labels长度应相等里面的元素应该是一一对应。
      * @param mats
      * @param labels
@@ -475,6 +510,15 @@ public final class Facer {
     		opencv_imgproc.cvtColor(mat, mat, mat.channels()>3?opencv_imgproc.COLOR_BGRA2GRAY:opencv_imgproc.COLOR_BGR2GRAY);
 		}
     	return mat;
+    }
+    
+    private static Mat gray(Mat mat,boolean isNew){
+    	if (mat!=null && !mat.empty() && mat.channels()>1) {
+    		Mat dst=isNew?new Mat():mat;
+    		Imgproc.cvtColor(dst, dst, mat.channels()>3?opencv_imgproc.COLOR_BGRA2GRAY:opencv_imgproc.COLOR_BGR2GRAY);
+    		return dst;
+		}
+    	return isNew&&mat!=null?mat.clone():mat;
     }
     
 }

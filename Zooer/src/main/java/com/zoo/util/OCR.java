@@ -12,9 +12,16 @@ public final class OCR {
 	
 	private static String tessdataFolder=tessdataFolder();
 	
+	private static String language=language();
+	
 	private static final String tessdataFolder() {
 		return LoadLibs.extractTessResources("tessdata").toString();
 	}
+	
+	private static final String language() {
+		return "eng";
+	}
+	
 	
 	/**
 	 * 设置全局的tessdata存放的目录
@@ -26,6 +33,15 @@ public final class OCR {
 	
 	
 	/**
+	 * 设置全局的language
+	 * @param language
+	 */
+	public static final void setLanguage(String language) {
+		OCR.language=language;
+	}
+	
+	
+	/**
 	 * 读取图片中的文字,返回读取结果,若读取失败则返回空字符串
 	 * @param image
 	 * @return 不会返回null
@@ -33,6 +49,7 @@ public final class OCR {
 	public static String read(BufferedImage image) {
 		Tesseract instance = new Tesseract();
 		instance.setDatapath(tessdataFolder);
+		instance.setLanguage(language);
 		try {
 			String result=instance.doOCR(image);
 			return result;

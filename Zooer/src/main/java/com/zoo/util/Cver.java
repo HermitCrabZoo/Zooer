@@ -323,6 +323,39 @@ public class Cver {
 		return this;
 	}
 	
+	
+	/**
+	 * 图片透明化处理,若当前关联的mat对象无透通道，则将被转为BGRA通道图(类型为:{@link CvType#CV_32SC4})，并将透明度设置为alpha值
+	 * @param alpha 该值范围必须在[0.0,1.0]
+	 * @return
+	 */
+	public Cver transparency(double alpha) {
+		if (mat.channels()==1) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGRA);
+		}else if (mat.channels()==3) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2BGRA);
+		}
+		
+		int a=(int) (alpha*255);
+		
+		int t=mat.type(),rows=mat.rows(),cols=mat.cols(),ch=mat.channels();
+		int len=rows*cols*ch;
+		int[] data=new int[len];
+		if (CvType.depth(t) != CvType.CV_32S) {//转成int类型的值
+			int type=CvType.CV_32SC(ch);//将通道转类型值
+			Mat intMat=new Mat(rows, cols, type);
+			mat.convertTo(intMat, type);
+			mat=intMat;
+		}
+		mat.get(0, 0, data);
+		for (int i = 3; i < len; i+=4) {
+			data[i]=a;
+		}
+		mat.put(0, 0, data);
+		return this;
+	}
+	
+	
 	/**
 	 * 转成灰度图
 	 * @return

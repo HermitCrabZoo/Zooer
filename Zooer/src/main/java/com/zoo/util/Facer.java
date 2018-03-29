@@ -11,8 +11,8 @@ import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacpp.opencv_core.MatVector;
-import org.bytedeco.javacpp.opencv_face;
 import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
+import org.bytedeco.javacpp.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.javacpp.opencv_imgcodecs;
 import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacv.Java2DFrameUtils;
@@ -460,7 +460,7 @@ public final class Facer {
         IntPointer result = new IntPointer(1);
         DoublePointer confidence = new DoublePointer(1);
     	
-        FaceRecognizer fr = opencv_face.createFisherFaceRecognizer();
+        FaceRecognizer fr = FisherFaceRecognizer.create();
         fr.train(mv, mat);
     	fr.predict(face, result, confidence);
     	

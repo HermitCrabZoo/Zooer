@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -58,7 +59,7 @@ public final class Imgs {
 	
 	/**
 	 * 推荐的图片字节密度与最高压缩质量之间对应的值<br/>
-	 * 其中每个数组元素下标为0的值代表图片按png格式转换为byte[]数组时，数组长度与图片宽高像素数乘积之间的比值。该比值代表图片字节密度，大于等于该值时，使用当前数组元素下标为1的值作为参考的最高压缩质量，大于该压缩质量的压缩将是不被推荐的。<br/>
+	 * 其中每个数组元素下标为0的值代表图片将png格式转换为byte[]数组时，数组长度与图片宽高像素数乘积之间的比值。该比值代表图片字节密度，大于等于该值时，使用当前数组元素下标为1的值作为参考的最高压缩质量，大于该压缩质量的压缩将是不被推荐的。<br/>
 	 * 如：图片字节密度大于1.343，压缩质量应该小于等于0.8，否则压缩效果可能不理想。
 	 */
 	private final static double[][] RESTRICTS= {{1.343,0.8},{1.224,0.7},{1.089,0.5},{0.946,0.4},{0.825,0.3},{0.702,0.3},{0.584,0.2},{0.465,0.2},{0.308,0.0}};
@@ -85,6 +86,17 @@ public final class Imgs {
 		assertNull(image);
 		return new Imgs(copy(image));
 	}
+	
+	
+	/**
+	 * 从文件路径中读取图片构造一个Imgs对象
+	 * @param filePath
+	 * @return
+	 */
+	public static Imgs of(String filePath) {
+		return of(Paths.get(filePath));
+	}
+	
 	
 	/**
 	 * 构造一个未关联image属性的Imgs对象，后续对image的操作前必须先关联当前对象的image属性到一个已存在的BufferedImage实例。
@@ -136,7 +148,9 @@ public final class Imgs {
 		BufferedImage image=null;
 		try {
 			image=ImageIO.read(path.toFile());
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return ofNull().set(image);
 	}
 	
@@ -149,7 +163,9 @@ public final class Imgs {
 		BufferedImage image=null;
 		try {
 			image=ImageIO.read(url);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return ofNull().set(image);
 	}
 	
@@ -162,7 +178,9 @@ public final class Imgs {
 		BufferedImage image=null;
 		try {
 			image=ImageIO.read(inputStream);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return ofNull().set(image);
 	}
 	
@@ -175,7 +193,9 @@ public final class Imgs {
 		BufferedImage image=null;
 		try {
 			image=ImageIO.read(imageInputStream);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return ofNull().set(image);
 	}
 	
@@ -192,6 +212,18 @@ public final class Imgs {
 	}
 	
 	/**
+	 * 将当前关联的图片输出到路径filePath中
+	 * @param formatName
+	 * @param filePath
+	 * @return
+	 */
+	public Imgs write(String formatName, String filePath) {
+		return write(formatName, Paths.get(filePath));
+	}
+	
+	
+	
+	/**
 	 * 将当前关联的图片输出到path中
 	 * @param formatName
 	 * @param path
@@ -202,6 +234,7 @@ public final class Imgs {
 			written=ImageIO.write(image, formatName, path.toFile());
 		} catch (Exception e) {
 			written=false;
+			e.printStackTrace();
 		}
 		return this;
 	}
@@ -217,6 +250,7 @@ public final class Imgs {
 			written=ImageIO.write(image, formatName, outputStream);
 		} catch (Exception e) {
 			written=false;
+			e.printStackTrace();
 		}
 		return this;
 	}
@@ -232,6 +266,7 @@ public final class Imgs {
 			written=ImageIO.write(image, formatName, imageOutputStream);
 		} catch (Exception e) {
 			written=false;
+			e.printStackTrace();
 		}
 		return this;
 	}

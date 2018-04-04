@@ -49,9 +49,6 @@ public final class Facer {
 	private static final Color GREEN_1=new Color(0, 255, 0,255);
 	private static final Scalar GREEN_2=new Scalar(0, 255, 0,255);
 	
-	private static final IllegalAccessError FACE_EMPTY_ERR=new IllegalAccessError("OpenCV Error: Assertion failed faceDetector is empty!");
-	private static final IllegalAccessError EYE_EMPTY_ERR=new IllegalAccessError("OpenCV Error: Assertion failed eyeDetector is empty!");
-	
 	static {CvBridge.loadOpenCv();}
 	
 	static {
@@ -227,7 +224,7 @@ public final class Facer {
 	 */
 	public static Rect[] eyeAreas(Mat mat,Size min,Size max) {
 		if(eyeLeftDetector.empty()) {
-			throw EYE_EMPTY_ERR;
+			return new Rect[0];
 		}
 		MatOfRect eyeDetections = new MatOfRect();
 		eyeLeftDetector.detectMultiScale(mat, eyeDetections, 1.1, 3, Objdetect.CASCADE_SCALE_IMAGE, min, max);
@@ -339,7 +336,7 @@ public final class Facer {
 	 */
 	public static Rect[] faceAreas(Mat mat) {
 		if(faceDetector.empty()) {
-			throw FACE_EMPTY_ERR;
+			return new Rect[0];
 		}
 		MatOfRect faceDetections = new MatOfRect();
 		faceDetector.detectMultiScale(mat, faceDetections, 1.1, 3, Objdetect.CASCADE_SCALE_IMAGE, MIN_FACE, MAX_FACE);

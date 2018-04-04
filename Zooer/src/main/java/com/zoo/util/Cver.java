@@ -286,6 +286,180 @@ public class Cver {
 		return this;
 	}
 	
+	/**
+	 * 将宽高按ratio倍比例缩放
+	 * @param ratio 输出图片宽高与原图片宽高的比值
+	 * @return
+	 * @see #scale(int, int)
+	 */
+	public Cver scale(double ratio) {
+		int w=(int) Math.round(mat.width()*ratio),h=(int) Math.round(mat.height()*ratio);
+		return scale(w, h);
+	}
+	
+	
+	/**
+	 * 按宽缩放,输出图片宽为w,高按w与原始比例计算而定,输出图片不变形.
+	 * @param w 输出图片的宽
+	 * @return
+	 * @see #scale(int, int)
+	 */
+	public Cver scaleW(int w){
+		int h=(int) Math.round(w*1.0/mat.width()*mat.height());
+		return scale(w, h);
+	}
+	
+	
+	/**
+	 * 按高缩放,输出图片高为h,宽按h与原始比例计算而定,输出图片不变形.
+	 * @param h 输出图片高
+	 * @return
+	 * @see #scale(int, int)
+	 */
+	public Cver scaleH(int h){
+		int w=(int) Math.round(h*1.0/mat.height()*mat.width());
+		return scale(w, h);
+	}
+	
+	
+	/**
+	 * 图片将按原始比例缩放到刚好可以放入宽为w高为h的容器中的大小(输出图片不变形).<br>
+	 * 若图片无法缩放至能放到宽为w高为h的容器中,那么将不缩放
+	 * @param w 容器宽
+	 * @param h 容器高
+	 * @return 输出图片宽高无法保证与参数w、h相等,但至少有一边(宽或高)与输入参数相等。
+	 */
+	public Cver scaleBox(int w, int h) {
+		int[] size=boxSize(w, h, mat.width(), mat.height());
+		return scale(size[0], size[1]);
+	}
+	
+	
+	
+	/**
+	 * 按输入宽(w)高(h)参数缩放,输出mat的rows==h,cols==w,若输入的宽高与原宽高比例不一致，那么输出的图片可能将会变形.<br/>
+	 * 若输入参数w、h至少有一个小于等于0,那么将不做任何操作.
+	 * @param w 缩放后的宽(cols)
+	 * @param h 缩放后的高(rows)
+	 * @return
+	 */
+	public Cver scale(int w, int h){
+		if (w>0&&h>0) {
+			Imgproc.resize(mat, mat, new Size(w,h));
+		}
+		return this;
+	}
+	
+	
+	/**
+	 * 计算宽高为width、height的原图在保持宽高比的情况下，缩放到刚好可以放入宽高为boxW、boxH的盒子中的宽高值.
+	 * @param boxW 盒子宽
+	 * @param boxH 盒子高
+	 * @param width 原图宽
+	 * @param height 原图高
+	 * @return 新的宽高值数组:第一个元素为新宽度,第二个元素为新高度
+	 */
+	private int[] boxSize(int boxW,int boxH,int width,int height) {
+		int[] size=new int[2];
+		double ratioX=boxW*1.0/width;
+		double ratioY=boxH*1.0/height;
+		if (ratioX<ratioY) {
+			boxH=(int) Math.round(ratioX*height);
+		}else {
+			boxW=(int) Math.round(ratioY*width);
+		}
+		size[0]=boxW;
+		size[1]=boxH;
+		return size;
+	}
+	
+	
+	
+	/**
+	 * 图片按angle度旋转,旋转后图片尺寸不变。
+	 * @param angle 旋转的角度，大于0图片按顺时针旋转,小于0图片按逆时针旋转
+	 * @return
+	 */
+	public Cver rotateDrop(double angle) {
+		angle=-angle;
+		int width=mat.width(),height=mat.height();
+		int[] size=rotateSize(angle, width, height);
+		int new_w=size[0],new_h=size[1];
+		
+		Mat m=getM(angle,boxSize(width, height, new_w, new_h)[0]*1.0/new_w, 0.0,0.0);
+		Imgproc.warpAffine(mat, mat, m, mat.size(),Imgproc.WARP_FILL_OUTLIERS,Core.BORDER_CONSTANT,CvBridge.bTransparent);
+		
+		return this;
+	}
+	
+	
+	/**
+	 * 图片按angle度旋转,旋转后图片尺寸刚好容下原来图片在旋转后所需占用的矩形空间，既旋转后的图片尺寸可能发生改变。
+	 * @param angle 旋转的角度，大于0图片按顺时针旋转,小于0图片按逆时针旋转
+	 * @return
+	 */
+	public Cver rotateRise(double angle) {
+		angle=-angle;
+		int width=mat.width(),height=mat.height();
+		int[] size=rotateSize(angle, width, height);
+		int new_w=size[0],new_h=size[1];
+		
+		Mat dst=new Mat(new_h, new_w, mat.type());
+		Mat m=getM(angle,1.0, (new_w-width)/2.0,(new_h-height)/2.0);
+		Imgproc.warpAffine(mat, dst, m, dst.size(),Imgproc.WARP_FILL_OUTLIERS,Core.BORDER_CONSTANT,CvBridge.bTransparent);
+		
+		return update(dst);
+	}
+	
+	/**
+	 * 图片按angle度旋转,旋转后图片内容超出的部分可能会被裁减，旋转后图片尺寸不变
+	 * @param angle 旋转的角度，大于0图片按顺时针旋转,小于0图片按逆时针旋转
+	 * @return
+	 */
+	public Cver rotate(double angle) {
+		Mat m=getM(angle,1.0, 0.0, 0.0);
+		Imgproc.warpAffine(mat, mat, m, mat.size(),Imgproc.WARP_INVERSE_MAP,Core.BORDER_CONSTANT,CvBridge.bTransparent);
+		return this;
+	}
+	
+	
+	/**
+	 * 计算图片在旋转后至少需要占用的宽高值.
+	 * @param angle 旋转角
+	 * @param width 原图宽
+	 * @param height 原图高
+	 * @return 返回旋转后至少占用的宽高值数组:第一个元素为新宽度,第二个元素为新高度
+	 */
+	private int[] rotateSize(double angle,int width,int height) {
+		int[] nsize=new int[2];
+		double radians=Math.toRadians(angle);
+		double cos=Math.cos(radians);
+		double sin=Math.sin(radians);
+		nsize[0] = (int) (Math.abs(width*cos) + Math.abs(height*sin));
+		nsize[1] = (int) (Math.abs(height*cos) + Math.abs(width*sin));
+		return nsize; 
+	}
+	
+	
+	/**
+	 * 获取仿射变换的矩阵
+	 * @param angle
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private Mat getM(double angle, double scale, double x,double y) {
+		Point center=new Point(mat.width()/2.0, mat.height()/2.0);
+		Mat m=Imgproc.getRotationMatrix2D(center, angle, scale);
+		if (x!=0) {
+			m.put(0, 2, m.get(0,2)[0]+=x);
+		}
+		if (y!=0) {
+			m.put(1, 2, m.get(1,2)[0]+=y);
+		}
+		return m;
+	}
+	
 	
 	/**
 	 * 按x轴垂直翻转图片
@@ -317,9 +491,7 @@ public class Cver {
 	 * @return
 	 */
 	private Cver flip(int flipCode) {
-		Mat dst=newMat();
-		Core.flip(mat, dst, flipCode);
-		update(dst);
+		Core.flip(mat, mat, flipCode);
 		return this;
 	}
 	
@@ -362,19 +534,40 @@ public class Cver {
 	 */
 	public Cver gray() {
 		int c=mat.channels();
-		if (c==3 || c==4) {
+		if (c==3) {
 			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+		}else if (c==4) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2GRAY);
 		}
 		return this;
 	}
 	
+	
 	/**
-	 * 灰度图转为BGR图
+	 * 转成BGR图
 	 * @return
 	 */
 	public Cver bgr() {
-		if (mat.channels()==1) {
+		int c=mat.channels();
+		if (c==1) {
 			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGR);
+		}else if (c==4) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2BGR);
+		}
+		return this;
+	}
+	
+	
+	/**
+	 * 转成BGRA图
+	 * @return
+	 */
+	public Cver bgra() {
+		int c=mat.channels();
+		if (c==1) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGRA);
+		}else if (c==3) {
+			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2BGRA);
 		}
 		return this;
 	}

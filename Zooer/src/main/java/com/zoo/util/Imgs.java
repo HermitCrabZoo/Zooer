@@ -772,8 +772,7 @@ public final class Imgs {
 	 * @return
 	 */
 	public Imgs scaleRatioBox(int w, int h,Color bgColor){
-		Image cover=scaleRatio(w, h).image;
-		return image(w, h, bgColor).pileCenter(cover);
+		return scaleRatio(w, h).image(w, h, bgColor).pileCenter(this.oldImage);
 	}
 	
 	/**
@@ -790,11 +789,7 @@ public final class Imgs {
 		}else {
 			w=(int) Math.round(h*1.0/image.getHeight()*image.getWidth());
 		}
-		if (w>0&&h>0) {
-			Image cover=scale(w, h);
-			image(w, h).pileLeftTop(cover);
-		}
-		return this;
+		return scaleZoom(w, h);
 	}
 	
 	/**
@@ -1014,7 +1009,7 @@ public final class Imgs {
 		if (w>0 && h>0) {
 			int width=image.getWidth();
 			int height=image.getHeight();
-			image(0, 0, w, h, Colors.wTransparent);
+			image(0, 0, w, h, Colors.bTransparent);
 			if(x<width && y<height && x+w>0 && y+h>0){
 				x=Math.max(0, x);
 				y=Math.max(0, y);
@@ -1275,7 +1270,7 @@ public final class Imgs {
 	private Imgs flip(int flipCode) {
 		int w = image.getWidth();
 		int h = image.getHeight();
-		image(0, 0, w, h, Colors.wTransparent);
+		image(0, 0, w, h, Colors.bTransparent);
 		Graphics2D graphics2d=image.createGraphics();
 		if (flipCode==0) {//垂直翻转(x轴)
 			graphics2d.drawImage(oldImage, 0, 0, w, h, 0, h, w, 0, null);
@@ -1364,6 +1359,8 @@ public final class Imgs {
 		}
 		return this;
 	}
+	
+	
 	/**
 	 * 图片按degree度旋转,旋转后图片尺寸不变。
 	 * @param degree 旋转的角度，大于0图片按顺时针旋转,小于0图片按逆时针旋转

@@ -15,10 +15,16 @@ import org.bytedeco.javacv.Frame;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 
 public final class CvBridge {
 
 	private CvBridge() {}
+	
+	
+	public static final Scalar bTransparent=new Scalar(0, 0, 0, 0);
+	
+	public static final Scalar wTransparent=new Scalar(255,255,255, 0);
 	
 	/**
 	 * BufferedImage的类型

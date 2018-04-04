@@ -355,7 +355,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static long[] raiseNew(long[] longs,long step){
-		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().map(l->l+step).toArray()).orElse(longs);
+		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().map(l->l+step).toArray()).orElse(Typer.longs());
 	}
 	
 	
@@ -366,7 +366,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static int[] raiseNew(int[] ints,int step){
-		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().map(i->i+step).toArray()).orElse(ints);
+		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().map(i->i+step).toArray()).orElse(Typer.ints());
 	}
 	
 	
@@ -399,7 +399,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static double[] raiseNew(double[] doubles,double step){
-		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().map(d->d+step).toArray()).orElse(doubles);
+		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().map(d->d+step).toArray()).orElse(Typer.doubles());
 	}
 	
 	
@@ -421,7 +421,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static long[] reduceNew(long[] longs,long step){
-		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().map(l->l-step).toArray()).orElse(longs);
+		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().map(l->l-step).toArray()).orElse(Typer.longs());
 	}
 	
 	
@@ -432,7 +432,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static int[] reduceNew(int[] ints,int step){
-		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().map(i->i-step).toArray()).orElse(ints);
+		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().map(i->i-step).toArray()).orElse(Typer.ints());
 	}
 	
 	
@@ -465,7 +465,7 @@ public final class Arrs {
 	 * @return
 	 */
 	public static double[] reduceNew(double[] doubles,double step){
-		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().map(d->d-step).toArray()).orElse(doubles);
+		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().map(d->d-step).toArray()).orElse(Typer.doubles());
 	}
 	
 	

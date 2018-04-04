@@ -376,7 +376,7 @@ public final class Strs {
 	 * @param fillchar
 	 * @return 若传入参数str为null则返回null
 	 */
-	public static String ljust(String str,int len,Character fillchar) {
+	public static String ljust(String str,int len,char fillchar) {
 		int l=len-len(str);
 		if (Typer.notNull(str,fillchar) && l>0) {
 			StringBuilder sb=new StringBuilder(str);
@@ -395,7 +395,7 @@ public final class Strs {
 	 * @param fillchar
 	 * @return 若传入参数str为null则返回null
 	 */
-	public static String rjust(String str,int len,Character fillchar) {
+	public static String rjust(String str,int len,char fillchar) {
 		int l=len-len(str);
 		if (Typer.notNull(str,fillchar) && l>0) {
 			StringBuilder sb=new StringBuilder();

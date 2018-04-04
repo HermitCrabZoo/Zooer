@@ -101,15 +101,7 @@ public class Encrypt {
 	 * @return
 	 */
 	public static String md5(Path file) {
-		try(FileChannel in=FileChannel.open(file, StandardOpenOption.READ)) {
-			MappedByteBuffer byteBuffer = in.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(file));
-			MessageDigest md5 = MessageDigest.getInstance("MD5");
-			md5.update(byteBuffer);
-            return hex(md5.digest());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Strs.empty();
+		return messageDigest(file, "MD5");
 	}
 	
 	/**
@@ -122,12 +114,30 @@ public class Encrypt {
 	}
 	
 	/**
+	 * SHA-1加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha1(Path file) {
+		return messageDigest(file, "SHA1");
+	}
+	
+	/**
 	 * SHA2-224加密:适用于长度不超过2^64二进制位的字符串
 	 * @param str
 	 * @return
 	 */
 	public static String sha2_224(String str) {
 		return messageDigest(str, "SHA-224");
+	}
+	
+	/**
+	 * SHA2-224加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha2_224(Path file) {
+		return messageDigest(file, "SHA-224");
 	}
 	
 	/**
@@ -140,12 +150,30 @@ public class Encrypt {
 	}
 	
 	/**
+	 * SHA2-256加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha2_256(Path file) {
+		return messageDigest(file, "SHA-256");
+	}
+	
+	/**
 	 * SHA2-384加密:适用于长度不超过2^128二进制位的字符串
 	 * @param str
 	 * @return
 	 */
 	public static String sha2_384(String str) {
 		return messageDigest(str, "SHA-384");
+	}
+	
+	/**
+	 * SHA2-384加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha2_384(Path file) {
+		return messageDigest(file, "SHA-384");
 	}
 	
 	/**
@@ -158,12 +186,30 @@ public class Encrypt {
 	}
 	
 	/**
+	 * SHA2-512加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha2_512(Path file) {
+		return messageDigest(file, "SHA-512");
+	}
+	
+	/**
 	 * SHA3-224加密
 	 * @param str
 	 * @return
 	 */
 	public static String sha3_224(String str) {
 		return messageDigest(str, "SHA3-224");
+	}
+	
+	/**
+	 * SHA3-224加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha3_224(Path file) {
+		return messageDigest(file, "SHA3-224");
 	}
 	
 	/**
@@ -176,12 +222,30 @@ public class Encrypt {
 	}
 	
 	/**
+	 * SHA3-256加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha3_256(Path file) {
+		return messageDigest(file, "SHA3-256");
+	}
+	
+	/**
 	 * SHA3-384加密
 	 * @param str
 	 * @return
 	 */
 	public static String sha3_384(String str) {
 		return messageDigest(str, "SHA3-384");
+	}
+	
+	/**
+	 * SHA3-384加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha3_384(Path file) {
+		return messageDigest(file, "SHA3-384");
 	}
 	
 	/**
@@ -193,17 +257,16 @@ public class Encrypt {
 		return messageDigest(str, "SHA3-512");
 	}
 	
+	/**
+	 * SHA3-512加密文件
+	 * @param str
+	 * @return
+	 */
+	public static String sha3_512(Path file) {
+		return messageDigest(file, "SHA3-512");
+	}
 	
-	private static String messageDigest(String str,String algorithm) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance(algorithm);
-            digest.update(str.getBytes());
-            return hex(digest.digest());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Strs.empty();
-    }
+
 	
 	/**
 	 * HmacMD5加密
@@ -269,6 +332,34 @@ public class Encrypt {
 	public static String hmacSha512(String str,String key) {
 		return hmac(str, key, "HmacSHA512");
 	}
+	
+	
+	
+	private static String messageDigest(Path file,String algorithm) {
+		try(FileChannel in=FileChannel.open(file, StandardOpenOption.READ)) {
+			MappedByteBuffer byteBuffer = in.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(file));
+			MessageDigest md5 = MessageDigest.getInstance(algorithm);
+			md5.update(byteBuffer);
+            return hex(md5.digest());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Strs.empty();
+	}
+	
+	
+	
+	private static String messageDigest(String str,String algorithm) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(algorithm);
+            digest.update(str.getBytes());
+            return hex(digest.digest());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Strs.empty();
+    }
+	
 	
 	
 	private static String hmac(String str,String key,String algorithm) {

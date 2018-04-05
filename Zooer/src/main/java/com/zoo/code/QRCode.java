@@ -26,7 +26,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.zoo.cons.Charsets;
 import com.zoo.cons.Images;
-import com.zoo.util.Filer;
+import com.zoo.mix.Filer;
 /**
  * quick response code process tool
  * @author ZOO

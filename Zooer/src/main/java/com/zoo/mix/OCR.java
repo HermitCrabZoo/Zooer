@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.mix;
 
 import java.awt.image.BufferedImage;
 

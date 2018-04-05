@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.mix;
 
 import java.net.URL;
 import java.nio.file.Path;

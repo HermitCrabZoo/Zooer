@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.zoo.util.Beaner;
+import com.zoo.mix.Beaner;
 
 public final class Arrs {
 	

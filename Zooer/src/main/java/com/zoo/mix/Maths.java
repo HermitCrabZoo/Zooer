@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.mix;
 
 import java.math.BigDecimal;
 import java.util.Objects;

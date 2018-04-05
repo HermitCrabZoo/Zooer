@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.mix;
 
 import java.util.List;
 import java.util.stream.Collectors;

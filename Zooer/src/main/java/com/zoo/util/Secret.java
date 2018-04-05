@@ -1,6 +1,5 @@
 package com.zoo.util;
 
-import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -10,16 +9,26 @@ import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-
+import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-public class Encrypt {
+public class Secret {
 
 	private static char hexDigits[]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};    
 	
 	private static Encoder base64Encoder=Base64.getEncoder();
 	private static Decoder base64Decoder=Base64.getDecoder();
+	
+	/**
+	 * 对byte数组进行base64编码
+	 * @param bytes
+	 * @return 编码后的字符串
+	 */
+	public static String base64(String str) {
+		return str==null?Strs.empty():base64Encoder.encodeToString(str.getBytes());
+	}
+	
 	
 	/**
 	 * 对byte数组进行base64编码
@@ -60,20 +69,18 @@ public class Encrypt {
 	}
 	
 	/**
-	 * 将base64编码的byte数组解码到文件输出
+	 * 将base64编码的byte数组解码
 	 * @param bytes
 	 * @param file
 	 * @return 解码后的byte数组
 	 */
-	public static byte[] unbase64(byte[] bytes,Path file) {
-		byte[] decodes=Typer.bytes();
+	public static byte[] unbase64(byte[] bytes) {
 		try {
-			decodes=base64Decoder.decode(bytes);
-			Files.write(file, decodes, StandardOpenOption.CREATE);
-		} catch (IOException e) {
+			return base64Decoder.decode(bytes);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return decodes;
+		return Typer.bytes();
 	}
 	
 	/**
@@ -266,6 +273,33 @@ public class Encrypt {
 		return messageDigest(file, "SHA3-512");
 	}
 	
+	
+	
+	private static String messageDigest(Path file,String algorithm) {
+		try(FileChannel in=FileChannel.open(file, StandardOpenOption.READ)) {
+			MappedByteBuffer byteBuffer = in.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(file));
+			MessageDigest md5 = MessageDigest.getInstance(algorithm);
+			md5.update(byteBuffer);
+            return hex(md5.digest());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Strs.empty();
+	}
+	
+	
+	
+	private static String messageDigest(String str,String algorithm) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(algorithm);
+            digest.update(str.getBytes());
+            return hex(digest.digest());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Strs.empty();
+    }
+	
 
 	
 	/**
@@ -335,35 +369,9 @@ public class Encrypt {
 	
 	
 	
-	private static String messageDigest(Path file,String algorithm) {
-		try(FileChannel in=FileChannel.open(file, StandardOpenOption.READ)) {
-			MappedByteBuffer byteBuffer = in.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(file));
-			MessageDigest md5 = MessageDigest.getInstance(algorithm);
-			md5.update(byteBuffer);
-            return hex(md5.digest());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Strs.empty();
-	}
-	
-	
-	
-	private static String messageDigest(String str,String algorithm) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance(algorithm);
-            digest.update(str.getBytes());
-            return hex(digest.digest());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Strs.empty();
-    }
-	
-	
-	
 	private static String hmac(String str,String key,String algorithm) {
 		try {
+			//生成密匙
 			SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), algorithm);
 			Mac mac = Mac.getInstance(algorithm);
 			mac.init(signingKey);
@@ -373,6 +381,8 @@ public class Encrypt {
 		}
 		return Strs.empty();
 	}
+
+	
 	
 	/**
 	 * 将byte[]转为十六进制字符串
@@ -392,4 +402,142 @@ public class Encrypt {
         }  
         return new String(chars);
 	}
+	
+	
+	/**
+	 * DES加密
+	 * @param src
+	 * @param key
+	 * @return
+	 */
+	public static byte[] des(String src,String key) {
+		if (Typer.notNull(src,key)) {
+			return des(src.getBytes(), key.getBytes());
+		}
+		return Typer.bytes();
+	}
+	
+	
+	/**
+	 * DES加密
+	 * @param src 
+	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @return 返回加密后得到字节数组
+	 */
+	public static byte[] des(byte[] src,byte[] key) {
+		return secretCode(src, key, "DES", Cipher.ENCRYPT_MODE);
+	}
+	
+	
+	
+	/**
+	 * DES解密
+	 * @param secrets
+	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @return 返回解密后的字节数组
+	 */
+	public static byte[] unDes(byte[] secrets,byte[] key) {
+		return secretCode(secrets, key, "DES", Cipher.DECRYPT_MODE);
+	}
+	
+	
+	
+	
+	/**
+	 * TripleDES加密
+	 * @param src
+	 * @param key
+	 * @return
+	 */
+	public static byte[] tripleDes(String src,String key) {
+		if (Typer.notNull(src,key)) {
+			return tripleDes(src.getBytes(), key.getBytes());
+		}
+		return Typer.bytes();
+	}
+	
+	
+	/**
+	 * TripleDES加密
+	 * @param src 
+	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @return 返回加密后得到字节数组
+	 */
+	public static byte[] tripleDes(byte[] src,byte[] key) {
+		return secretCode(src, key, "DESede", Cipher.ENCRYPT_MODE);
+	}
+	
+	
+	
+	/**
+	 * TripleDES解密
+	 * @param secrets
+	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @return 返回解密后的字节数组
+	 */
+	public static byte[] unTripleDes(byte[] secrets,byte[] key) {
+		return secretCode(secrets, key, "DESede",Cipher.DECRYPT_MODE);
+	}
+	
+	
+	/**
+	 * AES加密
+	 * @param src
+	 * @param key
+	 * @return
+	 */
+	public static byte[] aes(String src,String key) {
+		if (Typer.notNull(src,key)) {
+			return aes(src.getBytes(), key.getBytes());
+		}
+		return Typer.bytes();
+	}
+	
+	
+	/**
+	 * AES加密
+	 * @param src 
+	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @return 返回加密后得到字节数组
+	 */
+	public static byte[] aes(byte[] src,byte[] key) {
+		return secretCode(src, key, "AES", Cipher.ENCRYPT_MODE);
+	}
+	
+	
+	
+	/**
+	 * AES解密
+	 * @param secrets
+	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @return 返回解密后的字节数组
+	 */
+	public static byte[] unAes(byte[] secrets,byte[] key) {
+		return secretCode(secrets, key, "AES", Cipher.DECRYPT_MODE);
+	}
+	
+	
+	
+	/**
+	 * DES、AES等对称加密/解密
+	 * @param secrets
+	 * @param key
+	 * @param algorithm
+	 * @param mode
+	 * @return
+	 */
+	private static byte[] secretCode(byte[] secrets,byte[] key,String algorithm,int mode) {
+		try {
+			//生成密匙
+			SecretKeySpec signingKey = new SecretKeySpec(key, algorithm);
+			Cipher cipher = Cipher.getInstance(algorithm);
+			cipher.init(mode, signingKey);
+			return cipher.doFinal(secrets);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Typer.bytes();
+	}
+	
+	
 }

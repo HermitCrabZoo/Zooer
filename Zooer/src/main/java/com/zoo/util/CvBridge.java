@@ -86,7 +86,6 @@ public final class CvBridge {
 				Files.copy(in, extractedLibFile, StandardCopyOption.REPLACE_EXISTING);
 				
 				System.load(extractedLibFile.toString());
-//				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 				
 				unload=false;
 				System.out.println("Usage OpenCV "+Core.VERSION);

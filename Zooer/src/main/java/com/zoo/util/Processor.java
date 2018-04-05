@@ -4,6 +4,8 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Optional;
 
+import com.zoo.base.Strs;
+
 @FunctionalInterface
 public interface Processor<T> {
 	T process(T property);

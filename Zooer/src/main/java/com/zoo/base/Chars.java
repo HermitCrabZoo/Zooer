@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.base;
 
 public final class Chars {
 	private Chars() {

@@ -20,6 +20,8 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.zoo.base.Strs;
+
 
 
 public final class Httper {

@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.system;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
@@ -9,6 +9,8 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 import java.util.Properties;
+
+import com.zoo.base.Strs;
 
 /**
  * 系统工具类

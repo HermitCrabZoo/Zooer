@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.code;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,7 +11,12 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import com.zoo.base.Arrs;
 import com.zoo.cons.Images;
+import com.zoo.se.Chroma;
+import com.zoo.se.Colors;
+import com.zoo.se.Fonts;
+import com.zoo.se.Imgs;
 
 /**
  *验证码生成类

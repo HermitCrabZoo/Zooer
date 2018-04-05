@@ -1,5 +1,10 @@
 package com.zoo.util;
 
+import com.zoo.base.Arrs;
+import com.zoo.base.Strs;
+import com.zoo.system.Platform;
+import com.zoo.system.Syss;
+
 public final class Pather {
 	private Pather(){}
 	

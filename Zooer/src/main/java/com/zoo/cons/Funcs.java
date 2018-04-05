@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.cons;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

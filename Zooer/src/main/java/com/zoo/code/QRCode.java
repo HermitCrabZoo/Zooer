@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.code;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -26,6 +26,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.zoo.cons.Charsets;
 import com.zoo.cons.Images;
+import com.zoo.util.Filer;
 /**
  * quick response code process tool
  * @author ZOO

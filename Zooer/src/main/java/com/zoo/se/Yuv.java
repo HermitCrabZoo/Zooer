@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.se;
 
 public class Yuv {
 	private double y;

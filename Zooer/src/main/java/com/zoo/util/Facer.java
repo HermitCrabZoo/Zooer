@@ -27,6 +27,8 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
 
+import com.zoo.base.Arrs;
+
 public final class Facer {
 	private Facer() {}
 	

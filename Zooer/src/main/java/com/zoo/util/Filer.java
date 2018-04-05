@@ -22,6 +22,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.zoo.base.Strs;
+import com.zoo.cons.Funcs;
+
 public final class Filer {
 
 	private Filer() {}

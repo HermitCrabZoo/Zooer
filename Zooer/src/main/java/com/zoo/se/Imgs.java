@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.se;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -37,7 +37,12 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+
+import com.zoo.base.Strs;
 import com.zoo.cons.Images;
+import com.zoo.util.Eacher;
+import com.zoo.util.Filer;
+import com.zoo.util.Pather;
 
 public final class Imgs {
 	

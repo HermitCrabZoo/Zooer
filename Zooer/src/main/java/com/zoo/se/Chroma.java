@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.se;
 
 /**
  * 色系类,由浅至深共7个色系，YUV范围0-255

@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.base;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.zoo.util.Beaner;
 
 public final class Arrs {
 	

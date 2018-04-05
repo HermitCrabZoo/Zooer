@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.zoo.base.Strs;
+
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 

@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.base;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

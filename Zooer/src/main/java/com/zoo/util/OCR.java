@@ -2,6 +2,8 @@ package com.zoo.util;
 
 import java.awt.image.BufferedImage;
 
+import com.zoo.base.Strs;
+
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import net.sourceforge.tess4j.util.LoadLibs;

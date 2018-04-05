@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.code;
 
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -12,6 +12,9 @@ import java.util.Base64.Encoder;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.zoo.base.Strs;
+import com.zoo.base.Typer;
 
 public class Secret {
 

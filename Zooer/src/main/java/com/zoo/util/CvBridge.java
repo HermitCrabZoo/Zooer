@@ -17,6 +17,11 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
+import com.zoo.base.Arrs;
+import com.zoo.base.Typer;
+import com.zoo.se.Colors;
+import com.zoo.system.Platform;
+
 public final class CvBridge {
 
 	private CvBridge() {}

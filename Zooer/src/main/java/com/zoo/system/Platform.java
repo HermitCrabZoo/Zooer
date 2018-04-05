@@ -1,4 +1,4 @@
-package com.zoo.util;
+package com.zoo.system;
 
 public final class Platform {
 	private Platform(){}

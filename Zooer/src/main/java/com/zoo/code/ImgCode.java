@@ -154,7 +154,7 @@ public final class ImgCode {
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
 			Dimension dimen=Fonts.size(surface, font);
-			long[] units=xInWidth(dimen.width, surface.length(), image.getWidth());
+			int[] units=xInWidth(dimen.width, surface.length(), image.getWidth());
 			int x=0,y=(image.getHeight()-dimen.height)/2;
 			for(int i=0;i<units.length;i++){
 				x+=units[i];
@@ -214,7 +214,7 @@ public final class ImgCode {
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
 			Dimension dimen=Fonts.size(surface, font);
-			long[] units=xInWidth(dimen.width, surface.length(), image.getWidth());
+			int[] units=xInWidth(dimen.width, surface.length(), image.getWidth());
 			int x=0,y=(image.getHeight()-dimen.height)/2;
 			for(int i=0;i<units.length;i++){
 				x+=units[i];
@@ -231,9 +231,9 @@ public final class ImgCode {
 	 * @param width
 	 * @return
 	 */
-	private static long[] xInWidth(int total,int len,int width){
+	private static int[] xInWidth(int total,int len,int width){
 		int any=total/len;
-		long[] units=new long[len];
+		int[] units=new int[len];
 		if (width>total*2) {
 			units=Arrs.avgs(total*2,len);
 			units[0]=(width-total*2)/2+any/2;

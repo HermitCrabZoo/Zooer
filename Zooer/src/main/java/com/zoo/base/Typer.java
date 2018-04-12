@@ -181,6 +181,87 @@ public final class Typer {
 		return new boolean[] {};
 	}
 	
+	
+	/**
+	 * 构造二维空数组,长度为len,二维数组中的每个一维数组长度都为0.相当于构造len个一维空数组
+	 * @param len 二维数组长度,若小于0,则置为0
+	 * @return
+	 */
+	public static long[][] longss(int len) {
+		return new long[Math.max(len,0)][0];
+	}
+	
+	
+	/**
+	 * 构造二维空数组,长度为len,二维数组中的每个一维数组长度都为0.相当于构造len个一维空数组
+	 * @param len 二维数组长度,若小于0,则置为0
+	 * @return
+	 */
+	public static int[][] intss(int len) {
+		return new int[Math.max(len,0)][0];
+	}
+	
+	
+	/**
+	 * 构造二维空数组,长度为len,二维数组中的每个一维数组长度都为0.相当于构造len个一维空数组
+	 * @param len 二维数组长度,若小于0,则置为0
+	 * @return
+	 */
+	public static short[][] shortss(int len) {
+		return new short[Math.max(len,0)][0];
+	}
+	
+	
+	/**
+	 * 构造二维空数组,长度为len,二维数组中的每个一维数组长度都为0.相当于构造len个一维空数组
+	 * @param len 二维数组长度,若小于0,则置为0
+	 * @return
+	 */
+	public static byte[][] bytess(int len) {
+		return new byte[Math.max(len,0)][0];
+	}
+	
+	
+	/**
+	 * 构造二维空数组,长度为len,二维数组中的每个一维数组长度都为0.相当于构造len个一维空数组
+	 * @param len 二维数组长度,若小于0,则置为0
+	 * @return
+	 */
+	public static double[][] doubless(int len) {
+		return new double[Math.max(len,0)][0];
+	}
+	
+	
+	/**
+	 * 构造二维空数组,长度为len,二维数组中的每个一维数组长度都为0.相当于构造len个一维空数组
+	 * @param len 二维数组长度,若小于0,则置为0
+	 * @return
+	 */
+	public static float[][] floatss(int len) {
+		return new float[Math.max(len,0)][0];
+	}
+	
+	
+	/**
+	 * 构造二维空数组,长度为len,二维数组中的每个一维数组长度都为0.相当于构造len个一维空数组
+	 * @param len 二维数组长度,若小于0,则置为0
+	 * @return
+	 */
+	public static char[][] charss(int len) {
+		return new char[Math.max(len,0)][0];
+	}
+	
+	
+	/**
+	 * 构造二维空数组,长度为len,二维数组中的每个一维数组长度都为0.相当于构造len个一维空数组
+	 * @param len 二维数组长度,若小于0,则置为0
+	 * @return
+	 */
+	public static boolean[][] booleanss(int len) {
+		return new boolean[Math.max(len,0)][0];
+	}
+	
+	
 	/**
 	 * long型数组转成其包装类的数组
 	 * @param ls

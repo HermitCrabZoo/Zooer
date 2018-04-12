@@ -147,6 +147,34 @@ public final class Arrs {
 	
 	
 	/**
+	 * 将total平均分成len份的数组返回,若total不是len的整数倍,
+	 * 那么数组值将尽量平均(数组中元素和仍然等于total).
+	 * @param total
+	 * @param len 必须大于0
+	 * @return
+	 */
+	public static int[] avgs(int total,int len){
+		if (len>0) {
+			int[] avg=new int[len];
+			int unit=total/len;
+			int remain=total%len;
+			int one=remain<0?-1:1;
+			remain=Math.abs(remain);
+			if (total!=0) {
+				for(int i=0;i<len;i++){
+					avg[i]=unit;
+				}
+				for(int i=0;i<remain;i++) {
+					avg[i]+=one;
+				}
+			}
+			return avg;
+		}
+		return Typer.ints();
+	}
+	
+	
+	/**
 	 * 为数组中的每个元素增step
 	 * @param array
 	 * @param step
@@ -2023,6 +2051,389 @@ public final class Arrs {
 		return -1;
 	}
 	
+	
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static <T>int len(T[] array){
+		return array==null?0:array.length;
+	}
+	
+
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static int len(long[] array){
+		return array==null?0:array.length;
+	}
+	
+
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static int len(int[] array){
+		return array==null?0:array.length;
+	}
+	
+
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static int len(short[] array){
+		return array==null?0:array.length;
+	}
+	
+
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static int len(byte[] array){
+		return array==null?0:array.length;
+	}
+	
+
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static int len(double[] array){
+		return array==null?0:array.length;
+	}
+	
+
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static int len(float[] array){
+		return array==null?0:array.length;
+	}
+	
+
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static int len(char[] array){
+		return array==null?0:array.length;
+	}
+	
+
+	/**
+	 * 获取数组的长度,若数组为空返回0
+	 * @param array
+	 * @return
+	 */
+	public static int len(boolean[] array){
+		return array==null?0:array.length;
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={"1","2","3","4","5"},mount=3,返回:{{"1","2"},{"3","4"},{"5"}}
+	 * @param array 若此参数为null则返回null
+	 * @param amount 此参数若小于0则返回0个元素的二维数组(当array不为null时)
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T[][] splitAvg(T[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return array==null?null:(T[][])Array.newInstance(array.getClass(),0);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * @param array 被分割的数组
+	 * @param amount 均分的数量
+	 * @return 返回长度为amount的二维数组
+	 */
+	public static long[][] splitAvg(long[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.longss(amount);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * @param array 被分割的数组
+	 * @param amount 均分的数量
+	 * @return 返回长度为amount的二维数组
+	 */
+	public static int[][] splitAvg(int[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.intss(amount);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * @param array 被分割的数组
+	 * @param amount 均分的数量
+	 * @return 返回长度为amount的二维数组
+	 */
+	public static short[][] splitAvg(short[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.shortss(amount);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * @param array 被分割的数组
+	 * @param amount 均分的数量
+	 * @return 返回长度为amount的二维数组
+	 */
+	public static byte[][] splitAvg(byte[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.bytess(amount);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1.0,2.0,3.0,4.0,5.0},mount=3,返回:{{1.0,2.0},{3.0,4.0},{5.0}}
+	 * @param array 被分割的数组
+	 * @param amount 均分的数量
+	 * @return 返回长度为amount的二维数组
+	 */
+	public static double[][] splitAvg(double[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.doubless(amount);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1.0f,2.0f,3.0f,4.0f,5.0f},mount=3,返回:{{1.0f,2.0f},{3.0f,4.0f},{5.0f}}
+	 * @param array 被分割的数组
+	 * @param amount 均分的数量
+	 * @return 返回长度为amount的二维数组
+	 */
+	public static float[][] splitAvg(float[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.floatss(amount);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={'1','2','3','4','5'},mount=3,返回:{{'1','2'},{'3','4'},{'5'}}
+	 * @param array 被分割的数组
+	 * @param amount 均分的数量
+	 * @return 返回长度为amount的二维数组
+	 */
+	public static char[][] splitAvg(char[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.charss(amount);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={true,false,true,true,false},mount=3,返回:{{true,false},{true,true},{false}}
+	 * @param array 被分割的数组
+	 * @param amount 均分的数量
+	 * @return 返回长度为amount的二维数组
+	 */
+	public static boolean[][] splitAvg(boolean[] array,int amount){
+		if (array!=null && amount>=0) {
+			int[] quotas=avgs(array.length, amount);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.booleanss(amount);
+	}
+	
+	
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={"1","2","3","4","5"},quotas={1,2,3,4},返回:{{"1"},{"2","3"},{"4","5"},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T[][] split(T[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return array==null?null:(T[][])Array.newInstance(array.getClass(),0);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={1,2,3,4,5},quotas={1,2,3,4},返回:{{1},{2,3},{4,5},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	public static long[][] split(long[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return Typer.longss(len(quotas));
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={1,2,3,4,5},quotas={1,2,3,4},返回:{{1},{2,3},{4,5},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	public static int[][] split(int[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return Typer.intss(len(quotas));
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={1,2,3,4,5},quotas={1,2,3,4},返回:{{1},{2,3},{4,5},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	public static short[][] split(short[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return Typer.shortss(len(quotas));
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={1,2,3,4,5},quotas={1,2,3,4},返回:{{1},{2,3},{4,5},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	public static byte[][] split(byte[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return Typer.bytess(len(quotas));
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={1.0,2.0,3.0,4.0,5.0},quotas={1,2,3,4},返回:{{1.0},{2.0,3.0},{4.0,5.0},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	public static double[][] split(double[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return Typer.doubless(len(quotas));
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={1.0f,2.0f,3.0f,4.0f,5.0f},quotas={1,2,3,4},返回:{{1.0f},{2.0f,3.0f},{4.0f,5.0f},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	public static float[][] split(float[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return Typer.floatss(len(quotas));
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={'1','2','3','4','5'},quotas={1,2,3,4},返回:{{'1'},{'2','3'},{'4','5'},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	public static char[][] split(char[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return Typer.charss(len(quotas));
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按指标quotas来分割，返回包含每个分割后的一维数组的二维数组,分割将尽量按quotas中每个元素指定的长度分到每个一维数组中,若quotas中的元素和大于array的长度,那么分不到元素的数组将不包含元素.<br/>
+	 * 如输入:array={true,false,true,true,false},quotas={1,2,3,4},返回:{{true},{false,true},{true,false},{}}
+	 * @param array 被分割的数组
+	 * @param quotas 分割指标,其中每个元素对应array分割后的每个一维数组的长度,此指标并不保证返回值中每个一维数组的长度.
+	 * @return 返回长度等于quotas的长度的二维数组
+	 */
+	public static boolean[][] split(boolean[] array,int...quotas){
+		if (Typer.notNull(array,quotas)) {
+			return split(array, array.length, quotas);
+		}
+		return Typer.booleanss(len(quotas));
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private static <T>T[] split(T array,int total,int...quotas){
+		
+		int amount=quotas.length,len=0;
+		
+		T[] result=(T[]) Array.newInstance(array.getClass(),amount);//构造二维数组
+		Class<?> ct=array.getClass().getComponentType();
+		
+		for (int i = 0, start=0; i < amount; start+=quotas[i], i++) {
+			len=Math.max(Math.min(total-start,quotas[i]),0);//计算数组实际可行的长度(array中还有那么多未被分掉的元素)
+			T ones=(T) Array.newInstance(ct,len);
+			result[i]=ones;
+			if (len>0) {
+				System.arraycopy(array, start, ones, 0, len);
+			}
+		}
+		return result;
+	}
 	
 	
 }

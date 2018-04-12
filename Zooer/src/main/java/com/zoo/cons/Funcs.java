@@ -1,8 +1,9 @@
 package com.zoo.cons;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Predicate;
+
+import com.zoo.mix.Filer;
 
 public final class Funcs {
 	private Funcs() {}
@@ -17,10 +18,10 @@ public final class Funcs {
 	/**
 	 * 是文件返回true
 	 */
-	public final static Predicate<? super Path> onlyFile=p->Files.isRegularFile(p);
+	public final static Predicate<? super Path> onlyFile=Filer::isFile;
 	/**
 	 * 是目录返回true
 	 */
-	public final static Predicate<? super Path> onlyDir=p->Files.isDirectory(p);
+	public final static Predicate<? super Path> onlyDir=Filer::isDir;
 
 }

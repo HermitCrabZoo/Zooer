@@ -1,4 +1,4 @@
-package com.zoo.mix;
+package com.zoo.bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;

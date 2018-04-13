@@ -1,10 +1,11 @@
-package com.zoo.mix;
+package com.zoo.bean;
 
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Optional;
 
 import com.zoo.base.Strs;
+import com.zoo.mix.Dater;
 
 @FunctionalInterface
 public interface Processor<T> {

@@ -17,6 +17,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.photo.Photo;
 
 
 
@@ -683,7 +684,6 @@ public class Cver {
 	public Cver histogram() {
         List<Mat> images = new ArrayList<>();
         Core.split(mat, images);
-        System.out.println(images.size());
         MatOfInt channels = new MatOfInt(0); // 图像通道数，0表示只有一个通道 
         MatOfInt histSize = new MatOfInt(256); // CV_8U类型的图片范围是0~255，共有256个灰度级
         MatOfFloat histRange = new MatOfFloat(0, 255);
@@ -753,6 +753,40 @@ public class Cver {
 			}
 		}
 		return result;
+	}
+	
+	
+	/**
+	 * 图像风格化
+	 * @return
+	 */
+	public Cver stylizztion() {
+		Photo.stylization(mat, mat);
+		return this;
+	}
+	
+	
+	/**
+	 * 图像风格化
+	 * @param sigma_s
+	 * @param sigma_r
+	 * @return
+	 */
+	public Cver stylizztion(float sigma_s, float sigma_r) {
+		Photo.stylization(mat, mat,sigma_s,sigma_r);
+		return this;
+	}
+	
+	
+	public Cver pencilGray() {
+		Photo.pencilSketch(mat,mat, new Mat());
+		return this;
+	}
+	
+	
+	public Cver pencilColor() {
+		Photo.pencilSketch(mat, new Mat(),mat);
+		return this;
 	}
 	
 	

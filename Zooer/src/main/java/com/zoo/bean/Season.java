@@ -1,4 +1,4 @@
-package com.zoo.mix;
+package com.zoo.bean;
 
 import java.time.LocalDate;
 import java.time.Year;

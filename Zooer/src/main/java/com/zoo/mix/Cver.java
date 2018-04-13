@@ -1,6 +1,7 @@
 package com.zoo.mix;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -9,6 +10,8 @@ import org.opencv.core.Core;
 import org.opencv.core.Core.MinMaxLocResult;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfFloat;
+import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -68,6 +71,12 @@ public class Cver {
 	 * 通过模板匹配结果计算出来坐标信息,该对象代表矩形的定位,maxLoc属性为左上角,minLoc属性为右下角
 	 */
 	private MinMaxLocResult minMaxLocResult;
+	
+	
+	/**
+	 * 直方图计算结果
+	 */
+	private List<Mat> histograms=new ArrayList<>();
 	
 	
 	/**
@@ -209,6 +218,15 @@ public class Cver {
 	public MinMaxLocResult minMaxLocResult() {
 		return minMaxLocResult;
 	}
+	
+	/**
+	 * 计算直方图得到的结果
+	 * @return
+	 */
+	public List<Mat> histograms() {
+		return histograms;
+	}
+	
 	
 	/**
 	 * 将当前关联的对象输出到入参指向的文件
@@ -647,6 +665,97 @@ public class Cver {
 		}
 		return this;
 	}
+	
+	/**
+	 * 转换为反色图
+	 * @return
+	 */
+	public Cver inverseColor() {
+		Core.bitwise_not(mat, mat);
+		return this;
+	}
+	
+	
+	/**
+	 * 计算每个通道的直方图,结果保存在histograms属性中.
+	 * @return
+	 */
+	public Cver histogram() {
+        List<Mat> images = new ArrayList<>();
+        Core.split(mat, images);
+        System.out.println(images.size());
+        MatOfInt channels = new MatOfInt(0); // 图像通道数，0表示只有一个通道 
+        MatOfInt histSize = new MatOfInt(256); // CV_8U类型的图片范围是0~255，共有256个灰度级
+        MatOfFloat histRange = new MatOfFloat(0, 255);
+        histograms=new ArrayList<>();
+        for(Mat oneChannel:images) {
+        	Mat oneHistogram = new Mat(); // 输出直方图结果，共有256行，行数的相当于对应灰度值，每一行的值相当于该灰度值所占比例
+        	Imgproc.calcHist(Arrays.asList(oneChannel), channels, new Mat(), oneHistogram, histSize, histRange, false);  // 计算直方图 
+        	// 按行归一化
+        	Core.normalize(oneHistogram, oneHistogram, 0, oneHistogram.rows(), Core.NORM_MINMAX, -1, new Mat());
+        	histograms.add(oneHistogram);
+        }
+        return this;
+    }
+	
+	
+	/**
+	 * 获取Blue通道的直方图对象
+	 * @param width 直方图宽(最小256)
+	 * @param height 直方图高(最小256)
+	 * @return
+	 */
+	public Mat histogramBlue(int width,int height) {
+		return plotHistogram(histograms.size()>0?histograms.get(0):null, width, height,new Scalar(255, 0, 0));
+	}
+	
+	
+	/**
+	 * 获取Green通道的直方图对象
+	 * @param width 直方图宽(最小256)
+	 * @param height 直方图高(最小256)
+	 * @return
+	 */
+	public Mat histogramGreen(int width,int height) {
+		return plotHistogram(histograms.size()>1?histograms.get(1):(histograms.size()>0?histograms.get(0):null), width, height,new Scalar(0, 255, 0));
+	}
+	
+	
+	/**
+	 * 获取Red通道的直方图对象
+	 * @param width 直方图宽(最小256)
+	 * @param height 直方图高(最小256)
+	 * @return
+	 */
+	public Mat histogramRed(int width,int height) {
+		return plotHistogram(histograms.size()>2?histograms.get(2):(histograms.size()>0?histograms.get(0):null), width, height,new Scalar(0, 0, 255));
+	}
+	
+	
+	/**
+	 * 画直方图并返回直方图
+	 * @param hist 某通道的直方图计算结果,rows=256,cols=1
+	 * @param width
+	 * @param height
+	 * @param scalar
+	 * @return
+	 */
+	private Mat plotHistogram(Mat hist, int width,int height,Scalar scalar) {
+		//限制最小宽高为256*256
+		width=Math.max(width, 256);
+		height=Math.max(height, 256);
+		int linew=width/256,colOffset = width%256==0?0:(width%256)/2;//计算线宽和偏移
+		Mat result=new Mat(height,width,CvType.CV_8UC3, CvBridge.wTransparent);
+		if (hist!=null) {
+			for (int i = 0; i < 256; i++) {  // 画出每一个灰度级分量的比例，注意OpenCV将Mat最左上角的点作为坐标原点
+				int x=linew*i+colOffset;//x轴位置
+				Imgproc.line(result,new Point(x, height),new Point(x, height - Math.round(hist.get(i, 0)[0]/255*height)),scalar, linew,8,0);
+			}
+		}
+		return result;
+	}
+	
+	
 	
 	/**
 	 * 膨胀,默认kernel:{@link Cver#defKernelKsize} 3x3,anchor:(-1,-1),iterations:1

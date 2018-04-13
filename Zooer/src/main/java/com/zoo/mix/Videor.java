@@ -121,11 +121,7 @@ public final class Videor {
 				} catch (Exception e) {
 				}
 			}
-			recorder.stop();
-			recorder.release();
 			recorder.close();
-			frameGrabber.stop();
-			frameGrabber.release();
 			frameGrabber.close();
 		} catch (Exception e) {
 			e.printStackTrace();

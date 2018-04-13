@@ -32,7 +32,8 @@ public class Bean<T> {
 	
 	/**
 	 * 使用参数来构造实例
-	 * @param property
+	 * @param property 不能null
+	 * @throws IllegalArgumentException 当property为null时,抛出此异常
 	 * @return
 	 */
 	public static <T>Bean<T> of(T property){
@@ -44,6 +45,7 @@ public class Bean<T> {
 	 * 使用参数来构造实例,并提供一个默认参数def,以防在property为null时用来做替代.
 	 * @param property
 	 * @param def
+	 * @throws IllegalArgumentException 当property与def同时为null时,抛出此异常
 	 * @return
 	 */
 	public static <T>Bean<T> of(T property,T def){
@@ -75,6 +77,7 @@ public class Bean<T> {
 	/**
 	 * 设置绑定的属性值
 	 * @param property 不能为null
+	 * @throws IllegalArgumentException 当property为null时,抛出此异常
 	 */
 	public void set(T property) {
 		lock.writeLock().lock();

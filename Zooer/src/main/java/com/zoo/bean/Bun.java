@@ -83,7 +83,6 @@ public class Bun<T> {
 		lock.writeLock().lock();
 		try {
 			notNull(stuffing);
-			System.out.println("通过");
 			this.stuffing = stuffing;
 		} finally {
 			lock.writeLock().unlock();

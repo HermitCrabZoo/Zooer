@@ -768,8 +768,8 @@ public class Cver {
 	
 	/**
 	 * 图像风格化
-	 * @param sigma_s
-	 * @param sigma_r
+	 * @param sigma_s (sigma_size)计算临近像素的尺寸,取值[0,200]
+	 * @param sigma_r (sigma_range)取值(0,1]
 	 * @return
 	 */
 	public Cver stylizztion(float sigma_s, float sigma_r) {
@@ -778,17 +778,132 @@ public class Cver {
 	}
 	
 	
+	/**
+	 * 转为灰色铅笔画
+	 * @return
+	 */
 	public Cver pencilGray() {
 		Photo.pencilSketch(mat,mat, new Mat());
 		return this;
 	}
 	
 	
+	/**
+	 * 转为灰色铅笔画风格
+	 * @param sigma_s (sigma_size)计算临近像素的尺寸,取值[0,200]
+	 * @param sigma_r (sigma_range)取值(0,1]
+	 * @param shade_factor
+	 * @return
+	 */
+	public Cver pencilGray(float sigma_s, float sigma_r, float shade_factor) {
+		Photo.pencilSketch(mat,mat, new Mat(), sigma_s, sigma_r, shade_factor);
+		return this;
+	}
+	
+	
+	/**
+	 * 转为彩色铅笔画风格
+	 * @return
+	 */
 	public Cver pencilColor() {
 		Photo.pencilSketch(mat, new Mat(),mat);
 		return this;
 	}
 	
+	
+	/**
+	 * 转为彩色铅笔画风格
+	 * @param sigma_s (sigma_size)计算临近像素的尺寸,取值[0,200]
+	 * @param sigma_r (sigma_range)取值(0,1]
+	 * @param shade_factor
+	 * @return
+	 */
+	public Cver pencilColor(float sigma_s, float sigma_r, float shade_factor) {
+		Photo.pencilSketch(mat, new Mat(),mat,sigma_s, sigma_r, shade_factor);
+		return this;
+	}
+	
+	
+	/**
+	 * 增强细节
+	 * @return
+	 */
+	public Cver detailEnhance() {
+		Photo.detailEnhance(mat,mat);
+		return this;
+	}
+	
+	
+	/**
+	 * 增强细节
+	 * @param sigma_s (sigma_size)计算临近像素的尺寸,取值[0,200]
+	 * @param sigma_r (sigma_range)取值(0,1]
+	 * @return
+	 */
+	public Cver detailEnhance(float sigma_s, float sigma_r) {
+		Photo.detailEnhance(mat, mat, sigma_s, sigma_r);
+		return this;
+	}
+	
+	
+	/**
+	 * 边缘处理(降噪磨皮美白)<br/>
+	 * 默认值flags:{@link Photo#RECURS_FILTER},sigma_s:50,sigma_r:0.05f
+	 * @return
+	 */
+	public Cver edgePreserving() {
+		Photo.edgePreservingFilter(mat, mat,Photo.RECURS_FILTER,50,0.05f);
+		return this;
+	}
+	
+	
+	/**
+	 * 边缘处理(降噪磨皮美白)
+	 * @param flags <br/>
+	 * 可选：<br/>
+	 * {@link Photo#RECURS_FILTER} 递归过滤器(推荐值)速度比归一化卷织快3.5倍<br/>
+	 * {@link Photo#NORMCONV_FILTER} 卷织过滤器
+	 * @param sigma_s (sigma_size)计算临近像素的尺寸,取值[0,200]
+	 * @param sigma_r (sigma_range)磨皮效果,取值(0,1]
+	 * @return
+	 */
+	public Cver edgePreserving(int flags, float sigma_s, float sigma_r) {
+		Photo.edgePreservingFilter(mat, mat, flags, sigma_s, sigma_r);
+		return this;
+	}
+	
+	
+	/**
+	 * 添加图片
+	 * @param cover 需与原图宽高一致
+	 * @return
+	 */
+	public Cver add(Mat cover) {
+		int mc=mat.channels(),cc=cover.channels();
+		if (mc!=cc) {
+			if (mc==1) {
+				if (cc==3) {
+					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_BGR2GRAY);
+				}else if (cc==4) {
+					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_BGRA2GRAY);
+				}
+			}else if (mc==3) {
+				if (cc==1) {
+					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_GRAY2BGR);
+				}else if (cc==4) {
+					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_BGRA2BGR);
+				}
+			}else if (mc==4) {
+				if (cc==1) {
+					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_GRAY2BGRA);
+				}else if (cc==3) {
+					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_BGR2BGRA);
+				}
+			}
+		}
+		Core.add(mat, cover, mat);
+		return this;
+	}
 	
 	
 	/**

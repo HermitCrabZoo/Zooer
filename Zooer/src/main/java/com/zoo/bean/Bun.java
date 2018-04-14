@@ -4,7 +4,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * 属性包装类,该类是线程安全的
+ * 属性包装类,该类是多线程安全的
  * @author ZOO
  *
  * @param <T>

@@ -22,6 +22,12 @@ import com.zoo.base.Typer;
 import com.zoo.se.Colors;
 import com.zoo.system.Platform;
 
+
+/**
+ * BufferedImage,Mat之间的转换工具类,该类是多线程安全的
+ * @author ZOO
+ *
+ */
 public final class CvBridge {
 
 	private CvBridge() {}
@@ -78,7 +84,7 @@ public final class CvBridge {
 	/**
 	 * 加载OpenCV库
 	 */
-	public static final void loadOpenCv() {
+	public static final synchronized boolean loadOpenCv() {
 		if (unload) {
 			String name=Core.NATIVE_LIBRARY_NAME+Platform.jniSuffix();
 			try(
@@ -98,6 +104,7 @@ public final class CvBridge {
 				e.printStackTrace();
 			}
 		}
+		return !unload;
 	}
 	
 	

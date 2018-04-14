@@ -11,10 +11,24 @@ import com.zoo.base.Strs;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 
+/**
+ * bean操作类,线程安全
+ * @author ZOO
+ *
+ */
 public final class Beaner {
+	
 	private Beaner(){}
-	private static Map<String, BeanCopier> copierMap=new HashMap<String, BeanCopier>();
-	private static List<String> keys=new ArrayList<String>();
+	
+	/**
+	 * 缓存BeanCopier对象
+	 */
+	private static final Map<String, BeanCopier> COPIER_MAP=new HashMap<String, BeanCopier>();
+	
+	/**
+	 * 缓存key
+	 */
+	private static final List<String> KEYS=new ArrayList<String>();
 	
 	/**
 	 * 将多个JavaBean转换到多个Map输出
@@ -174,14 +188,14 @@ public final class Beaner {
 	 * @param t
 	 * @return
 	 */
-	private static BeanCopier copier(Class<?> f,Class<?> t) {
+	private static synchronized BeanCopier copier(Class<?> f,Class<?> t) {
 		String key=f.getName()+"->"+t.getName();
-		if (keys.contains(key)) {
-			return copierMap.get(key);
+		if (KEYS.contains(key)) {
+			return COPIER_MAP.get(key);
 		}
 		BeanCopier copier=BeanCopier.create(f, t, false);
-		copierMap.put(key, copier);
-		keys.add(key);
+		COPIER_MAP.put(key, copier);
+		KEYS.add(key);
 		return copier;
 	}
 	

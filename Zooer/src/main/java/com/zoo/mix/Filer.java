@@ -29,9 +29,9 @@ public final class Filer {
 
 	private Filer() {}
 	
-	private final static String MIME_VIDEO="video/";
+	private static final String MIME_VIDEO="video/";
 	
-	private final static String MIME_IMAGE="image/";
+	private static final String MIME_IMAGE="image/";
 	
 	private static final int BUFFER = 8192;
 	

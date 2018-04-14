@@ -475,12 +475,12 @@ public final class Facer {
      * @param face
      * @return
      */
-    public static int trainPredict(List<org.bytedeco.javacpp.opencv_core.Mat> mats,int[] labels,org.bytedeco.javacpp.opencv_core.Mat face) {
+    public static int trainPredict(List<opencv_core.Mat> mats,int[] labels,opencv_core.Mat face) {
     	
     	int size=labels.length;
     	
     	MatVector mv=new MatVector(size);
-    	org.bytedeco.javacpp.opencv_core.Mat mat=new org.bytedeco.javacpp.opencv_core.Mat(size, 1, opencv_core.CV_32SC1);
+    	opencv_core.Mat mat=new opencv_core.Mat(size, 1, opencv_core.CV_32SC1);
         IntBuffer intBuffer=mat.createBuffer();
         
         for (int i = 0; i < size; i++) {
@@ -501,7 +501,7 @@ public final class Facer {
     	return result.get();
     }
     
-    private static org.bytedeco.javacpp.opencv_core.Mat gray(org.bytedeco.javacpp.opencv_core.Mat mat,boolean clone){
+    private static opencv_core.Mat gray(opencv_core.Mat mat,boolean clone){
     	if (mat!=null && !mat.empty() && mat.channels()>1) {
     		if (clone) {
     			mat=mat.clone();

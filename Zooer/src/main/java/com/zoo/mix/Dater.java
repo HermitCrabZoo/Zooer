@@ -18,6 +18,11 @@ import java.util.Optional;
 
 import com.zoo.base.Strs;
 
+/**
+ * 日期工具类,该类是多线程安全的
+ * @author ZOO
+ *
+ */
 public final class Dater {
 	private Dater(){}
 	
@@ -29,9 +34,16 @@ public final class Dater {
 	
 	private static final Clock CLOCK=Clock.systemUTC();
 	
+	/**
+	 * 默认开始日期
+	 */
 	private static final LocalDate START=LocalDate.of(0, 1, 1);
 	
+	/**
+	 * 缓存的日期格式编码器
+	 */
 	private static final Map<String, DateTimeFormatter> DFS=new HashMap<String, DateTimeFormatter>();
+	
 	
 	/**
 	 * 获取当前日期的"年月日时分秒"字符串(yyyy-MM-dd HH:mm:ss)
@@ -280,7 +292,7 @@ public final class Dater {
 	 * @param pattern
 	 * @return
 	 */
-	private static DateTimeFormatter formatter(String pattern) {
+	private static synchronized DateTimeFormatter formatter(String pattern) {
 		DateTimeFormatter dateTimeFormatter=null;
 		if (DFS.containsKey(pattern)) {
 			dateTimeFormatter=DFS.get(pattern);

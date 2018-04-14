@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
- * 属性转换过程工具
+ * 属性转换过程工具,多线程安全
  */
 @SuppressWarnings("rawtypes")
 public class Procedure {
+	
 	private Map<String,List<Processor>> procs=new HashMap<String,List<Processor>>();
+	
+	private ReadWriteLock lock=new ReentrantReadWriteLock();
+	
 	/**
 	 * 为属性名添加处理器来处理该属性
 	 * 每个属性对应的处理器队列按处理器添加的顺序对该属性值进行处理
@@ -18,16 +24,23 @@ public class Procedure {
 	 * @return
 	 */
 	public <T>Procedure add(String propertyName,Processor<T> proc){
-		List<Processor> ps=null;
-		if(procs.get(propertyName)==null){
-			ps=new ArrayList<Processor>();
-			procs.put(propertyName, ps);
-		}else{
-			ps=procs.get(propertyName);
+		lock.writeLock().lock();
+		try {
+			List<Processor> ps=null;
+			if(procs.get(propertyName)==null){
+				ps=new ArrayList<Processor>();
+				procs.put(propertyName, ps);
+			}else{
+				ps=procs.get(propertyName);
+			}
+			ps.add(proc);
+			return this;
+		} finally {
+			lock.writeLock().unlock();
 		}
-		ps.add(proc);
-		return this;
 	}
+	
+	
 	/**
 	 * 为某个属性同时添加多个处理器
 	 * @param propertyName
@@ -42,6 +55,8 @@ public class Procedure {
 		}
 		return this;
 	}
+	
+	
 	/**
 	 * 添加处理器的键值对key-value.
 	 * @param map
@@ -55,6 +70,8 @@ public class Procedure {
 		}
 		return this;
 	}
+	
+	
 	/**
 	 * 添加处理器的键值对key-values.
 	 * @param maps
@@ -68,6 +85,8 @@ public class Procedure {
 		}
 		return this;
 	}
+	
+	
 	/**
 	 * 将一另一个Procedure的处理器队列合并到当前处理队列中
 	 * @param procedure
@@ -75,18 +94,25 @@ public class Procedure {
 	 */
 	@SuppressWarnings("unchecked")
 	public Procedure concat(Procedure procedure){
-		if(procedure!=null && !procedure.procs.isEmpty()){
-			for(String key:procedure.procs.keySet()){
-				List<Processor> ps=procedure.procs.get(key);
-				if(ps!=null){
-					for(Processor p:ps){
-						add(key, p);
+		lock.readLock().lock();
+		try {
+			if(procedure!=null && !procedure.procs.isEmpty()){
+				for(String key:procedure.procs.keySet()){
+					List<Processor> ps=procedure.procs.get(key);
+					if(ps!=null){
+						for(Processor p:ps){
+							add(key, p);
+						}
 					}
 				}
 			}
+			return this;
+		} finally {
+			lock.readLock().unlock();
 		}
-		return this;
 	}
+	
+	
 	/**
 	 * 对属性值进行处理，使用该属性名已映射的处理器来按处理器添加到该属性映射中的先后顺序对属性进行处理，返回最终处理结果对象
 	 * @param propertyName
@@ -95,14 +121,19 @@ public class Procedure {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T>T doProcess(String propertyName,T propertyValue){
-		if(procs.get(propertyName)!=null){
-			T t=propertyValue;
-			for(Processor<T> pro:procs.get(propertyName)){
-				t=pro.process(t);
+		lock.readLock().lock();
+		try {
+			if(procs.get(propertyName)!=null){
+				T t=propertyValue;
+				for(Processor<T> pro:procs.get(propertyName)){
+					t=pro.process(t);
+				}
+				return t;
+			}else{
+				return propertyValue;
 			}
-			return t;
-		}else{
-			return propertyValue;
+		} finally {
+			lock.readLock().unlock();
 		}
 	}
 }

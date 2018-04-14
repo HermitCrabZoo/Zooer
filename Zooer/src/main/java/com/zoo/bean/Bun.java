@@ -4,17 +4,17 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * bean属性包装类,该类是线程安全的
+ * 属性包装类,该类是线程安全的
  * @author ZOO
  *
  * @param <T>
  */
-public class Bean<T> {
+public class Bun<T> {
 	
 	/**
 	 * 绑定的属性
 	 */
-	private T property;
+	private T stuffing;
 	
 	/**
 	 * 读写锁(读写、写写互斥)
@@ -24,40 +24,40 @@ public class Bean<T> {
 	
 	/**
 	 * 私有构造器,应使用{@link #of(Object)}、{@link #of(Object, Object)}、{@link #ofNull()}函数来构造实例
-	 * @param property
+	 * @param stuffing
 	 */
-	private Bean(T property) {
-		this.property=property;
+	private Bun(T stuffing) {
+		this.stuffing=stuffing;
 	}
 	
 	/**
 	 * 使用参数来构造实例
-	 * @param property 不能null
-	 * @throws IllegalArgumentException 当property为null时,抛出此异常
+	 * @param stuffing 不能null
+	 * @throws IllegalArgumentException 当stuffing为null时,抛出此异常
 	 * @return
 	 */
-	public static <T>Bean<T> of(T property){
-		notNull(property);
-		return new Bean<>(property);
+	public static <T>Bun<T> of(T stuffing){
+		notNull(stuffing);
+		return new Bun<>(stuffing);
 	}
 	
 	/**
-	 * 使用参数来构造实例,并提供一个默认参数def,以防在property为null时用来做替代.
-	 * @param property
+	 * 使用参数来构造实例,并提供一个默认参数def,以防在stuffing为null时用来做替代.
+	 * @param stuffing
 	 * @param def
-	 * @throws IllegalArgumentException 当property与def同时为null时,抛出此异常
+	 * @throws IllegalArgumentException 当stuffing与def同时为null时,抛出此异常
 	 * @return
 	 */
-	public static <T>Bean<T> of(T property,T def){
-		return of(property==null?def:property);
+	public static <T>Bun<T> of(T stuffing,T def){
+		return of(stuffing==null?def:stuffing);
 	}
 	
 	/**
 	 * 构造一个空的Bean实例(该操作具有一定的风险性)
 	 * @return
 	 */
-	public static <T>Bean<T> ofNull(){
-		return new Bean<>(null);
+	public static <T>Bun<T> ofNull(){
+		return new Bun<>(null);
 	}
 	
 	
@@ -68,7 +68,7 @@ public class Bean<T> {
 	public T get() {
 		lock.readLock().lock();
 		try {
-			return property;
+			return stuffing;
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -76,15 +76,15 @@ public class Bean<T> {
 
 	/**
 	 * 设置绑定的属性值
-	 * @param property 不能为null
-	 * @throws IllegalArgumentException 当property为null时,抛出此异常
+	 * @param stuffing 不能为null
+	 * @throws IllegalArgumentException 当stuffing为null时,抛出此异常
 	 */
-	public void set(T property) {
+	public void set(T stuffing) {
 		lock.writeLock().lock();
 		try {
-			notNull(property);
+			notNull(stuffing);
 			System.out.println("通过");
-			this.property = property;
+			this.stuffing = stuffing;
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -96,7 +96,7 @@ public class Bean<T> {
 	public void setNull() {
 		lock.writeLock().lock();
 		try {
-			this.property = null;
+			this.stuffing = null;
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -109,7 +109,7 @@ public class Bean<T> {
 	 */
 	private static <T>void notNull(T t) {
 		if (t==null) {
-			throw new IllegalArgumentException("argument property must be not null !");
+			throw new IllegalArgumentException("argument stuffing must be not null !");
 		}
 	}
 	

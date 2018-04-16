@@ -89,14 +89,14 @@ public final class Strs {
 								return i>-1?s.substring(0, i)+s.substring(i+es.length()):s;
 							}
 						).orElse(s)
-				).orElse(str);
+				).orElse(empty());
 	}
 	
 	/**
 	 * 移除第一个出现的子串
 	 * @param str
 	 * @param startStr
-	 * @return
+	 * @return 若str为null则返回空字符串
 	 */
 	public static String removeStart(String str,String startStr){
 		return Optional.ofNullable(str).map(
@@ -106,7 +106,7 @@ public final class Strs {
 								return i>-1?s.substring(0, i)+s.substring(i+ss.length()):s;
 							}
 						).orElse(s)
-				).orElse(str);
+				).orElse(empty());
 	}
 	
 	/**
@@ -150,7 +150,7 @@ public final class Strs {
 	 * @param str 
 	 * @param startIndex 开始索引
 	 * @param len 截取的长度
-	 * @return 若str为null，则返回null。若startIndex大于等于str的长度或startIndex小于0或len小于1，则返回空的(empty)字符串，若从startIndex开始，后面没有len长度的字符串，那么将尽量截取接近len长度的字符串(除了传入str为null外，其他条件下都不会返回null)。
+	 * @return 若startIndex大于等于str的长度或startIndex小于0或len小于1，则返回空的(empty)字符串，若从startIndex开始，后面没有len长度的字符串，那么将尽量截取接近len长度的字符串(不会返回null)。
 	 */
 	public static String sub(String str,int startIndex,int len) {
 		return Optional.ofNullable(str).map(
@@ -158,7 +158,7 @@ public final class Strs {
 					int l=str.length(),ei=startIndex+len;
 					return startIndex>=l||startIndex<0||len<1?empty():str.substring(startIndex,(ei>l||ei<startIndex?l:ei));
 				}
-		).orElse(str);
+		).orElse(empty());
 	}
 	
 	/**
@@ -167,16 +167,124 @@ public final class Strs {
 	 * @param startIndex
 	 * @param len
 	 * @param addition
-	 * @return 若str为null，则返回null。若startIndex大于等于str的长度或startIndex小于0或len小于1，则返回空的(empty)字符串<br>
-	 * 若从startIndex开始，后面没有len长度的字符串，那么将尽量截取接近len长度的字符串(除了传入str为null外，其他条件下都不会返回null)。<br>
+	 * @return 若startIndex大于等于str的长度或startIndex小于0或len小于1，则返回空的(empty)字符串<br>
+	 * 若从startIndex开始，后面没有len长度的字符串，那么将尽量截取接近len长度的字符串(不会返回null)。<br>
 	 * 若str的长度大于len，那么返回的字符串是str的子串+addition
 	 */
 	public static String subIf(String str,int startIndex,int len,String addition) {
 		return Optional.ofNullable(str).map(s->{
 			String sub=sub(str, startIndex, len);
 			return s.length()>len?sub+addition:sub;
-		}).orElse(str);
+		}).orElse(empty());
 	}
+	
+	/**
+	 * "正向查找",找到str中第一个出现在start与end之间的子串,start与end之间无先后顺序
+	 * @param str
+	 * @param start
+	 * @param end
+	 * @return 若未找到或str、start、end中任一为null,则返回空字符串
+	 */
+	public static String subBetween(String str,String start,String end) {
+		return subBetween(str, start, 1, end, 1);
+	}
+	
+	
+	/**
+	 * "正向查找",从str中找到第startTimes次出现的start子串,与str中找到第endTimes次出现的end子串之间的子串,start与end之间无先后顺序
+	 * @param str
+	 * @param start
+	 * @param startTimes 从1开始
+	 * @param end
+	 * @param endTimes 从1开始
+	 * @return 若未找到或str、start、end中任一为null,或startTimes、endTimes中任一小于1,则返回空字符串
+	 */
+	public static String subBetween(String str,String start,int startTimes,String end,int endTimes) {
+		if (Typer.notNull(str,start,end)) {
+			int si=indexOfTimes(str, start, startTimes);
+			int ei=indexOfTimes(str, end, endTimes);
+			int offset=si<ei?start.length():end.length();
+			if (si != ei && si !=-1 && ei != -1 && Math.abs(ei-si)>offset) {
+				return str.substring(Math.min(si, ei)+offset, Math.max(si, ei));
+			}
+		}
+		
+		return empty();
+	}
+	
+	/**
+	 * "反向查找",找到str中第一个出现在start与end之间的子串,start与end之间无先后顺序
+	 * @param str
+	 * @param start
+	 * @param end
+	 * @return 若未找到或str、start、end中任一为null,则返回空字符串
+	 */
+	public static String lastSubBetween(String str,String start,String end) {
+		return lastSubBetween(str, start, 1, end, 1);
+	}
+	
+	
+	/**
+	 * "反向查找",从str中找到第startTimes次出现的start子串,与str中找到第endTimes次出现的end子串之间的子串,start与end之间无先后顺序
+	 * @param str
+	 * @param start
+	 * @param startTimes 从1开始
+	 * @param end
+	 * @param endTimes 从1开始
+	 * @return 若未找到或str、start、end中任一为null,或startTimes、endTimes中任一小于1,则返回空字符串
+	 */
+	public static String lastSubBetween(String str,String start,int startTimes,String end,int endTimes) {
+		if (Typer.notNull(str,start,end)) {
+			int si=lastIndexOfTimes(str, start, startTimes);
+			int ei=lastIndexOfTimes(str, end, endTimes);
+			int offset=si<ei?start.length():end.length();
+			if (si != ei && si !=-1 && ei != -1 && Math.abs(ei-si)>offset) {
+				return str.substring(Math.min(si, ei)+offset, Math.max(si, ei));
+			}
+		}
+		
+		return empty();
+	}
+	
+	
+	/**
+	 * 正向查找substr在str中第times次出现的索引,若未找到,或str、substr为null,或times小于1,则返回-1
+	 * @param str
+	 * @param substr
+	 * @param times
+	 * @return
+	 */
+	public static int indexOfTimes(String str,String substr,int times) {
+		if (Typer.notNull(str,substr)) {
+			int index=-1,i = -1,t=0;
+	        while (t<times && (i = str.indexOf(substr, i + 1)) != -1) {
+	        	index=i;
+	        	t++;
+	        }
+	        return t==times?index:-1;
+		}
+		return -1;
+	}
+	
+	
+	
+	/**
+	 * 从末尾反向查找substr在str中第times次出现的索引,若未找到,或str、substr为null,或times小于1,则返回-1
+	 * @param str
+	 * @param substr
+	 * @param times
+	 * @return
+	 */
+	public static int lastIndexOfTimes(String str,String substr,int times) {
+		if (Typer.notNull(str,substr)) {
+			int i=indexOfTimes(new String(Arrs.reverse(str.toCharArray(), false)), new String(Arrs.reverse(substr.toCharArray(), false)), times);
+			if (i!=-1) {
+				return str.length()-i-substr.length();
+			}
+		}
+		return -1;
+	}
+	
 	
 	/**
 	 * 将对象转换为字符串，若对象为null则返回空(empty)字符串。
@@ -237,48 +345,48 @@ public final class Strs {
 	}
 	
 	/**
-	 * str字符串中的target替换成replacement，三个参数若有一个为null则返回传入的str
+	 * str字符串中的target替换成replacement
 	 * @param str
 	 * @param target
 	 * @param replacement
-	 * @return
+	 * @return 三个参数若有一个为null则返回传入的str(若此参数不为null,否则返回空字符串)
 	 * @see {@link String#replace(CharSequence, CharSequence)}
 	 */
 	public static String replace(String str,CharSequence target,CharSequence replacement) {
 		if (Typer.notNull(str,target,replacement)) {
 			return str.replace(target, replacement);
 		}
-		return str;
+		return firstNotNull(str);
 	}
 	
 	/**
-	 * str字符串中按正则表达式regex替换第一个匹配的为replacement，三个参数若有一个为null则返回传入的str
+	 * str字符串中按正则表达式regex替换第一个匹配的为replacement
 	 * @param str
 	 * @param regex
 	 * @param replacement
-	 * @return
+	 * @return 三个参数若有一个为null则返回传入的str(若此参数不为null,否则返回空字符串)
 	 * @see {@link String#replaceFirst(String, String)}
 	 */
 	public static String replaceFirst(String str,String regex,String replacement) {
 		if (Typer.notNull(str,regex,replacement)) {
 			return str.replaceFirst(regex, replacement);
 		}
-		return str;
+		return firstNotNull(str);
 	}
 	
 	/**
-	 * str字符串中按正则表达式regex替换匹配的为replacement，三个参数若有一个为null则返回传入的str
+	 * str字符串中按正则表达式regex替换匹配的为replacement
 	 * @param str
 	 * @param regex
 	 * @param replacement
-	 * @return
+	 * @return 三个参数若有一个为null则返回传入的str(若此参数不为null,否则返回空字符串)
 	 * @see {@link String#replaceAll(String, String)}
 	 */
 	public static String replaceAll(String str,String regex,String replacement) {
 		if (Typer.notNull(str,regex,replacement)) {
 			return str.replaceAll(regex, replacement);
 		}
-		return str;
+		return firstNotNull(str);
 	}
 	
 	/**
@@ -374,7 +482,7 @@ public final class Strs {
 	 * @param str
 	 * @param len
 	 * @param fillchar
-	 * @return 若传入参数str为null则返回null
+	 * @return 若传入参数str为null则返回空字符串
 	 */
 	public static String ljust(String str,int len,char fillchar) {
 		int l=len-len(str);
@@ -385,7 +493,7 @@ public final class Strs {
 			}
 			str=sb.toString();
 		}
-		return str;
+		return firstNotNull(str);
 	}
 	
 	/**
@@ -393,7 +501,7 @@ public final class Strs {
 	 * @param str
 	 * @param len
 	 * @param fillchar
-	 * @return 若传入参数str为null则返回null
+	 * @return 若传入参数str为null则返回空字符串
 	 */
 	public static String rjust(String str,int len,char fillchar) {
 		int l=len-len(str);
@@ -406,8 +514,24 @@ public final class Strs {
 			str=sb.toString();
 			
 		}
-		return str;
+		return firstNotNull(str);
 	}
 	
+	
+	/**
+	 * 返回strs中第一个不为null的字符串,若strs为null,或里面的元素都为null,则返回空字符串
+	 * @param strs
+	 * @return
+	 */
+	public static String firstNotNull(String...strs) {
+		if (strs!=null) {
+			for (String s : strs) {
+				if (s!=null) {
+					return s;
+				}
+			}
+		}
+		return empty();
+	}
 	
 }

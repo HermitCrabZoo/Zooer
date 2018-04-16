@@ -14,7 +14,7 @@ public class Bun<T> {
 	/**
 	 * 绑定的属性
 	 */
-	private T stuffing;
+	private volatile T stuffing;
 	
 	/**
 	 * 读写锁(读写、写写互斥)

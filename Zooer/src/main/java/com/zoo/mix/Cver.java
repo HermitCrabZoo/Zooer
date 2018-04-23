@@ -521,11 +521,8 @@ public class Cver {
 	 * @return
 	 */
 	public Cver transparency(double alpha) {
-		if (mat.channels()==1) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGRA);
-		}else if (mat.channels()==3) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2BGRA);
-		}
+		//转为带有alpha通道
+		bgra();
 		
 		int a=(int) (alpha*255);
 		
@@ -552,12 +549,7 @@ public class Cver {
 	 * @return
 	 */
 	public Cver gray() {
-		int c=mat.channels();
-		if (c==3) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
-		}else if (c==4) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2GRAY);
-		}
+		transform(mat, 1);
 		return this;
 	}
 	
@@ -567,12 +559,7 @@ public class Cver {
 	 * @return
 	 */
 	public Cver bgr() {
-		int c=mat.channels();
-		if (c==1) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGR);
-		}else if (c==4) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2BGR);
-		}
+		transform(mat, 3);
 		return this;
 	}
 	
@@ -582,12 +569,7 @@ public class Cver {
 	 * @return
 	 */
 	public Cver bgra() {
-		int c=mat.channels();
-		if (c==1) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGRA);
-		}else if (c==3) {
-			Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2BGRA);
-		}
+		transform(mat, 4);
 		return this;
 	}
 	
@@ -874,6 +856,39 @@ public class Cver {
 	
 	
 	/**
+	 * 改变图片亮度
+	 * @param alpha 大于1为提升亮度,小于1为降低亮度,等于1为亮度不变
+	 * @return
+	 */
+	public Cver brightness(double alpha) {
+        Mat black = Mat.zeros(mat.size(), mat.type());
+        Core.addWeighted(mat, alpha, black, 0.5, 0, mat);
+        return this;
+    }
+	
+	
+	/**
+	 * 改变对比度
+	 * @param beta 为1时不变
+	 * @return
+	 */
+	public Cver contrast(double beta) {
+		int len=mat.channels()==4?3:mat.channels();
+		double[] pixels;
+		for (int r = 0,rows=mat.rows(); r < rows; r++) {
+			for (int c = 0,cols=mat.cols(); c < cols; c++) {
+				pixels=mat.get(r, c);
+				for (int i = 0; i < len; i++) {
+					pixels[i]=Maths.limit(pixels[i]*beta, 255.0, 0.0);
+				}
+				mat.put(r, c, pixels);
+			}
+		}
+		return this;
+	}
+	
+	
+	/**
 	 * 添加图片
 	 * @param cover 需与原图宽高一致
 	 * @return
@@ -881,29 +896,47 @@ public class Cver {
 	public Cver add(Mat cover) {
 		int mc=mat.channels(),cc=cover.channels();
 		if (mc!=cc) {
-			if (mc==1) {
-				if (cc==3) {
-					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_BGR2GRAY);
-				}else if (cc==4) {
-					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_BGRA2GRAY);
-				}
-			}else if (mc==3) {
-				if (cc==1) {
-					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_GRAY2BGR);
-				}else if (cc==4) {
-					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_BGRA2BGR);
-				}
-			}else if (mc==4) {
-				if (cc==1) {
-					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_GRAY2BGRA);
-				}else if (cc==3) {
-					Imgproc.cvtColor(cover, cover, Imgproc.COLOR_BGR2BGRA);
-				}
-			}
+			cover=cover.clone();//为了不改变原cover对象
+			transform(cover, mc);
 		}
 		Core.add(mat, cover, mat);
 		return this;
 	}
+	
+	
+	/**
+	 * 将原始通道图片转换为目标通道图片,会改变原始图像,若原始图像通道数与目标通道数相等,那么将不执行转换.
+	 * @param src
+	 * @param targetChannel
+	 * @return
+	 */
+	private static Mat transform(Mat src,int targetChannel) {
+		int srcChannel=src.channels();
+		if (srcChannel==targetChannel) {//相同则不转换
+			return src;
+		}
+		if (targetChannel==1) {
+			if (srcChannel==3) {
+				Imgproc.cvtColor(src, src, Imgproc.COLOR_BGR2GRAY);
+			}else if (srcChannel==4) {
+				Imgproc.cvtColor(src, src, Imgproc.COLOR_BGRA2GRAY);
+			}
+		}else if (targetChannel==3) {
+			if (srcChannel==1) {
+				Imgproc.cvtColor(src, src, Imgproc.COLOR_GRAY2BGR);
+			}else if (srcChannel==4) {
+				Imgproc.cvtColor(src, src, Imgproc.COLOR_BGRA2BGR);
+			}
+		}else if (targetChannel==4) {
+			if (srcChannel==1) {
+				Imgproc.cvtColor(src, src, Imgproc.COLOR_GRAY2BGRA);
+			}else if (srcChannel==3) {
+				Imgproc.cvtColor(src, src, Imgproc.COLOR_BGR2BGRA);
+			}
+		}
+		return src;
+	}
+	
 	
 	
 	/**

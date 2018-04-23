@@ -36,10 +36,10 @@ public class Secret {
 	/**
 	 * 对byte数组进行base64编码
 	 * @param bytes
-	 * @return 编码后的字符串
+	 * @return 编码后的byte数组
 	 */
-	public static String base64(byte[] bytes) {
-		return bytes==null?Strs.empty():base64Encoder.encodeToString(bytes);
+	public static byte[] base64(byte[] bytes) {
+		return bytes==null?Typer.bytes():base64Encoder.encode(bytes);
 	}
 	
 	/**

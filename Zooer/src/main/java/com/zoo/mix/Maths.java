@@ -138,4 +138,77 @@ public final class Maths {
 		return Math.sqrt(variance(arr));
 	}
 	
+	
+	/**
+	 * 限制value在max与min之间,若value大于max则返回max,若value小于min则返回min,否则返回value
+	 * @param value
+	 * @param max
+	 * @param min
+	 * @return
+	 */
+	public static double limit(double value,double max,double min) {
+		return Math.max(Math.min(value,max),min);
+	}
+	
+	
+	/**
+	 * 限制value在max与min之间,若value大于max则返回max,若value小于min则返回min,否则返回value
+	 * @param value
+	 * @param max
+	 * @param min
+	 * @return
+	 */
+	public static float limit(float value,float max,float min) {
+		return Math.max(Math.min(value,max),min);
+	}
+	
+	
+	/**
+	 * 限制value在max与min之间,若value大于max则返回max,若value小于min则返回min,否则返回value
+	 * @param value
+	 * @param max
+	 * @param min
+	 * @return
+	 */
+	public static long limit(long value,long max,long min) {
+		return Math.max(Math.min(value,max),min);
+	}
+	
+	
+	/**
+	 * 限制value在max与min之间,若value大于max则返回max,若value小于min则返回min,否则返回value
+	 * @param value
+	 * @param max
+	 * @param min
+	 * @return
+	 */
+	public static int limit(int value,int max,int min) {
+		return Math.max(Math.min(value,max),min);
+	}
+	
+	
+	/**
+	 * 限制value在max与min之间,若value大于max则返回max,若value小于min则返回min,否则返回value
+	 * @param value
+	 * @param max
+	 * @param min
+	 * @return
+	 */
+	public static short limit(short value,short max,short min) {
+		return value<max?value>min?value:min:max;
+	}
+	
+	
+	/**
+	 * 限制value在max与min之间,若value大于max则返回max,若value小于min则返回min,否则返回value
+	 * @param value
+	 * @param max
+	 * @param min
+	 * @return
+	 */
+	public static byte limit(byte value,byte max,byte min) {
+		return value<max?value>min?value:min:max;
+	}
+	
+	
 }

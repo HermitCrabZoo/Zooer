@@ -100,9 +100,9 @@ public class Cver {
 	}
 	
 	/**
-	 * 根据给定的Mat对象的拷贝构造一个Cver对象,即后续操作将不改变传入的原始Mat对象
-	 * @param mat
-	 * @throws NullPointerException 如果mat参数为null，则抛出此异常
+	 * 根据给定的文件路径fileName构造一个Cver对象
+	 * @param fileName
+	 * @throws NullPointerException 如果fileName参数为null，则抛出此异常
 	 * @return
 	 */
 	public static Cver of(String fileName) {

@@ -1,6 +1,7 @@
 package com.zoo.mix;
 
 import java.io.UnsupportedEncodingException;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -163,4 +164,20 @@ public final class Http2 {
     	}
     	return sb.toString();
     }
+    
+    
+    /**
+     * 判断端口是否是可用的(未被占用)
+     * @param port
+     * @return
+     */
+	public static boolean isFreePort(int port) {
+		boolean ret = false;
+		try (ServerSocket serverSocket = new ServerSocket(port)) {
+			ret = true;
+		} catch (Exception e) {
+		}
+		return ret;
+	}
+
 }

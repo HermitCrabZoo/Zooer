@@ -18,16 +18,23 @@ import com.zoo.base.Typer;
 public final class Pager<T> {
 	
 	public static final String DESC="DESC";
+	
 	public static final String ASC="ASC";
+	
 	private static final Comparator<Object> CHINESE = Collator.getInstance(java.util.Locale.CHINA);
+	
 	/**
 	 * 当前对象关联的list
 	 */
 	private List<T> list=null;
+	
 	private Pager(){}
+	
 	private Pager(List<T> list) {
 		this.list=list;
 	}
+	
+	
 	/**
 	 * 使用list构造一个 Pager<T>对象,后续操作会改变原list对象。
 	 * @param list
@@ -39,6 +46,8 @@ public final class Pager<T> {
 		}
 		return new Pager<T>(list);
 	}
+	
+	
 	/**
 	 * 使用list的拷贝来构造一个 Pager<T>对象，后续操作将不会改变原list对象
 	 * @param list
@@ -50,6 +59,8 @@ public final class Pager<T> {
 		}
 		return new Pager<T>(Arrs.deepCopy(list));
 	}
+	
+	
 	/**
 	 * 获取当前关联的对象
 	 * @return
@@ -57,6 +68,8 @@ public final class Pager<T> {
 	public List<T> get(){
 		return list;
 	}
+	
+	
 	/**
 	 * 将当前对象关联到list
 	 * @param list
@@ -69,6 +82,8 @@ public final class Pager<T> {
 		this.list=list;
 		return this;
 	}
+	
+	
 	/**
 	 * 将当前对象关联到list的一份拷贝
 	 * @param list
@@ -81,6 +96,8 @@ public final class Pager<T> {
 		this.list=Arrs.deepCopy(list);
 		return this;
 	}
+	
+	
 	/**
 	 * 通过sortField字段降序排序
 	 * @param sortField
@@ -89,6 +106,8 @@ public final class Pager<T> {
 	public Pager<T> desc(String sortField){
 		return sort(DESC, sortField);
 	}
+	
+	
 	/**
 	 * 通过sortField字段升序排序
 	 * @param sortField
@@ -97,6 +116,8 @@ public final class Pager<T> {
 	public Pager<T> asc(String sortField){
 		return sort(ASC, sortField);
 	}
+	
+	
 	/**
 	 * 按照sortField和sortType来对sorts进行排序
 	 * @param sortType asc为升序，desc为降序，默认asc。
@@ -132,6 +153,8 @@ public final class Pager<T> {
 		}
 		return this;
 	}
+	
+	
 	/**
 	 * 限制当前关联list的长度，start小于0或size小于1或start大于等于当前关联list的元素个数，那么该方法将不对当前关联的list做截取操作。<br/>
 	 * 该方法只对当前关联的list对象重新进行原list对象元素的范围映射，而不产生新的元素，即：对原始list的对象的'增删改'仍会对当前Pager<T>对象里关联的list产生影响。
@@ -146,6 +169,8 @@ public final class Pager<T> {
 		}
 		return this;
 	}
+	
+	
 	/**
 	 * 通过by字段(若元素是Map则by为key)分组
 	 * @param by
@@ -160,6 +185,7 @@ public final class Pager<T> {
 		}
 		return oneToMore;
 	}
+	
 	
 	/**
 	 * one大于two返回1，one小于two返回-1，one等于two返回0
@@ -178,6 +204,7 @@ public final class Pager<T> {
 		}
 	}
 	
+	
 	/**
 	 * 判断排序类型是否是升序"ASC"或降序"DESC"，如果是返回原字符串，如果不是或为null，那么将默认返回"DESC"
 	 * @param sortType
@@ -190,6 +217,8 @@ public final class Pager<T> {
 		String upper=sortType.toUpperCase();
 		return DESC.equals(upper)||ASC.equals(upper)?sortType:DESC;
 	}
+	
+	
 	/**
 	 * 判断排序类型是否是升序"ASC"或降序"DESC"，如果是返回原字符串，如果不是或为null，那么将默认返回"ASC"
 	 * @param sortType

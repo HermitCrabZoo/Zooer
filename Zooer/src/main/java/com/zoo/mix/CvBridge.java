@@ -83,6 +83,7 @@ public final class CvBridge {
 	
 	/**
 	 * 加载OpenCV库
+	 * @return 加载成功或已加载为true,否则为false
 	 */
 	public static final synchronized boolean loadOpenCv() {
 		if (unload) {
@@ -100,7 +101,7 @@ public final class CvBridge {
 				
 				unload=false;
 				System.out.println("Usage OpenCV "+Core.VERSION);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}

@@ -1,9 +1,5 @@
 package com.zoo.base;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1162,24 +1158,12 @@ public final class Arrs {
 	 * @param src
 	 * @return 不会返回null
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> deepCopy(List<T> src){
 		List<T> dest=new ArrayList<>();
-		if (src!=null) {
-			try (
-					ByteArrayOutputStream byteOut = new ByteArrayOutputStream();  
-					ObjectOutputStream out = new ObjectOutputStream(byteOut);){
-				out.writeObject(src);
-				ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
-				ObjectInputStream in = new ObjectInputStream(byteIn);
-				dest=(List<T>) in.readObject();
-				byteIn.close();
-				in.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	    return dest;  
+		byte[] serializeds=Serializer.serialize(src);
+		Optional<List> newObj=Serializer.deserialize(serializeds, List.class);
+		return newObj.orElse(dest);
 	}
 	
 	

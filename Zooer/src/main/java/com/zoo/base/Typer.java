@@ -807,4 +807,21 @@ public final class Typer {
 	}
 	
 	
+	/**
+	 * 返回objs中第一个不为null的Option对象,若objs为null,或里面的元素都为objs,则返回空的Option对象
+	 * @param objs
+	 * @return
+	 */
+	@SafeVarargs
+	public static <T>Optional<T> firstNotNull(T...objs) {
+		if (objs!=null) {
+			for (T t : objs) {
+				if (t!=null) {
+					return Optional.ofNullable(t);
+				}
+			}
+		}
+		return Optional.empty();
+	}
+	
 }

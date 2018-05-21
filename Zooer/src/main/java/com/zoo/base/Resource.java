@@ -45,7 +45,7 @@ public final class Resource
 	 * @param path 相对于classpath下的路径
 	 * @return
 	 */
-	public static Path fileOnClassPath(String path) {
+	public static Path onClassPath(String path) {
 		return Paths.get(Pather.join(CP,path));
 	}
 	

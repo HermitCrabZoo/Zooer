@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.zoo.base.Strs;
+import com.zoo.base.Typer;
 import com.zoo.cons.Funcs;
 
 public final class Filer {
@@ -471,6 +472,84 @@ public final class Filer {
 			count += len;
 		}
 		return count;
+	}
+	
+	
+	/**
+	 * 获取文件或目录占用的空间(单位/字节)
+	 * @param path
+	 * @return
+	 */
+	public static long size(Path path) {
+		long s=0L;
+		try {
+			s=Files.size(path);
+		} catch (IOException e) {}
+		return s;
+	}
+	
+	
+	/**
+	 * 读取文件内容到字符串
+	 * @param path
+	 * @return
+	 */
+	public static String read(Path path) {
+		return new String(readBytes(path));
+	}
+	
+	
+	/**
+	 * 使用指定编码,读取文件内容到字符串
+	 * @param path
+	 * @param cs 字符串编码
+	 * @return
+	 */
+	public static String read(Path path,Charset cs) {
+		return new String(readBytes(path), cs);
+	}
+	
+	
+	/**
+	 * 读取文件中每一行到字符串
+	 * @param path
+	 * @return
+	 */
+	public static List<String> readLines(Path path){
+		return readLines(path,Charset.defaultCharset());
+	}
+	
+	
+	/**
+	 * 使用指定编码,读取文件每一行内容到字符串
+	 * @param path
+	 * @param cs
+	 * @return
+	 */
+	public static List<String> readLines(Path path,Charset cs) {
+		List<String> lines;
+		try {
+			lines=Files.readAllLines(path, cs);
+		} catch (IOException e) {
+			lines=new ArrayList<String>();
+		}
+		return lines;
+	}
+	
+	
+	/**
+	 * 读取文件内容到byte数组
+	 * @param path
+	 * @return
+	 */
+	public static byte[] readBytes(Path path) {
+		byte[] contents;
+		try {
+			contents=Files.readAllBytes(path);
+		} catch (IOException e) {
+			contents=Typer.bytes();
+		}
+		return contents;
 	}
 	
 }

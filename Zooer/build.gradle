@@ -8,6 +8,7 @@
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'maven' 
 //JDK1.8
 sourceCompatibility = 1.8  
 //版本号  
@@ -40,7 +41,6 @@ dependencies {
     
     compile fileTree(dir:'lib',include:['*.jar'])
     
-    compile 'junit:junit:4.12'
 	compile group: 'cglib', name: 'cglib', version: '3.2.5'
     compile group: 'org.ow2.asm', name: 'asm', version: '5.2'
     compile group: 'com.google.zxing', name: 'core', version: '3.3.0'

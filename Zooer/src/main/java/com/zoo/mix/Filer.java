@@ -251,8 +251,8 @@ public final class Filer {
 	 * @return
 	 * @see #copy(Path, Path, Predicate, Charset)
 	 */
-	public static CopyResult copy(Path source,Path target,Charset destCharset) {
-		return copy(source, target, null, destCharset);
+	public static CopyResult copy(Path source,Path target,Charset fromCharset,Charset toCharset) {
+		return copy(source, target, null,fromCharset, toCharset);
 	}
 	
 	/**
@@ -260,10 +260,10 @@ public final class Filer {
 	 * @param source
 	 * @param target
 	 * @param filter
-	 * @see #copy(Path, Path, Predicate, Charset)
+	 * @see #copy(Path, Path, Predicate, Charset, Charset)
 	 */
 	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter) {
-		return copy(source, target, filter, null);
+		return copy(source, target, filter,null, null);
 	}
 	
 	/**
@@ -274,7 +274,7 @@ public final class Filer {
 	 * @param destCharset
 	 * @return
 	 */
-	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter,Charset destCharset){
+	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter,Charset fromCharset,Charset toCharset){
 		CopyResult cr=CopyResult.instance();
 		//被拷贝的目录或文件要有可读属性，目录无法拷贝到文件，两个不相同的目录或文件才能对考
 		if (!isReadable(source)) {
@@ -304,11 +304,7 @@ public final class Filer {
 					}
 				}
 				if (Files.isRegularFile(p)&&Files.isRegularFile(t)) {//文件对文件拷贝
-					if(destCharset!=null) {
-						transfer(p, t,Charsetor.discern(p),destCharset);
-					}else {
-						transfer(p, t,null,null);
-					}
+					transfer(p, t,fromCharset,toCharset);
 				}
 			} catch (IOException e) {
 				cr.addException(e);

@@ -22,15 +22,28 @@ public final class Resource
 	
 	private static String getCp(){
         try{
-            URL url = Resource.class.getProtectionDomain().getCodeSource().getLocation();
+        	URL url=null;
+        	/**
+        	 * 从栈尾逐个获取类路径,直到找到为止
+        	 */
+        	StackTraceElement[] stackTraces=Thread.currentThread().getStackTrace();
+			for (int i = stackTraces.length-1; i >= 0; i++) {
+				try {
+					 url= Class.forName(stackTraces[i].getClassName()).getProtectionDomain().getCodeSource().getLocation();
+					 break;
+				} catch (Exception e) {}
+			}
             Path path=Paths.get(url.toURI());
             if (Filer.isFile(path)) {
                 path=path.getParent();
             }
             return path.toString();
-        } catch (Exception e){}
-        return "";
+        } catch (Exception e){
+        	e.printStackTrace();
+        }
+        return Strs.empty();
     }
+	
 	
 	/**
 	 * 获取类路径,若获取失败则返回空字符串

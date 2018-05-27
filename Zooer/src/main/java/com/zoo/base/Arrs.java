@@ -171,6 +171,38 @@ public final class Arrs {
 	
 	
 	/**
+	 * 将总数total按每份为each来平均分,返回数组中各元素和等于total.<br/>若total大于each,并且total不是each的整数倍,那么返回数组中最后一个元素的值等于total%each,而其他元素的值在total大于0时为each,在total小于0时值为-each.
+	 * @param total
+	 * @param each 必须大于0
+	 * @return
+	 */
+	public static int[] everys(int total,int each) {
+		if (each>0) {
+			int baseLen = Math.abs(total/each);
+			int remainder=total%each;
+			boolean hasRemainder = remainder!=0;
+			int[] every=new int[baseLen+(hasRemainder?1:0)];
+			if (total<0) {
+				for (int i = 0; i < baseLen; i++) {
+					every[i]=-each;
+				}
+			}else {
+				for (int i = 0; i < baseLen; i++) {
+					every[i]=each;
+				}
+			}
+			if (hasRemainder) {
+				every[baseLen]=remainder;
+			}
+			return every;
+		}
+		return Typer.ints();
+	}
+	
+	
+	
+	
+	/**
 	 * 为数组中的每个元素增step
 	 * @param array
 	 * @param step
@@ -963,7 +995,7 @@ public final class Arrs {
 	 */
 	public static String[] toStrings(Object obj){
 		if (obj==null || !obj.getClass().isArray()) {
-			return new String[]{};
+			return Strs.emptys();
 		}
 		int len=Array.getLength(obj);
 		String[] strs=new String[len];
@@ -2127,7 +2159,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={"1","2","3","4","5"},mount=3,返回:{{"1","2"},{"3","4"},{"5"}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={"1","2","3","4","5"},amount=3,返回:{{"1","2"},{"3","4"},{"5"}}
 	 * @param array 若此参数为null则返回null
 	 * @param amount 此参数若小于0则返回0个元素的二维数组(当array不为null时)
 	 * @return
@@ -2143,7 +2176,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1,2,3,4,5},amount=3,返回:{{1,2},{3,4},{5}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2158,7 +2192,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1,2,3,4,5},amount=3,返回:{{1,2},{3,4},{5}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2173,7 +2208,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1,2,3,4,5},amount=3,返回:{{1,2},{3,4},{5}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2188,7 +2224,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1,2,3,4,5},amount=3,返回:{{1,2},{3,4},{5}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2203,7 +2240,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1.0,2.0,3.0,4.0,5.0},mount=3,返回:{{1.0,2.0},{3.0,4.0},{5.0}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1.0,2.0,3.0,4.0,5.0},amount=3,返回:{{1.0,2.0},{3.0,4.0},{5.0}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2218,7 +2256,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1.0f,2.0f,3.0f,4.0f,5.0f},mount=3,返回:{{1.0f,2.0f},{3.0f,4.0f},{5.0f}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1.0f,2.0f,3.0f,4.0f,5.0f},amount=3,返回:{{1.0f,2.0f},{3.0f,4.0f},{5.0f}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2233,7 +2272,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={'1','2','3','4','5'},mount=3,返回:{{'1','2'},{'3','4'},{'5'}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={'1','2','3','4','5'},amount=3,返回:{{'1','2'},{'3','4'},{'5'}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2248,7 +2288,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={true,false,true,true,false},mount=3,返回:{{true,false},{true,true},{false}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={true,false,true,true,false},amount=3,返回:{{true,false},{true,true},{false}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2261,6 +2302,152 @@ public final class Arrs {
 		return Typer.booleanss(amount);
 	}
 	
+	
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={"1","2","3","4","5"},every=3,返回:{{"1","2","3"},{"4","5"}}
+	 * @param array 若此参数为null则返回null
+	 * @param every 此参数若小于0则返回0个元素的二维数组(当array不为null时)
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T[][] splitEverys(T[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return array==null?null:(T[][])Array.newInstance(array.getClass(),0);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1,2,3,4,5},every=3,返回:{{1,2,3},{4,5}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static long[][] splitEverys(long[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.longss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1,2,3,4,5},every=3,返回:{{1,2,3},{4,5}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static int[][] splitEverys(int[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.intss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1,2,3,4,5},every=3,返回:{{1,2,3},{4,5}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static short[][] splitEverys(short[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.shortss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1,2,3,4,5},every=3,返回:{{1,2,3},{4,5}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static byte[][] splitEverys(byte[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.bytess(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1.0,2.0,3.0,4.0,5.0},every=3,返回:{{1.0,2.0,3.0},{4.0,5.0}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static double[][] splitEverys(double[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.doubless(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1.0f,2.0f,3.0f,4.0f,5.0f},every=3,返回:{{1.0f,2.0f,3.0f},{4.0f,5.0f}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static float[][] splitEverys(float[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.floatss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={'1','2','3','4','5'},every=3,返回:{{'1','2','3'},{'4','5'}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static char[][] splitEverys(char[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.charss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={true,false,true,true,false},every=3,返回:{{true,false,true},{true,false}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static boolean[][] splitEverys(boolean[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.booleanss(every);
+	}
 	
 	
 	

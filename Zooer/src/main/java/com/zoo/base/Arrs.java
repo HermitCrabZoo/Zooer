@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.zoo.mix.Beaner;
 
@@ -990,19 +991,19 @@ public final class Arrs {
 	/**
 	 * 将obj对象转换成String数组返回,若obj对象为null或者obj对象不是数组类型那么将返回一个空数组(长度为0)
 	 * 若传入的为对象类型的数组，此类型未对'toString'方法做任何特定的实现，那么结果可能料想不到。
-	 * @param obj 任何类型的数组对象
+	 * @param arrayObj 任何类型的数组对象
 	 * @return
 	 */
-	public static String[] toStrings(Object obj){
-		if (obj==null || !obj.getClass().isArray()) {
+	public static String[] toStrings(Object arrayObj){
+		if (arrayObj==null || !arrayObj.getClass().isArray()) {
 			return Strs.emptys();
 		}
-		int len=Array.getLength(obj);
+		int len=Array.getLength(arrayObj);
 		String[] strs=new String[len];
 		for(int i=0;i<len;i++){
-			strs[i]=String.valueOf(Array.get(obj, i));
+			strs[i]=String.valueOf(Array.get(arrayObj, i));
 		}
-		Optional.ofNullable(obj).map(o->o.getClass().isArray()).orElse(false);
+		Optional.ofNullable(arrayObj).map(o->o.getClass().isArray()).orElse(false);
 		return strs;
 	}
 	
@@ -2605,6 +2606,38 @@ public final class Arrs {
 		}
 		return result;
 	}
+	
+	
+	
+	/**
+	 * 为数组中每个元素添加字符串前缀prefix,不会改变原始数组.
+	 * @param arr 不能为null
+	 * @param prefix 不能为null
+	 * @return 返回新数组
+	 */
+	public static String[] prefix(String[] arr,String prefix) {
+		if (Typer.notNull(arr,prefix)) {
+			return Stream.of(arr).parallel().map(s->prefix+(s==null?"":s)).toArray(String[]::new);
+		}
+		return Typer.strings();
+	}
+	
+	
+	/**
+	 * 为数组中每个元素添加字符串后缀suffix,不会改变原始数组.
+	 * @param arr 不能为null
+	 * @param suffix 不能为null
+	 * @return 返回新数组
+	 */
+	public static String[] suffix(String[] arr,String suffix) {
+		if (Typer.notNull(arr,suffix)) {
+			return Stream.of(arr).parallel().map(s->(s==null?"":s)+suffix).toArray(String[]::new);
+		}
+		return Typer.strings();
+	}
+	
+	
+	
 	
 	
 }

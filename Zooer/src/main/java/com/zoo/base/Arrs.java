@@ -1193,10 +1193,9 @@ public final class Arrs {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> deepCopy(List<T> src){
-		List<T> dest=new ArrayList<>();
 		byte[] serializeds=Serializer.serialize(src);
 		Optional<List> newObj=Serializer.deserialize(serializeds, List.class);
-		return newObj.orElse(dest);
+		return newObj.orElseGet(ArrayList::new);
 	}
 	
 	
@@ -2638,6 +2637,498 @@ public final class Arrs {
 	
 	
 	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static <T>int index(T[] sub,T[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (!Objects.equals(sub[j],src[i+j])) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
 	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(long[] sub,long[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(int[] sub,int[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(short[] sub,short[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(byte[] sub,byte[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(double[] sub,double[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(float[] sub,float[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(char[] sub,char[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(boolean[] sub,boolean[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static <T>int lastIndex(T[] sub,T[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (!Objects.equals(sub[j], src[i+j])) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(long[] sub,long[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(int[] sub,int[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(short[] sub,short[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(byte[] sub,byte[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(double[] sub,double[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(float[] sub,float[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(char[] sub,char[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(boolean[] sub,boolean[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
 	
 }

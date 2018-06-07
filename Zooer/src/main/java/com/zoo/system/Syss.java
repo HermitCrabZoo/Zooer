@@ -4,12 +4,17 @@ import java.awt.AWTException;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
+
 import com.zoo.base.Strs;
 
 /**
@@ -25,23 +30,33 @@ public final class Syss {
 	static{
 		try {
 			defaultToolKit = Toolkit.getDefaultToolkit();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
+		} catch (Throwable e) {}
 	}
+	
 	
 	
 	/**
 	 * 获取屏幕分辨率对象
 	 * @return
 	 */
-	private static Dimension getDimension() {
-		Dimension screenDimension=null;
+	public static Optional<Dimension> screenDimension() {
 		try {
-			screenDimension = defaultToolKit.getScreenSize();
-		} catch (Exception e) {
-		}
-		return screenDimension;
+			return Optional.ofNullable(defaultToolKit.getScreenSize());
+		} catch (Exception e) {}
+		return Optional.empty();
+	}
+	
+	
+	/**
+	 * 获取Insets对象
+	 * @return
+	 */
+	public static Optional<Insets> insets(){
+		try {
+			Insets insets = defaultToolKit.getScreenInsets(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration());
+			return Optional.ofNullable(insets);
+		} catch (Exception e) {}
+		return Optional.empty();
 	}
 	
 	
@@ -68,7 +83,7 @@ public final class Syss {
 	 * @return
 	 */
 	public static int screenWidth() {
-		return Optional.ofNullable(getDimension()).map(sd->sd.width).orElse(0);
+		return screenDimension().map(sd->sd.width).orElse(0);
 	}
 
 	
@@ -78,7 +93,7 @@ public final class Syss {
 	 * @return
 	 */
 	public static int screenHeight() {
-		return Optional.ofNullable(getDimension()).map(sd->sd.height).orElse(0);
+		return screenDimension().map(sd->sd.height).orElse(0);
 	}
 
 	/**
@@ -222,6 +237,16 @@ public final class Syss {
     }
 	
 	
+	private static class Desktoper{
+		private static final Desktop desktop=getDesktop();
+		private static Desktop getDesktop() {
+			if (!GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported()) {
+				return Desktop.getDesktop();
+			}
+			return null;
+		}
+	}
+	
 	
 	/**
 	 * 向系统发送浏览该url的指令
@@ -231,8 +256,7 @@ public final class Syss {
 	public static boolean browse(String url){
 		try {
 			return browse(new URI(url));
-		} catch (Exception e) {
-		}
+		} catch (Exception e) {}
 		return false;
 	}
 	
@@ -243,17 +267,84 @@ public final class Syss {
 	 * @return 发送指令成功为true,发送失败为false
 	 */
 	public static boolean browse(URI uri){
-		if (!GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported()) {
-			Desktop desktop = Desktop.getDesktop();
-			if (desktop.isSupported(Desktop.Action.BROWSE)) {
-				try {
-					desktop.browse(uri);
-					return true;
-				} catch (Exception e) {
-				}
-			}
+		Desktop desktop = Desktoper.desktop;
+		if (desktop.isSupported(Desktop.Action.BROWSE)) {
+			try {
+				desktop.browse(uri);
+				return true;
+			} catch (Exception e) {}
 		}
 		return false;
 	}
 
+	/**
+	 * 用默认的应用打开文件
+	 * @param filename
+	 * @return
+	 */
+	public static boolean open(String filename) {
+		return open(new File(filename));
+	}
+	
+	/**
+	 * 用默认的应用打开文件
+	 * @param file
+	 * @return
+	 */
+	public static boolean open(Path file) {
+		return Objects.nonNull(file)?open(file.toFile()):false;
+	}
+	
+	
+	/**
+	 * 用默认的应用打开文件
+	 * @param filename
+	 * @return
+	 */
+	public static boolean open(File file) {
+		Desktop desktop = Desktoper.desktop;
+		if (Objects.nonNull(file) && desktop.isSupported(Desktop.Action.OPEN)) {
+			try {
+				desktop.open(file);
+			} catch (Exception e) {}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 用默认的文件浏览器打开文件夹,并选中文件(若传入的是文件)
+	 * @param filename
+	 * @return
+	 */
+	public static boolean browseFileDirectory(String filename) {
+		return browseFileDirectory(new File(filename));
+	}
+	
+	
+	/**
+	 * 用默认的文件浏览器打开文件夹,并选中文件(若传入的是文件)
+	 * @param path
+	 * @return
+	 */
+	public static boolean browseFileDirectory(Path path) {
+		return Objects.nonNull(path)?browseFileDirectory(path.toFile()):false;
+	}
+	
+	/**
+	 * 用默认的文件浏览器打开文件夹,并选中文件(若传入的是文件)
+	 * @param file
+	 * @return
+	 */
+	public static boolean browseFileDirectory(File file) {
+		Desktop desktop = Desktoper.desktop;
+		if (desktop.isSupported(Desktop.Action.BROWSE_FILE_DIR)) {
+			try {
+				desktop.browseFileDirectory(file);
+			} catch (Exception e) {}
+		}
+		return false;
+	}
+	
+	
 }

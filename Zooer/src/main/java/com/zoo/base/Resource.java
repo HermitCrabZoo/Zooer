@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 
 import com.zoo.mix.Filer;
 import com.zoo.mix.Pather;
+import com.zoo.system.Platform;
 
 /**
  * 获取项目资源类
@@ -18,7 +19,10 @@ public final class Resource
 {
 	private Resource(){}
 	
-	private static final String CP=getCp();
+	private static class ClassPather{
+		private static final String CP=getCp();
+	}
+	
 	
 	private static String getCp(){
         try{
@@ -33,14 +37,15 @@ public final class Resource
 					 break;
 				} catch (Exception e) {}
 			}
+			if (url==null) {
+				url=Resource.class.getProtectionDomain().getCodeSource().getLocation();
+			}
             Path path=Paths.get(url.toURI());
             if (Filer.isFile(path)) {
                 path=path.getParent();
             }
             return path.toString();
-        } catch (Exception e){
-        	e.printStackTrace();
-        }
+        } catch (Exception e){}
         return Strs.empty();
     }
 	
@@ -50,7 +55,7 @@ public final class Resource
 	 * @return
 	 */
 	public static String classPath() {
-		return CP;
+		return ClassPather.CP;
 	}
 	
 	/**
@@ -59,7 +64,7 @@ public final class Resource
 	 * @return
 	 */
 	public static Path onClassPath(String path) {
-		return Paths.get(Pather.join(CP,path));
+		return Paths.get(Pather.join(ClassPather.CP,path));
 	}
 	
 	
@@ -82,11 +87,9 @@ public final class Resource
     public static ImageIcon getIcon(String folder,String imageName) {
     	ImageIcon icon=null;
     	try{
-        	URL url=Resource.class.getClassLoader().getResource(Pather.join(folder, imageName));
+        	URL url=Resource.class.getClassLoader().getResource(Pather.toPath(folder)+Platform.SLASH+Pather.toPath(imageName));
         	icon = new ImageIcon(url);// 创建图标
-    	}catch(Exception e){	
-    		e.printStackTrace();
-    	}
+    	}catch(Exception e){}
     	return icon;
 	}
     

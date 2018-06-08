@@ -544,7 +544,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static long[] distinct(long[] longs){
+	public static long[] distinct(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().distinct().toArray()).orElse(Typer.longs());
 	}
 	
@@ -554,7 +554,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static int[] distinct(int[] ints){
+	public static int[] distinct(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().distinct().toArray()).orElse(Typer.ints());
 	}
 	
@@ -564,7 +564,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static short[] distinct(short[] shorts){
+	public static short[] distinct(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->Typer.shorts(distinct(Typer.ints(ss)))).orElse(Typer.shorts());
 	}
 	
@@ -574,7 +574,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static byte[] distinct(byte[] bytes){
+	public static byte[] distinct(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->Typer.bytes(distinct(Typer.ints(bs)))).orElse(Typer.bytes());
 	}
 	
@@ -584,7 +584,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double[] distinct(double[] doubles){
+	public static double[] distinct(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().distinct().toArray()).orElse(Typer.doubles());
 	}
 	
@@ -594,7 +594,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static float[] distinct(float[] floats){
+	public static float[] distinct(float...floats){
 		return Optional.ofNullable(floats).map(fs->Typer.floats(distinct(Typer.doubles(fs)))).orElse(Typer.floats());
 	}
 	
@@ -604,7 +604,7 @@ public final class Arrs {
 	 * @param strings
 	 * @return
 	 */
-	public static String[] distinct(String[] strings){
+	public static String[] distinct(String...strings){
 		return Optional.ofNullable(strings).map(ds->Arrays.stream(ds).parallel().distinct().toArray(String[]::new)).orElse(Typer.strings());
 	}
 	
@@ -614,7 +614,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static double avg(long[] longs){
+	public static double avg(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().average().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -624,7 +624,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static double avg(int[] ints){
+	public static double avg(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().average().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -634,7 +634,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static double avg(short[] shorts){
+	public static double avg(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->avg(Typer.ints(ss))).orElse(0.0);
 	}
 	
@@ -644,7 +644,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static double avg(byte[] bytes){
+	public static double avg(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->avg(Typer.ints(bs))).orElse(0.0);
 	}
 	
@@ -654,7 +654,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double avg(double[] doubles){
+	public static double avg(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().average().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -664,7 +664,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static double avg(float[] floats){
+	public static double avg(float...floats){
 		return Optional.ofNullable(floats).map(fs->avg(Typer.doubles(fs))).orElse(0.0);
 	}
 	
@@ -674,7 +674,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static long sum(long[] longs){
+	public static long sum(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().sum()).orElse(0L);
 	}
 	
@@ -684,7 +684,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static long sum(int[] ints){
+	public static long sum(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().sum()).orElse(0);
 	}
 	
@@ -694,7 +694,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static long sum(short[] shorts){
+	public static long sum(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->sum(Typer.ints(ss))).orElse(0L);
 	}
 	
@@ -704,7 +704,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static long sum(byte[] bytes){
+	public static long sum(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->sum(Typer.ints(bs))).orElse(0L);
 	}
 	
@@ -714,7 +714,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double sum(double[] doubles){
+	public static double sum(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().sum()).orElse(0.0);
 	}
 	
@@ -724,7 +724,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static double sum(float[] floats){
+	public static double sum(float...floats){
 		return Optional.ofNullable(floats).map(fs->sum(Typer.doubles(fs))).orElse(0.0);
 	}
 	
@@ -734,7 +734,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static long max(long[] longs){
+	public static long max(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().max().orElse(0L)).orElse(0L);
 	}
 	
@@ -744,7 +744,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static int max(int[] ints){
+	public static int max(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().max().orElse(0)).orElse(0);
 	}
 	
@@ -754,7 +754,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static short max(short[] shorts){
+	public static short max(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->(short) max(Typer.ints(ss))).orElse((short)0);
 	}
 	
@@ -764,7 +764,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static byte max(byte[] bytes){
+	public static byte max(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->(byte) max(Typer.ints(bs))).orElse((byte)0);
 	}
 	
@@ -774,7 +774,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double max(double[] doubles){
+	public static double max(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().max().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -784,7 +784,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static float max(float[] floats){
+	public static float max(float...floats){
 		return Optional.ofNullable(floats).map(fs->(float) max(Typer.doubles(fs))).orElse(0.0f);
 	}
 	
@@ -794,7 +794,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static long min(long[] longs){
+	public static long min(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().min().orElse(0L)).orElse(0L);
 	}
 	
@@ -804,7 +804,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static int min(int[] ints){
+	public static int min(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().min().orElse(0)).orElse(0);
 	}
 	
@@ -814,7 +814,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static short min(short[] shorts){
+	public static short min(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->(short) min(Typer.ints(ss))).orElse((short)0);
 	}
 	
@@ -824,7 +824,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static byte min(byte[] bytes){
+	public static byte min(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->(byte) min(Typer.ints(bs))).orElse((byte)0);
 	}
 	
@@ -834,7 +834,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double min(double[] doubles){
+	public static double min(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().min().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -844,7 +844,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static float min(float[] floats){
+	public static float min(float...floats){
 		return Optional.ofNullable(floats).map(fs->(float) min(Typer.doubles(fs))).orElse(0.0f);
 	}
 	

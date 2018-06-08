@@ -337,6 +337,32 @@ public final class Imgs {
 		return this;
 	}
 	
+	
+	/**
+	 * 转换为abgr颜色空间
+	 * @return
+	 */
+	public Imgs abgr() {
+		if (type!=BufferedImage.TYPE_4BYTE_ABGR) {
+			type=BufferedImage.TYPE_4BYTE_ABGR;
+			image(image.getWidth(), image.getHeight()).pileCenter(oldImage);
+		}
+		return this;
+	}
+	
+	/**
+	 * 转成bgr颜色空间
+	 * @return
+	 */
+	public Imgs bgr() {
+		if (type!=BufferedImage.TYPE_3BYTE_BGR) {
+			type=BufferedImage.TYPE_3BYTE_BGR;
+			image(image.getWidth(), image.getHeight()).pileCenter(oldImage);
+		}
+		return this;
+	}
+	
+	
 	/**
 	 * 做某些额外的操作,参数freedom的doIt方法的第一个参数为当前绑定的BufferedImage对象,第二个参数为上一个(旧的)与当前绑定的BufferedImage对象,第三个参数为当前的Imgs对象
 	 * @param freedom

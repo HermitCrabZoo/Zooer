@@ -54,7 +54,7 @@ public final class Strs {
 	 * @return
 	 */
 	public static String nullToEmpty(String str){
-		return Optional.ofNullable(str).orElse(empty());
+		return str==null?empty():str;
 	}
 	
 	/**

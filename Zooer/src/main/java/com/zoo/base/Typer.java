@@ -6,7 +6,11 @@ import java.util.Optional;
  *
  */
 public final class Typer {
+	
 	private  Typer(){}
+	
+	private static char hexDigits[]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};  
+	
 	
 	/**
 	 * 判断obj是否是基本类型的包装类的实例，若是返回true，不是返回false
@@ -805,6 +809,43 @@ public final class Typer {
 		}
 		return false;
 	}
+	
+	
+	/**
+	 * 返回objs中第一个不为null的Option对象,若objs为null,或里面的元素都为objs,则返回空的Option对象
+	 * @param objs
+	 * @return
+	 */
+	@SafeVarargs
+	public static <T>Optional<T> firstNotNull(T...objs) {
+		if (objs!=null) {
+			for (T t : objs) {
+				if (t!=null) {
+					return Optional.ofNullable(t);
+				}
+			}
+		}
+		return Optional.empty();
+	}
+	
+	
+	/**
+	 * byte数组转成16进制表示的字符串数组
+	 * @param arrs
+	 * @return
+	 */
+	public static String[] hex(byte[] arrs) {
+		if (arrs!=null) {
+			String[] hexs=new String[arrs.length];
+			for (int i=0;i<arrs.length;i++) {
+				byte b=arrs[i];
+	            hexs[i]=hexDigits[b >>> 4 & 0xf]+""+hexDigits[b & 0xf];
+			}
+			return hexs;
+		}
+		return strings();
+	}
+	
 	
 	
 }

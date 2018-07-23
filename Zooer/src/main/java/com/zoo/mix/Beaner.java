@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import com.zoo.base.Serializer;
 import com.zoo.base.Strs;
 
 import net.sf.cglib.beans.BeanCopier;
@@ -286,4 +288,22 @@ public final class Beaner {
 		}
 		return true;
 	}
+	
+	
+	/**
+	 * 对象深度拷贝,若拷贝失败则返回empty的Optional.
+	 * @param t
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>Optional<T> deepCopy(T t){
+		if (t!=null) {
+			byte[] serializeds=Serializer.serialize(t);
+			Optional<T> newObj=(Optional<T>) Serializer.deserialize(serializeds, t.getClass());
+			return newObj;
+		}
+		return Optional.empty();
+	}
+	
+	
 }

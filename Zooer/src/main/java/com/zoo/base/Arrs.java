@@ -1,9 +1,5 @@
 package com.zoo.base;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.zoo.mix.Beaner;
 
@@ -172,6 +169,38 @@ public final class Arrs {
 		}
 		return Typer.ints();
 	}
+	
+	
+	/**
+	 * 将总数total按每份为each来平均分,返回数组中各元素和等于total.<br/>若total大于each,并且total不是each的整数倍,那么返回数组中最后一个元素的值等于total%each,而其他元素的值在total大于0时为each,在total小于0时值为-each.
+	 * @param total
+	 * @param each 必须大于0
+	 * @return
+	 */
+	public static int[] everys(int total,int each) {
+		if (each>0) {
+			int baseLen = Math.abs(total/each);
+			int remainder=total%each;
+			boolean hasRemainder = remainder!=0;
+			int[] every=new int[baseLen+(hasRemainder?1:0)];
+			if (total<0) {
+				for (int i = 0; i < baseLen; i++) {
+					every[i]=-each;
+				}
+			}else {
+				for (int i = 0; i < baseLen; i++) {
+					every[i]=each;
+				}
+			}
+			if (hasRemainder) {
+				every[baseLen]=remainder;
+			}
+			return every;
+		}
+		return Typer.ints();
+	}
+	
+	
 	
 	
 	/**
@@ -515,7 +544,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static long[] distinct(long[] longs){
+	public static long[] distinct(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().distinct().toArray()).orElse(Typer.longs());
 	}
 	
@@ -525,7 +554,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static int[] distinct(int[] ints){
+	public static int[] distinct(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().distinct().toArray()).orElse(Typer.ints());
 	}
 	
@@ -535,7 +564,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static short[] distinct(short[] shorts){
+	public static short[] distinct(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->Typer.shorts(distinct(Typer.ints(ss)))).orElse(Typer.shorts());
 	}
 	
@@ -545,7 +574,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static byte[] distinct(byte[] bytes){
+	public static byte[] distinct(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->Typer.bytes(distinct(Typer.ints(bs)))).orElse(Typer.bytes());
 	}
 	
@@ -555,7 +584,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double[] distinct(double[] doubles){
+	public static double[] distinct(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().distinct().toArray()).orElse(Typer.doubles());
 	}
 	
@@ -565,7 +594,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static float[] distinct(float[] floats){
+	public static float[] distinct(float...floats){
 		return Optional.ofNullable(floats).map(fs->Typer.floats(distinct(Typer.doubles(fs)))).orElse(Typer.floats());
 	}
 	
@@ -575,7 +604,7 @@ public final class Arrs {
 	 * @param strings
 	 * @return
 	 */
-	public static String[] distinct(String[] strings){
+	public static String[] distinct(String...strings){
 		return Optional.ofNullable(strings).map(ds->Arrays.stream(ds).parallel().distinct().toArray(String[]::new)).orElse(Typer.strings());
 	}
 	
@@ -585,7 +614,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static double avg(long[] longs){
+	public static double avg(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().average().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -595,7 +624,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static double avg(int[] ints){
+	public static double avg(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().average().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -605,7 +634,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static double avg(short[] shorts){
+	public static double avg(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->avg(Typer.ints(ss))).orElse(0.0);
 	}
 	
@@ -615,7 +644,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static double avg(byte[] bytes){
+	public static double avg(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->avg(Typer.ints(bs))).orElse(0.0);
 	}
 	
@@ -625,7 +654,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double avg(double[] doubles){
+	public static double avg(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().average().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -635,7 +664,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static double avg(float[] floats){
+	public static double avg(float...floats){
 		return Optional.ofNullable(floats).map(fs->avg(Typer.doubles(fs))).orElse(0.0);
 	}
 	
@@ -645,7 +674,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static long sum(long[] longs){
+	public static long sum(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().sum()).orElse(0L);
 	}
 	
@@ -655,7 +684,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static long sum(int[] ints){
+	public static long sum(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().sum()).orElse(0);
 	}
 	
@@ -665,7 +694,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static long sum(short[] shorts){
+	public static long sum(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->sum(Typer.ints(ss))).orElse(0L);
 	}
 	
@@ -675,7 +704,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static long sum(byte[] bytes){
+	public static long sum(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->sum(Typer.ints(bs))).orElse(0L);
 	}
 	
@@ -685,7 +714,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double sum(double[] doubles){
+	public static double sum(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().sum()).orElse(0.0);
 	}
 	
@@ -695,7 +724,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static double sum(float[] floats){
+	public static double sum(float...floats){
 		return Optional.ofNullable(floats).map(fs->sum(Typer.doubles(fs))).orElse(0.0);
 	}
 	
@@ -705,7 +734,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static long max(long[] longs){
+	public static long max(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().max().orElse(0L)).orElse(0L);
 	}
 	
@@ -715,7 +744,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static int max(int[] ints){
+	public static int max(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().max().orElse(0)).orElse(0);
 	}
 	
@@ -725,7 +754,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static short max(short[] shorts){
+	public static short max(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->(short) max(Typer.ints(ss))).orElse((short)0);
 	}
 	
@@ -735,7 +764,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static byte max(byte[] bytes){
+	public static byte max(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->(byte) max(Typer.ints(bs))).orElse((byte)0);
 	}
 	
@@ -745,7 +774,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double max(double[] doubles){
+	public static double max(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().max().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -755,7 +784,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static float max(float[] floats){
+	public static float max(float...floats){
 		return Optional.ofNullable(floats).map(fs->(float) max(Typer.doubles(fs))).orElse(0.0f);
 	}
 	
@@ -765,7 +794,7 @@ public final class Arrs {
 	 * @param longs
 	 * @return
 	 */
-	public static long min(long[] longs){
+	public static long min(long...longs){
 		return Optional.ofNullable(longs).map(ls->Arrays.stream(ls).parallel().min().orElse(0L)).orElse(0L);
 	}
 	
@@ -775,7 +804,7 @@ public final class Arrs {
 	 * @param ints
 	 * @return
 	 */
-	public static int min(int[] ints){
+	public static int min(int...ints){
 		return Optional.ofNullable(ints).map(is->Arrays.stream(is).parallel().min().orElse(0)).orElse(0);
 	}
 	
@@ -785,7 +814,7 @@ public final class Arrs {
 	 * @param shorts
 	 * @return
 	 */
-	public static short min(short[] shorts){
+	public static short min(short...shorts){
 		return Optional.ofNullable(shorts).map(ss->(short) min(Typer.ints(ss))).orElse((short)0);
 	}
 	
@@ -795,7 +824,7 @@ public final class Arrs {
 	 * @param bytes
 	 * @return
 	 */
-	public static byte min(byte[] bytes){
+	public static byte min(byte...bytes){
 		return Optional.ofNullable(bytes).map(bs->(byte) min(Typer.ints(bs))).orElse((byte)0);
 	}
 	
@@ -805,7 +834,7 @@ public final class Arrs {
 	 * @param doubles
 	 * @return
 	 */
-	public static double min(double[] doubles){
+	public static double min(double...doubles){
 		return Optional.ofNullable(doubles).map(ds->Arrays.stream(ds).parallel().min().orElse(0.0)).orElse(0.0);
 	}
 	
@@ -815,7 +844,7 @@ public final class Arrs {
 	 * @param floats
 	 * @return
 	 */
-	public static float min(float[] floats){
+	public static float min(float...floats){
 		return Optional.ofNullable(floats).map(fs->(float) min(Typer.doubles(fs))).orElse(0.0f);
 	}
 	
@@ -962,19 +991,19 @@ public final class Arrs {
 	/**
 	 * 将obj对象转换成String数组返回,若obj对象为null或者obj对象不是数组类型那么将返回一个空数组(长度为0)
 	 * 若传入的为对象类型的数组，此类型未对'toString'方法做任何特定的实现，那么结果可能料想不到。
-	 * @param obj 任何类型的数组对象
+	 * @param arrayObj 任何类型的数组对象
 	 * @return
 	 */
-	public static String[] toStrings(Object obj){
-		if (obj==null || !obj.getClass().isArray()) {
-			return new String[]{};
+	public static String[] toStrings(Object arrayObj){
+		if (arrayObj==null || !arrayObj.getClass().isArray()) {
+			return Strs.emptys();
 		}
-		int len=Array.getLength(obj);
+		int len=Array.getLength(arrayObj);
 		String[] strs=new String[len];
 		for(int i=0;i<len;i++){
-			strs[i]=String.valueOf(Array.get(obj, i));
+			strs[i]=String.valueOf(Array.get(arrayObj, i));
 		}
-		Optional.ofNullable(obj).map(o->o.getClass().isArray()).orElse(false);
+		Optional.ofNullable(arrayObj).map(o->o.getClass().isArray()).orElse(false);
 		return strs;
 	}
 	
@@ -1162,24 +1191,11 @@ public final class Arrs {
 	 * @param src
 	 * @return 不会返回null
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> deepCopy(List<T> src){
-		List<T> dest=new ArrayList<>();
-		if (src!=null) {
-			try (
-					ByteArrayOutputStream byteOut = new ByteArrayOutputStream();  
-					ObjectOutputStream out = new ObjectOutputStream(byteOut);){
-				out.writeObject(src);
-				ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
-				ObjectInputStream in = new ObjectInputStream(byteIn);
-				dest=(List<T>) in.readObject();
-				byteIn.close();
-				in.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	    return dest;  
+		byte[] serializeds=Serializer.serialize(src);
+		Optional<List> newObj=Serializer.deserialize(serializeds, List.class);
+		return newObj.orElseGet(ArrayList::new);
 	}
 	
 	
@@ -2143,7 +2159,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={"1","2","3","4","5"},mount=3,返回:{{"1","2"},{"3","4"},{"5"}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={"1","2","3","4","5"},amount=3,返回:{{"1","2"},{"3","4"},{"5"}}
 	 * @param array 若此参数为null则返回null
 	 * @param amount 此参数若小于0则返回0个元素的二维数组(当array不为null时)
 	 * @return
@@ -2159,7 +2176,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1,2,3,4,5},amount=3,返回:{{1,2},{3,4},{5}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2174,7 +2192,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1,2,3,4,5},amount=3,返回:{{1,2},{3,4},{5}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2189,7 +2208,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1,2,3,4,5},amount=3,返回:{{1,2},{3,4},{5}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2204,7 +2224,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1,2,3,4,5},mount=3,返回:{{1,2},{3,4},{5}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1,2,3,4,5},amount=3,返回:{{1,2},{3,4},{5}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2219,7 +2240,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1.0,2.0,3.0,4.0,5.0},mount=3,返回:{{1.0,2.0},{3.0,4.0},{5.0}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1.0,2.0,3.0,4.0,5.0},amount=3,返回:{{1.0,2.0},{3.0,4.0},{5.0}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2234,7 +2256,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={1.0f,2.0f,3.0f,4.0f,5.0f},mount=3,返回:{{1.0f,2.0f},{3.0f,4.0f},{5.0f}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={1.0f,2.0f,3.0f,4.0f,5.0f},amount=3,返回:{{1.0f,2.0f},{3.0f,4.0f},{5.0f}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2249,7 +2272,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={'1','2','3','4','5'},mount=3,返回:{{'1','2'},{'3','4'},{'5'}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={'1','2','3','4','5'},amount=3,返回:{{'1','2'},{'3','4'},{'5'}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2264,7 +2288,8 @@ public final class Arrs {
 	
 	
 	/**
-	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回个二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.如输入:array={true,false,true,true,false},mount=3,返回:{{true,false},{true,true},{false}}
+	 * 将数组array中的元素'尽量'平均分成amount份,若array长度刚好能被amount整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的每个一维数组长度将被'尽量'设为相等.<br/>
+	 * 如输入:array={true,false,true,true,false},amount=3,返回:{{true,false},{true,true},{false}}
 	 * @param array 被分割的数组
 	 * @param amount 均分的数量
 	 * @return 返回长度为amount的二维数组
@@ -2277,6 +2302,152 @@ public final class Arrs {
 		return Typer.booleanss(amount);
 	}
 	
+	
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={"1","2","3","4","5"},every=3,返回:{{"1","2","3"},{"4","5"}}
+	 * @param array 若此参数为null则返回null
+	 * @param every 此参数若小于0则返回0个元素的二维数组(当array不为null时)
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T[][] splitEverys(T[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return array==null?null:(T[][])Array.newInstance(array.getClass(),0);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1,2,3,4,5},every=3,返回:{{1,2,3},{4,5}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static long[][] splitEverys(long[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.longss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1,2,3,4,5},every=3,返回:{{1,2,3},{4,5}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static int[][] splitEverys(int[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.intss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1,2,3,4,5},every=3,返回:{{1,2,3},{4,5}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static short[][] splitEverys(short[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.shortss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1,2,3,4,5},every=3,返回:{{1,2,3},{4,5}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static byte[][] splitEverys(byte[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.bytess(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1.0,2.0,3.0,4.0,5.0},every=3,返回:{{1.0,2.0,3.0},{4.0,5.0}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static double[][] splitEverys(double[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.doubless(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={1.0f,2.0f,3.0f,4.0f,5.0f},every=3,返回:{{1.0f,2.0f,3.0f},{4.0f,5.0f}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static float[][] splitEverys(float[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.floatss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={'1','2','3','4','5'},every=3,返回:{{'1','2','3'},{'4','5'}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static char[][] splitEverys(char[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.charss(every);
+	}
+	
+	
+	/**
+	 * 将数组array中的元素按每份every个元素分成一个二维数组,二维数组中每个元素的长度之和等于array.length.若array长度刚好能被every整除,则返回的二维数组中每个一维数组的长度都是相等的,否则二维数组中的最后一个元素的长度将等于array.length%every.<br/>
+	 * 如输入:array={true,false,true,true,false},every=3,返回:{{true,false,true},{true,false}}
+	 * @param array 被分割的数组
+	 * @param every 均分的数量
+	 * @return 返回长度为every的二维数组
+	 */
+	public static boolean[][] splitEverys(boolean[] array,int every){
+		if (array!=null && every>=0) {
+			int[] quotas=everys(array.length, every);//计算每个数组的长度
+			return split(array, quotas);
+		}
+		return Typer.booleanss(every);
+	}
 	
 	
 	
@@ -2435,5 +2606,529 @@ public final class Arrs {
 		return result;
 	}
 	
+	
+	
+	/**
+	 * 为数组中每个元素添加字符串前缀prefix,不会改变原始数组.
+	 * @param arr 不能为null
+	 * @param prefix 不能为null
+	 * @return 返回新数组
+	 */
+	public static String[] prefix(String[] arr,String prefix) {
+		if (Typer.notNull(arr,prefix)) {
+			return Stream.of(arr).parallel().map(s->prefix+(s==null?"":s)).toArray(String[]::new);
+		}
+		return Typer.strings();
+	}
+	
+	
+	/**
+	 * 为数组中每个元素添加字符串后缀suffix,不会改变原始数组.
+	 * @param arr 不能为null
+	 * @param suffix 不能为null
+	 * @return 返回新数组
+	 */
+	public static String[] suffix(String[] arr,String suffix) {
+		if (Typer.notNull(arr,suffix)) {
+			return Stream.of(arr).parallel().map(s->(s==null?"":s)+suffix).toArray(String[]::new);
+		}
+		return Typer.strings();
+	}
+	
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static <T>int index(T[] sub,T[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (!Objects.equals(sub[j],src[i+j])) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(long[] sub,long[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(int[] sub,int[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(short[] sub,short[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(byte[] sub,byte[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(double[] sub,double[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(float[] sub,float[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(char[] sub,char[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src的start位置开始,获取sub在src中第一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param start 从src中查找的起始位置
+	 * @return
+	 */
+	public static int index(boolean[] sub,boolean[] src,int start) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen+1;
+			int flag=subLen -1;
+			for (int i = Math.max(start, 0); i < len; i++) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static <T>int lastIndex(T[] sub,T[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (!Objects.equals(sub[j], src[i+j])) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(long[] sub,long[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(int[] sub,int[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(short[] sub,short[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(byte[] sub,byte[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(double[] sub,double[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(float[] sub,float[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(char[] sub,char[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 从src中查找(不包含末尾长度endOffset)sub在src中最后一次出现的索引,若sub不在src内,则返回-1
+	 * @param sub 子数组
+	 * @param src 父数组
+	 * @param endOffset src数组末尾部分不参与查找的长度,如:sub={1,2},src={0,1,2,1,2},endOffset=2将返回1
+	 * @param end 从后往前找时,结束的位置,即:找到此位置时还未找到出现的索引,则不再继续往前找
+	 * @return
+	 */
+	public static int lastIndex(boolean[] sub,boolean[] src,int endOffset,int end) {
+		if (Typer.notNull(sub,src) && sub.length>0) {
+			int subLen=sub.length;
+			int len=src.length-subLen-endOffset;
+			int flag=subLen -1;
+			for (int i = len; i >= 0 && i>=end; i--) {
+				for (int j = 0; j < subLen; j++) {
+					if (sub[j] != src[i+j]) {
+						break;
+					}
+					if (j == flag) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
 	
 }

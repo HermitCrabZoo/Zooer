@@ -42,6 +42,10 @@ public final class Fonts {
 	 */
 	public static final Font naive=new Font("幼圆", Font.PLAIN, 20);
 	
+	/**
+	 * 微软雅黑Light
+	 */
+	public static final Font YaHeiLight=new Font("微软雅黑Light", Font.PLAIN, 20);
 	
 	/**
 	 * 获取字符串str在字体为font下所占用的宽高像素值.

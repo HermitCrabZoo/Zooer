@@ -8,6 +8,7 @@
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'maven' 
 //JDK1.8
 sourceCompatibility = 1.8  
 //版本号  
@@ -40,10 +41,11 @@ dependencies {
     
     compile fileTree(dir:'lib',include:['*.jar'])
     
-    compile 'junit:junit:4.12'
 	compile group: 'cglib', name: 'cglib', version: '3.2.5'
     compile group: 'org.ow2.asm', name: 'asm', version: '5.2'
     compile group: 'com.google.zxing', name: 'core', version: '3.3.0'
+    
+    //javacv部分
 	compile('org.bytedeco:javacv:1.4@jar'){//只下载主依赖jar
 		transitive=true//下载子依赖
 		//不添加以下子依赖到项目
@@ -74,6 +76,7 @@ dependencies {
 	//compile group: 'org.projectlombok', name: 'lombok', version: '1.16.18'
 	
 
+	//tess4j部分
 	compile('net.sourceforge.tess4j:tess4j:3.4.6@jar'){//只下载主依赖jar
 		transitive=true//下载子依赖
 		//不添加以下子依赖到项目(需要下载的子依赖:jai-imageio-core-1.3.1,jna-4.1.0)
@@ -87,10 +90,17 @@ dependencies {
 		exclude module: 'log4j-over-slf4j'
 	}
 	compile group: 'net.sourceforge.lept4j', name: 'lept4j', version: '1.6.3'
-	compile group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.3.1'
+	compile group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.4.0'
 	compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.25'
+	
+	//cpdetector部分
+	api 'net.sourceforge.cpdetector:cpdetector:1.0.7'
+	api 'net.sourceforge.jargs:jargs:1.0'
+	api 'net.sourceforge.jchardet:jchardet:1.0'
+	api 'antlr:antlr:2.7.7'
+	
 	
 }
 tasks.withType(JavaCompile) {  

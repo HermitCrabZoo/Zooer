@@ -6,15 +6,22 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.FileTime;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +30,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.zoo.base.Strs;
+import com.zoo.base.Typer;
 import com.zoo.cons.Funcs;
+
+import jdk.internal.ref.Cleaner;
+import sun.nio.ch.DirectBuffer;
 
 public final class Filer {
 
@@ -250,8 +261,8 @@ public final class Filer {
 	 * @return
 	 * @see #copy(Path, Path, Predicate, Charset)
 	 */
-	public static CopyResult copy(Path source,Path target,Charset destCharset) {
-		return copy(source, target, null, destCharset);
+	public static CopyResult copy(Path source,Path target,Charset fromCharset,Charset toCharset) {
+		return copy(source, target, null,fromCharset, toCharset);
 	}
 	
 	/**
@@ -259,10 +270,10 @@ public final class Filer {
 	 * @param source
 	 * @param target
 	 * @param filter
-	 * @see #copy(Path, Path, Predicate, Charset)
+	 * @see #copy(Path, Path, Predicate, Charset, Charset)
 	 */
 	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter) {
-		return copy(source, target, filter, null);
+		return copy(source, target, filter,null, null);
 	}
 	
 	/**
@@ -273,7 +284,7 @@ public final class Filer {
 	 * @param destCharset
 	 * @return
 	 */
-	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter,Charset destCharset){
+	public static CopyResult copy(Path source,Path target,Predicate<? super Path> filter,Charset fromCharset,Charset toCharset){
 		CopyResult cr=CopyResult.instance();
 		//被拷贝的目录或文件要有可读属性，目录无法拷贝到文件，两个不相同的目录或文件才能对考
 		if (!isReadable(source)) {
@@ -303,11 +314,7 @@ public final class Filer {
 					}
 				}
 				if (Files.isRegularFile(p)&&Files.isRegularFile(t)) {//文件对文件拷贝
-					if(destCharset!=null) {
-						transfer(p, t,Charsetor.discern(p),destCharset);
-					}else {
-						transfer(p, t,null,null);
-					}
+					transfer(p, t,fromCharset,toCharset);
 				}
 			} catch (IOException e) {
 				cr.addException(e);
@@ -471,6 +478,155 @@ public final class Filer {
 			count += len;
 		}
 		return count;
+	}
+
+	
+	
+	/**
+	 * 读取文件内容到字符串
+	 * @param path
+	 * @return
+	 */
+	public static String read(Path path) {
+		return new String(readBytes(path));
+	}
+	
+	
+	/**
+	 * 使用指定编码,读取文件内容到字符串
+	 * @param path
+	 * @param cs 字符串编码
+	 * @return
+	 */
+	public static String read(Path path,Charset cs) {
+		return new String(readBytes(path), cs);
+	}
+	
+	
+	/**
+	 * 读取文件中每一行到字符串
+	 * @param path
+	 * @return
+	 */
+	public static List<String> readLines(Path path){
+		return readLines(path,Charset.defaultCharset());
+	}
+	
+	
+	/**
+	 * 使用指定编码,读取文件每一行内容到字符串
+	 * @param path
+	 * @param cs
+	 * @return
+	 */
+	public static List<String> readLines(Path path,Charset cs) {
+		List<String> lines;
+		try {
+			lines=Files.readAllLines(path, cs);
+		} catch (IOException e) {
+			lines=new ArrayList<String>();
+		}
+		return lines;
+	}
+	
+	
+	/**
+	 * 读取文件内容到byte数组
+	 * @param path
+	 * @return
+	 */
+	public static byte[] readBytes(Path path) {
+		byte[] contents;
+		try {
+			contents=Files.readAllBytes(path);
+		} catch (IOException e) {
+			contents=Typer.bytes();
+		}
+		return contents;
+	}
+	
+	
+	
+	/**
+	 * 获取文件或目录占用的空间(单位/字节)
+	 * @param path
+	 * @return
+	 */
+	public static long size(Path path) {
+		long s=0L;
+		try {
+			s=Files.size(path);
+		} catch (IOException e) {}
+		return s;
+	}
+	
+	
+	/**
+	 * 获取文件/目录创建时间,若获取失败则返回null
+	 * @param path
+	 * @return
+	 */
+	public static LocalDateTime creationTime(Path path) {
+		try {
+			BasicFileAttributeView basicview = Files.getFileAttributeView(path, BasicFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
+			BasicFileAttributes attr = basicview.readAttributes();
+			LocalDateTime time = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneOffset.ofHours(8));
+			return time;
+		} catch (Exception e) {}
+		return null;
+	}
+
+	/**
+	 * 获取文件/目录最后修改时间,若获取失败则返回null
+	 * @param path
+	 * @param options
+	 * @return
+	 */
+	public static LocalDateTime modifiedTime(Path path) {
+		try {
+			FileTime fileTime=Files.getLastModifiedTime(path, LinkOption.NOFOLLOW_LINKS);
+			LocalDateTime time=LocalDateTime.ofInstant(fileTime.toInstant(), ZoneOffset.ofHours(8));
+			return time;
+		} catch (IOException e) {}
+		return null;
+	}
+	
+	
+	/**
+	 * 释放内存映射文件的文件句柄
+	 * @param var0
+	 */
+	public static void unmap(MappedByteBuffer var0) {
+		if (var0 instanceof DirectBuffer) {
+			Cleaner var1 = ((DirectBuffer)var0).cleaner();
+			if (var1 != null) {
+				var1.clean();
+			}
+		}
+    }
+	
+	
+	/**
+	 * 将sizeOfByte转换为{B,KB,MB,GB,TB,PB,EB,ZB,YB}中最适合的那个单位来显示,返回转换后的字符串.
+	 * @param sizeOfByte
+	 * @return
+	 */
+	public static String grace(double sizeOfByte) {
+		if (sizeOfByte<1024.0) {
+			return Math.round(Math.floor(sizeOfByte))+"B";
+		}
+		String[] units=new String[] {"KB","MB","GB","TB","PB","EB","ZB"};
+		for (int i=0;i<units.length;i++) {
+			if (sizeOfByte<Math.pow(1024.0, i+2)) {
+				double val=sizeOfByte/Math.pow(1024.0, i+1);
+				double flat=Math.floor(val);
+				return (val-flat==0?Math.round(flat)+"":String.format("%.2f", flat))+units[i];
+			}
+		}
+		double val=sizeOfByte/Math.pow(1024.0, units.length+1);
+		double flat=Math.floor(val);
+		String res=String.format("%.2f", val);
+		return (val-flat==0?Strs.removeEnd(res, ".00"):res)+"YB";
 	}
 	
 }

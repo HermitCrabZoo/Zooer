@@ -1,7 +1,7 @@
 package com.zoo.se;
 
 import java.awt.Color;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Random;
 
 public final class Colors {
@@ -24,8 +24,7 @@ public final class Colors {
 	 * 生成一种随机颜色
 	 * @return
 	 */
-	public static Color randColor()
-	{
+	public static Color randColor(){
 		return new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
 	
@@ -60,12 +59,12 @@ public final class Colors {
 	 */
 	public static Yuv getYuv(Color color){
 		Yuv yuv=new Yuv();
-		return Optional.ofNullable(color).map(c->{
-			yuv.setY(c.getRed()*0.299 + c.getGreen()*0.587 + c.getBlue()*0.114);//Y
-			yuv.setU(c.getRed()*-0.147 - c.getGreen()*0.289 + c.getBlue()*0.436);//U
-			yuv.setV(c.getRed()*0.615 - c.getGreen()*0.515 - c.getBlue()*0.100);//V
-			return yuv;
-		}).orElse(yuv);
+		if (Objects.nonNull(color)) {
+			yuv.setY(color.getRed()*0.299 + color.getGreen()*0.587 + color.getBlue()*0.114);//Y
+			yuv.setU(color.getRed()*-0.147 - color.getGreen()*0.289 + color.getBlue()*0.436);//U
+			yuv.setV(color.getRed()*0.615 - color.getGreen()*0.515 - color.getBlue()*0.100);//V
+		}
+		return yuv;
 	}
 	
 	
@@ -74,12 +73,12 @@ public final class Colors {
 	 */
 	public static YCbCr getYCbCr(Color color){
 		YCbCr yCbCr=new YCbCr();
-		return Optional.ofNullable(color).map(c->{
-			yCbCr.setY(c.getRed()*0.257 + c.getGreen()*0.504 + c.getBlue()*0.098 + 16);//Y
-			yCbCr.setCb(c.getRed()*-0.148 - c.getGreen()*0.291 + c.getBlue()*0.439 + 128);//Cb
-			yCbCr.setCr(c.getRed()*0.439 - c.getGreen()*0.368 - c.getBlue()*0.071 + 128);//Cr
-			return yCbCr;
-		}).orElse(yCbCr);
+		if (Objects.nonNull(color)) {
+			yCbCr.setY(color.getRed()*0.257 + color.getGreen()*0.504 + color.getBlue()*0.098 + 16);//Y
+			yCbCr.setCb(color.getRed()*-0.148 - color.getGreen()*0.291 + color.getBlue()*0.439 + 128);//Cb
+			yCbCr.setCr(color.getRed()*0.439 - color.getGreen()*0.368 - color.getBlue()*0.071 + 128);//Cr
+		}
+		return yCbCr;
 	}
 	
 	

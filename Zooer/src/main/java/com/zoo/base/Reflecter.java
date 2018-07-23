@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Optional;
 
+import sun.misc.Unsafe;
+
 /**
  * 泛型工具
  * @author ZOO
@@ -12,7 +14,7 @@ import java.util.Optional;
 public final class Reflecter {
 	
 	private Reflecter() {}
-
+	
     /**
      * 设置类的静态变量/常量的值,不支持基本类型的常量字段!
      * @param clazz
@@ -47,6 +49,19 @@ public final class Reflecter {
         }
         return Optional.empty();
     }
-
+    
+    
+    /**
+     * 获取{@link Unsafe}实例
+     * @return
+     */
+    public static Unsafe getUnsafe() {
+    	return Unsafer.unsafe;
+    }
+    
+    private static class Unsafer{
+    	private static final Unsafe unsafe=(Unsafe) getStatic(Unsafe.class, "theUnsafe").orElse(null);
+    }
+    
 
 }

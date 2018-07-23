@@ -90,7 +90,7 @@ dependencies {
 		exclude module: 'log4j-over-slf4j'
 	}
 	compile group: 'net.sourceforge.lept4j', name: 'lept4j', version: '1.6.3'
-	compile group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.3.1'
+	compile group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.4.0'
 	compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.25'

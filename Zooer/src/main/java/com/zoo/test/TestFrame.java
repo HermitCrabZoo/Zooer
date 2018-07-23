@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -131,18 +132,24 @@ public class TestFrame{
 	}
 	
 	
-	public static void testOCR() {
-		
-		Mat mat=Cver.of("E:\\images\\six.jpg").gray().threshold().erode()/*.write("E:\\images\\sixerode.jpg")*/.get();
-		BufferedImage image=CvBridge.image(mat);
-		String result=OCR.read(image);
-		System.out.println(result);
-	}
-	
-	
-	
 	
 	public static void testCver() throws TesseractException {
+		
+		Cver cver=Cver.of("E:\\images\\Tracer.png").scaleW(640);
+		Mat mat=cver.get();
+		Mat style=Cver.of(cver.get()).contrast(1).get();
+		Mat style1=Cver.of(cver.get()).contrast(3).get();
+		Mat style2=Cver.of(cver.get()).contrast(0.2).get();
+		ImageGUI sourcer=ImageGUI.of().createWin("source");
+		ImageGUI styler=ImageGUI.of().createWin("brightness1");
+		ImageGUI styler1=ImageGUI.of().createWin("brightness1.2");
+		ImageGUI styler2=ImageGUI.of().createWin("brightness0.5");
+		
+		sourcer.imshow(CvBridge.image(mat));
+		styler.imshow(CvBridge.image(style));
+		styler1.imshow(CvBridge.image(style1));
+		styler2.imshow(CvBridge.image(style2));
+		
 		Cver.of("E:\\images\\one.jpg").transparency(0.9).write("E:\\images\\onet.png").get();
 		
 //		Cver.of("E:\\images\\videoRotateMatToImgAlpha.png").pyrUp().write("E:\\images\\videoRotateMatToImgAlphaPyrUp.png");
@@ -241,25 +248,6 @@ public class TestFrame{
 			System.out.println(stack.getFileName());
 			System.out.println(stack.getMethodName());
 		}
-	}
-	
-	public static void testCver() {
-		Cver cver=Cver.of("E:\\images\\Tracer.png").scaleW(640);
-		Mat mat=cver.get();
-		Mat style=Cver.of(cver.get()).contrast(1).get();
-		Mat style1=Cver.of(cver.get()).contrast(3).get();
-		Mat style2=Cver.of(cver.get()).contrast(0.2).get();
-		ImageGUI sourcer=ImageGUI.of().createWin("source");
-		ImageGUI styler=ImageGUI.of().createWin("brightness1");
-		ImageGUI styler1=ImageGUI.of().createWin("brightness1.2");
-		ImageGUI styler2=ImageGUI.of().createWin("brightness0.5");
-		
-		sourcer.imshow(CvBridge.image(mat));
-		styler.imshow(CvBridge.image(style));
-		styler1.imshow(CvBridge.image(style1));
-		styler2.imshow(CvBridge.image(style2));
-		
-		
 	}
 	
 	
@@ -428,6 +416,22 @@ public class TestFrame{
 //		System.out.println(((DataBufferUShort)image14.getRaster().getDataBuffer()).getData().length/10000);
 		
 		
+		
+		
+		
+
+//		BufferedImage image=ImageIO.read(Paths.get("E:\\images\\videoRotate.png").toFile());
+//		System.out.println(image.getType());
+		Mat mat1=Imgcodecs.imread("E:\\images\\videoRotate.png",Imgcodecs.CV_LOAD_IMAGE_UNCHANGED);
+//		System.out.println(mat.depth());
+//		System.out.println(mat.type());
+		long s=clock.millis();
+//		Mat mat=CvBridge.mat(image);
+		BufferedImage image1=CvBridge.image(mat1);
+		long e=clock.millis();
+//		Imgcodecs.imwrite("E:\\images\\videoRotateImgToMat.png", mat);
+		ImageIO.write(image1, "png", Paths.get("E:\\images\\videoRotateMatToImg.png").toFile());
+		System.out.println(e-s);
 	}
 
 	
@@ -667,8 +671,8 @@ public class TestFrame{
 			contentPane.add(label1,Integer.valueOf(Integer.MAX_VALUE));
 //			BufferedImage bimage=Imgs.of("e:\\images\\snow.jpg").cutCenter().scaleRatio(200, 200).get();
 //			bimage=CvBridge.image(Cver.of(CvBridge.mat(bimage)).gray().threshold().get());
-//			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com?w=唔等", 200, 200,null,Colors.randColor(Chroma.light));
-			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com?w=唔等", 400);
+			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com?w=唔等", 200, 200,null,Colors.randColor(Chroma.light));
+//			BufferedImage qrcode=QRCode.qrCode("https://www.baidu.com?w=唔等", 400);
 			JLabel jlLabel=new JLabel(new ImageIcon(qrcode));
 			jlLabel.setBounds(0, 0, fw, fh);
 			contentPane.add(jlLabel,Integer.valueOf(Integer.MAX_VALUE));
@@ -676,23 +680,6 @@ public class TestFrame{
 		}
 	}
 	
-	
-	public static void testCvBridge() throws IOException {
-		
-//		BufferedImage image=ImageIO.read(Paths.get("E:\\images\\videoRotate.png").toFile());
-//		System.out.println(image.getType());
-		Mat mat=Imgcodecs.imread("E:\\images\\videoRotate.png",Imgcodecs.CV_LOAD_IMAGE_UNCHANGED);
-//		System.out.println(mat.depth());
-//		System.out.println(mat.type());
-		long s=clock.millis();
-//		Mat mat=CvBridge.mat(image);
-		BufferedImage image=CvBridge.image(mat);
-		long e=clock.millis();
-//		Imgcodecs.imwrite("E:\\images\\videoRotateImgToMat.png", mat);
-		ImageIO.write(image, "png", Paths.get("E:\\images\\videoRotateMatToImg.png").toFile());
-		System.out.println(e-s);
-		
-	}
 	
 	
 	public static void testFace() {

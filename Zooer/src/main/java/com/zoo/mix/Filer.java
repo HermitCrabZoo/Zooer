@@ -79,6 +79,20 @@ public final class Filer {
 		}
 	}
 	
+	
+	/**
+	 * 是否是符号链接
+	 * @param path
+	 * @return
+	 */
+	public static boolean isSymbolicLink(Path path){
+		try {
+			return Files.isSymbolicLink(path);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	/**
 	 * 目录、存在
 	 * @param path
@@ -552,18 +566,32 @@ public final class Filer {
 		return contents;
 	}
 	
-	
-	
 	/**
-	 * 获取文件或目录占用的空间(单位/字节)
+	 * 获取文件/目录占用的大小(单位/字节)
 	 * @param path
 	 * @return
 	 */
 	public static long size(Path path) {
 		long s=0L;
-		try {
-			s=Files.size(path);
+		
+		if (!isDir(path)) {
+			try {
+				s=Files.size(path);
+			} catch (IOException e) {}
+			return s;
+		}
+		
+		try(Stream<Path> pathStream = Files.walk(path, FileVisitOption.FOLLOW_LINKS)) {
+			s=pathStream.map(p->{
+				try {
+					if(Files.isRegularFile(p) && !Files.isSymbolicLink(p)) {
+						return Files.size(p);
+					}
+				} catch (Exception e) {}
+				return 0L;
+			}).parallel().reduce(0L, (a,b)->a+b).longValue();
 		} catch (IOException e) {}
+		
 		return s;
 	}
 	
@@ -627,7 +655,7 @@ public final class Filer {
 			if (sizeOfByte<Math.pow(1024.0, i+2)) {
 				double val=sizeOfByte/Math.pow(1024.0, i+1);
 				double flat=Math.floor(val);
-				return (val-flat==0?Math.round(flat)+"":String.format("%.2f", flat))+units[i];
+				return (val-flat==0?Math.round(flat)+"":String.format("%.2f", val))+units[i];
 			}
 		}
 		double val=sizeOfByte/Math.pow(1024.0, units.length+1);

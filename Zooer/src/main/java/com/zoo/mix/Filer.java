@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
@@ -25,6 +26,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,6 +47,11 @@ public final class Filer {
 	private static final String MIME_IMAGE="image/";
 	
 	private static final int BUFFER = 8192;
+	
+	/**
+	 * 缓存root->FileStore
+	 */
+	private static ConcurrentHashMap<Path, FileStore> fsMap=new ConcurrentHashMap<Path, FileStore>();
 	
 	/**
 	 * 文件或目录、存在
@@ -629,4 +636,94 @@ public final class Filer {
 		return (val-flat==0?Strs.removeEnd(res, ".00"):res)+"YB";
 	}
 	
+	
+	/**
+	 * 获取path所在根目录的路径
+	 * @param path
+	 * @return
+	 */
+	public static Path driverRoot(Path path) {
+		path = path.normalize();
+		Iterable<Path> roots=FileSystems.getDefault().getRootDirectories();;
+		for(Path root:roots) {
+			if (path.startsWith(root)) {
+				return root;
+			}
+		}
+		return path;
+	}
+	
+	
+	/**
+	 * 从缓存中获取FileStore
+	 * @param path
+	 * @return
+	 */
+	private static FileStore getFileStore(Path path) {
+		Path root=driverRoot(path);
+		FileStore fs=fsMap.get(root);
+		if (fs==null) {
+			try {
+				fs=Files.getFileStore(root);
+				fsMap.put(root, fs);
+			} catch (IOException e) {}
+		}
+		return fs;
+	}
+	
+	
+	/**
+	 * 获取驱动器总的字节大小
+	 * @param driver
+	 * @return
+	 */
+	public static long total(Path driver) {
+		try {
+			FileStore fs = getFileStore(driver);
+			return fs.getTotalSpace();
+		} catch (IOException e) {}
+		return 0L;
+	}
+	
+	
+	/**
+	 * 获取驱动器未分配的字节大小
+	 * @param driver
+	 * @return
+	 */
+	public static long unallocated(Path driver) {
+		try {
+			FileStore fs = getFileStore(driver);
+			return fs.getUnallocatedSpace();
+		} catch (IOException e) {}
+		return 0L;
+	}
+	
+	
+	/**
+	 * 获取驱动器未使用的字节大小
+	 * @param driver
+	 * @return
+	 */
+	public static long usable(Path driver) {
+		try {
+			FileStore fs = getFileStore(driver);
+			return fs.getUsableSpace();
+		} catch (IOException e) {}
+		return 0L;
+	}
+	
+	
+	/**
+	 * 获取驱动器已使用的字节大小
+	 * @param driver
+	 * @return
+	 */
+	public static long used(Path driver) {
+		try {
+			FileStore fs = getFileStore(driver);
+			return fs.getTotalSpace()-fs.getUsableSpace();
+		} catch (IOException e) {}
+		return 0L;
+	}
 }

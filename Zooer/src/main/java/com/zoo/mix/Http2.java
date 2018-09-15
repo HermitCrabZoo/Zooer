@@ -12,7 +12,7 @@ import com.zoo.base.Strs;
 
 import jdk.incubator.http.HttpClient;
 import jdk.incubator.http.HttpRequest;
-import jdk.incubator.http.HttpRequest.BodyProcessor;
+import jdk.incubator.http.HttpRequest.BodyPublisher;
 import jdk.incubator.http.HttpResponse;
 
 /**
@@ -21,7 +21,10 @@ import jdk.incubator.http.HttpResponse;
  *
  */
 public final class Http2 {
+	
 	private Http2(){}
+	
+	private static final String[] headers= {"accept", "*/*", "connection", "Keep-Alive", "user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)"};
 	
 	/**
 	 * 发送get请求
@@ -77,9 +80,7 @@ public final class Http2 {
 		try {
 			HttpClient client = getClient();
 			HttpRequest request = HttpRequest.newBuilder(URI.create(uri))
-					.header("accept", "*/*")
-		            .header("connection", "Keep-Alive")
-		            .header("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)")
+					.headers(headers)
 					.GET().build();
 			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandler.asString());
 			String result=response.body();//响应结果
@@ -100,11 +101,12 @@ public final class Http2 {
     public static String post(String url, Map<String, Object> param,Charset charset) {
 		try {
 			HttpClient client = getClient();
-			BodyProcessor body=BodyProcessor.fromString(param(param), Optional.ofNullable(charset).orElse(Charset.defaultCharset()));//请求体
+			//Java9
+//			BodyProcessor body=BodyProcessor.fromString(param(param), Optional.ofNullable(charset).orElse(Charset.defaultCharset()));//请求体
+			//Java10
+			BodyPublisher body=BodyPublisher.fromString(param(param), Optional.ofNullable(charset).orElse(Charset.defaultCharset()));
 			HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-					.header("accept", "*/*")
-		            .header("connection", "Keep-Alive")
-		            .header("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)")
+					.headers(headers)
 					.POST(body)
 					.build();
 			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandler.asString());

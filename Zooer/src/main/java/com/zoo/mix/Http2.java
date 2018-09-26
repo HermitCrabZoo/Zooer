@@ -1,19 +1,18 @@
 package com.zoo.mix;
 
-import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Optional;
 
 import com.zoo.base.Strs;
-
-import jdk.incubator.http.HttpClient;
-import jdk.incubator.http.HttpRequest;
-import jdk.incubator.http.HttpRequest.BodyPublisher;
-import jdk.incubator.http.HttpResponse;
 
 /**
  * use for Java9
@@ -75,14 +74,16 @@ public final class Http2 {
      * @param charset 请求参数的字符集编码
      * @return 响应结果
      */
-	public static String get(String url,Map<String, Object> param,String charset) {
+	public static String get(String url,Map<String, Object> param,Charset charset) {
+		
+		charset = Optional.ofNullable(charset).orElseGet(Charset::defaultCharset);
 		String uri=url+(Strs.endsWith(url, "?")?"":"?")+param(param, charset);
 		try {
 			HttpClient client = getClient();
 			HttpRequest request = HttpRequest.newBuilder(URI.create(uri))
 					.headers(headers)
 					.GET().build();
-			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandler.asString());
+			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString(charset));
 			String result=response.body();//响应结果
 			return result;
 		} catch (Exception e) {
@@ -100,16 +101,14 @@ public final class Http2 {
      */
     public static String post(String url, Map<String, Object> param,Charset charset) {
 		try {
+			charset = Optional.ofNullable(charset).orElseGet(Charset::defaultCharset);
 			HttpClient client = getClient();
-			//Java9
-//			BodyProcessor body=BodyProcessor.fromString(param(param), Optional.ofNullable(charset).orElse(Charset.defaultCharset()));//请求体
-			//Java10
-			BodyPublisher body=BodyPublisher.fromString(param(param), Optional.ofNullable(charset).orElse(Charset.defaultCharset()));
+			BodyPublisher body=BodyPublishers.ofString(param(param, charset), charset);
 			HttpRequest request = HttpRequest.newBuilder(URI.create(url))
 					.headers(headers)
 					.POST(body)
 					.build();
-			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandler.asString());
+			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString(charset));
 			String result=response.body();//响应结果
 			return result;
 		} catch (Exception e) {
@@ -149,7 +148,7 @@ public final class Http2 {
      * @param charset
      * @return 返回格式：key1=value1&key2=value2
      */
-    public static String param(Map<String, Object> map,String charset){
+    public static String param(Map<String, Object> map,Charset charset){
     	StringBuffer sb=new StringBuffer();
     	if(map!=null&&!map.isEmpty()){
     		for(String key:map.keySet()){
@@ -157,11 +156,7 @@ public final class Http2 {
     		}
     		sb.deleteCharAt(sb.length()-1);
     		if(charset!=null){
-    			try {
-    				return URLEncoder.encode(sb.toString(), charset);
-    			} catch (UnsupportedEncodingException e) {
-    				e.printStackTrace();
-    			}
+    			return URLEncoder.encode(sb.toString(), charset);
     		}
     	}
     	return sb.toString();
@@ -173,7 +168,7 @@ public final class Http2 {
      * @param port
      * @return
      */
-	public static boolean isFreePort(int port) {
+	public static boolean isPortUnused(int port) {
 		boolean ret = false;
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 			ret = true;

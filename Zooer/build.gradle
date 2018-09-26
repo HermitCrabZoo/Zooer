@@ -10,7 +10,8 @@
 apply plugin: 'java-library'
 apply plugin: 'maven' 
 //JDK1.8
-sourceCompatibility = 1.8  
+sourceCompatibility = 1.10
+targetCompatibility = 1.10
 //版本号  
 version = '1.0'  
 
@@ -96,8 +97,8 @@ dependencies {
 	compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.25'
 	
 	//cpdetector部分
-	api 'net.sourceforge.cpdetector:cpdetector:1.0.7'
-	api 'net.sourceforge.jargs:jargs:1.0'
+	//api 'net.sourceforge.cpdetector:cpdetector:1.0.7'
+	//api 'net.sourceforge.jargs:jargs:1.0'
 	api 'net.sourceforge.jchardet:jchardet:1.0'
 	api 'antlr:antlr:2.7.7'
 	
@@ -105,6 +106,14 @@ dependencies {
 }
 tasks.withType(JavaCompile) {  
     options.encoding = "UTF-8"
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"//编译参数:未检查,过期API
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" //编译参数:未检查,过期API
+    //options.compilerArgs += ['--add-modules', 'java.desktop']
+}
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                   'Implementation-Version': project.version)
+    }
 }
 

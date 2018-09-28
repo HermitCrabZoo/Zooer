@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -566,6 +567,38 @@ public final class Filer {
 		return contents;
 	}
 	
+	
+	/**
+	 * 将bytes写入文件，适合用于小文件的一次性写入。不建议多次写入同一个文件。
+	 * @param bytes 文件内容字节数组
+	 * @param file 目标文件，若该文件已经存在，则会删除已存在的文件，并创建新文件作为写入目标。该参数不能为null或目录，否则返回false。
+	 * @return 写入成功则返回true
+	 */
+	public static boolean write(byte[] bytes,Path file) {
+		
+		//null、目录不可作为目标输出
+		if (Objects.isNull(file) || isDir(file)) {
+			return false;
+		}
+		
+		//父目录不存在则创建
+		if(!createDirIfNotExists(file.getParent())) {
+			return false;
+		}
+		
+		//创建全新的文件
+		try (FileChannel oc = FileChannel.open(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE)){
+    		ByteBuffer buffer = ByteBuffer.wrap(bytes);
+			oc.write(buffer);
+			buffer.clear();
+			return true;
+		} catch (Exception e) {}
+		
+		return false;
+	}
+	
+	
+	
 	/**
 	 * 获取文件/目录占用的大小(单位/字节)
 	 * @param path
@@ -601,14 +634,14 @@ public final class Filer {
 	 * @param path
 	 * @return
 	 */
-	public static LocalDateTime creationTime(Path path) {
+	public static Optional<LocalDateTime> creationTime(Path path) {
 		try {
 			BasicFileAttributeView basicview = Files.getFileAttributeView(path, BasicFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
 			BasicFileAttributes attr = basicview.readAttributes();
 			LocalDateTime time = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneOffset.ofHours(8));
-			return time;
+			return Optional.ofNullable(time);
 		} catch (Exception e) {}
-		return null;
+		return Optional.empty();
 	}
 
 	/**
@@ -617,13 +650,13 @@ public final class Filer {
 	 * @param options
 	 * @return
 	 */
-	public static LocalDateTime modifiedTime(Path path) {
+	public static Optional<LocalDateTime> modifiedTime(Path path) {
 		try {
 			FileTime fileTime=Files.getLastModifiedTime(path, LinkOption.NOFOLLOW_LINKS);
 			LocalDateTime time=LocalDateTime.ofInstant(fileTime.toInstant(), ZoneOffset.ofHours(8));
-			return time;
+			return Optional.ofNullable(time);
 		} catch (IOException e) {}
-		return null;
+		return Optional.empty();
 	}
 	
 	

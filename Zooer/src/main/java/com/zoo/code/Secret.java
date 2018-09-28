@@ -51,9 +51,7 @@ public class Secret {
 		try {
 			byte[] bytes = Files.readAllBytes(file);
 			return base64Encoder.encode(bytes);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		return Typer.bytes();
 	}
 	
@@ -65,9 +63,7 @@ public class Secret {
 	public static byte[] unbase64(String base64Str) {
 		try {
 			return base64Decoder.decode(base64Str);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		return Typer.bytes();
 	}
 	
@@ -80,9 +76,7 @@ public class Secret {
 	public static byte[] unbase64(byte[] bytes) {
 		try {
 			return base64Decoder.decode(bytes);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		return Typer.bytes();
 	}
 	
@@ -284,9 +278,7 @@ public class Secret {
 			MessageDigest md5 = MessageDigest.getInstance(algorithm);
 			md5.update(byteBuffer);
             return hex(md5.digest());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		return Strs.empty();
 	}
 	
@@ -297,9 +289,7 @@ public class Secret {
             MessageDigest digest = MessageDigest.getInstance(algorithm);
             digest.update(str.getBytes());
             return hex(digest.digest());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         return Strs.empty();
     }
 	
@@ -379,9 +369,7 @@ public class Secret {
 			Mac mac = Mac.getInstance(algorithm);
 			mac.init(signingKey);
 			return hex(mac.doFinal(str.getBytes()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		return Strs.empty();
 	}
 
@@ -424,7 +412,7 @@ public class Secret {
 	/**
 	 * DES加密
 	 * @param src 
-	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @param key 密匙字节数组,长度必须大于或等于8
 	 * @return 返回加密后得到字节数组
 	 */
 	public static byte[] des(byte[] src,byte[] key) {
@@ -436,7 +424,7 @@ public class Secret {
 	/**
 	 * DES解密
 	 * @param secrets
-	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @param key 密匙字节数组,长度必须大于或等于8
 	 * @return 返回解密后的字节数组
 	 */
 	public static byte[] unDes(byte[] secrets,byte[] key) {
@@ -463,7 +451,7 @@ public class Secret {
 	/**
 	 * TripleDES加密
 	 * @param src 
-	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @param key 密匙字节数组,长度必须大于或等于8
 	 * @return 返回加密后得到字节数组
 	 */
 	public static byte[] tripleDes(byte[] src,byte[] key) {
@@ -475,7 +463,7 @@ public class Secret {
 	/**
 	 * TripleDES解密
 	 * @param secrets
-	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @param key 密匙字节数组,长度必须大于或等于8
 	 * @return 返回解密后的字节数组
 	 */
 	public static byte[] unTripleDes(byte[] secrets,byte[] key) {
@@ -500,7 +488,7 @@ public class Secret {
 	/**
 	 * AES加密
 	 * @param src 
-	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @param key 密匙字节数组,长度必须大于或等于8
 	 * @return 返回加密后得到字节数组
 	 */
 	public static byte[] aes(byte[] src,byte[] key) {
@@ -512,7 +500,7 @@ public class Secret {
 	/**
 	 * AES解密
 	 * @param secrets
-	 * @param key 密匙自己数组,长度必须大于或等于8
+	 * @param key 密匙字节数组,长度必须大于或等于8
 	 * @return 返回解密后的字节数组
 	 */
 	public static byte[] unAes(byte[] secrets,byte[] key) {
@@ -536,9 +524,7 @@ public class Secret {
 			Cipher cipher = Cipher.getInstance(algorithm);
 			cipher.init(mode, signingKey);
 			return cipher.doFinal(secrets);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		return Typer.bytes();
 	}
 	

@@ -2,11 +2,10 @@ package com.zoo.se;
 
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.geom.Rectangle2D;
 import java.util.Random;
-
-import sun.font.FontDesignMetrics;
 
 public final class Fonts {
 	
@@ -48,16 +47,17 @@ public final class Fonts {
 	public static final Font YaHeiLight=new Font("微软雅黑Light", Font.PLAIN, 20);
 	
 	/**
-	 * 获取字符串str在字体为font下所占用的宽高像素值.
+	 * 获取字符串str在图形环境为g2d下使用字体为font所占用的宽高像素值.
 	 * @param str 不能为空
 	 * @param font 不能为空
+	 * @param g2d 不能为空
 	 * @return 宽高像素值,若str或font中有一个为null,那么返回的宽高值均为0
 	 */
-	public static Dimension size(String str,Font font) {
+	public static Dimension size(String str,Font font, Graphics2D g2d) {
 		Dimension dimension=new Dimension();
-		if (str!=null && font!=null) {
-			FontMetrics fm=FontDesignMetrics.getMetrics(font);
-			dimension.setSize(fm.stringWidth(str), fm.getDescent()-fm.getAscent());
+		if (str!=null && font!=null && g2d!=null) {
+			Rectangle2D r2d=font.getStringBounds(str, g2d.getFontRenderContext());
+			dimension.setSize(r2d.getWidth(), r2d.getHeight());
 		}
 		return dimension;
 	}

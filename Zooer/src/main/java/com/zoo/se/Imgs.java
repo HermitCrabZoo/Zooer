@@ -535,7 +535,7 @@ public final class Imgs {
 	 */
 	public Imgs pile(String surface,Color color,Font font){
 		if (Strs.notEmpty(surface)) {
-			Dimension dimen=Fonts.size(surface, Optional.ofNullable(font).orElse(image.getGraphics().getFont()));
+			Dimension dimen=Fonts.size(surface, Optional.ofNullable(font).orElse(image.getGraphics().getFont()), (Graphics2D)image.getGraphics());
 			pile(surface, (image.getWidth()-dimen.width)/2,(image.getHeight()-dimen.height)/2,color, font);
 		}
 		return this;

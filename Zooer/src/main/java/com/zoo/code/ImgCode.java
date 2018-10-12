@@ -3,6 +3,7 @@ package com.zoo.code;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -153,7 +154,7 @@ public final class ImgCode {
 		BufferedImage image=imgs.get();
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
-			Dimension dimen=Fonts.size(surface, font);
+			Dimension dimen=Fonts.size(surface, font, (Graphics2D)image.getGraphics());
 			int[] units=xInWidth(dimen.width, surface.length(), image.getWidth());
 			int x=0,y=(image.getHeight()-dimen.height)/2;
 			for(int i=0;i<units.length;i++){
@@ -213,7 +214,7 @@ public final class ImgCode {
 		BufferedImage image=imgs.get();
 		if (surface!=null && surface.length()>0) {
 			font=Optional.ofNullable(font).orElse(image.getGraphics().getFont());
-			Dimension dimen=Fonts.size(surface, font);
+			Dimension dimen=Fonts.size(surface, font, (Graphics2D)image.getGraphics());
 			int[] units=xInWidth(dimen.width, surface.length(), image.getWidth());
 			int x=0,y=(image.getHeight()-dimen.height)/2;
 			for(int i=0;i<units.length;i++){

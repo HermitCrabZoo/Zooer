@@ -32,12 +32,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.zoo.base.Reflecter;
 import com.zoo.base.Strs;
 import com.zoo.base.Typer;
 import com.zoo.cons.Funcs;
-
-import jdk.internal.ref.Cleaner;
-import sun.nio.ch.DirectBuffer;
 
 public final class Filer {
 
@@ -665,12 +663,7 @@ public final class Filer {
 	 * @param var0
 	 */
 	public static void unmap(MappedByteBuffer var0) {
-		if (var0 instanceof DirectBuffer) {
-			Cleaner var1 = ((DirectBuffer)var0).cleaner();
-			if (var1 != null) {
-				var1.clean();
-			}
-		}
+		Reflecter.getUnsafe().invokeCleaner(var0);
     }
 	
 	

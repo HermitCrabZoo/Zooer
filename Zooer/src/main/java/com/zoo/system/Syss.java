@@ -9,13 +9,19 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
 import com.zoo.base.Strs;
+import com.zoo.mix.Charsetor;
 
 /**
  * 系统工具类
@@ -200,33 +206,33 @@ public final class Syss {
 	 * @return
 	 */
 	public static String osName(){
-		return osNamer.NAME;
+		return OsNamer.NAME;
 	}
 	
 	
-	private static class osNamer{
+	private static class OsNamer{
     	private static final String NAME = System.getProperty("os.name",Strs.empty());
     	private static final String NAME_LOWER = NAME.toLowerCase();
     }
 	
 	
 	private static class Windows{
-		private static final boolean is=osNamer.NAME_LOWER.contains("windows");
+		private static final boolean is=OsNamer.NAME_LOWER.contains("windows");
 	}
 	
 	
 	private static class Mac{
-		private static final boolean is=osNamer.NAME_LOWER.contains("mac");
+		private static final boolean is=OsNamer.NAME_LOWER.contains("mac");
 	}
 	
 	
 	private static class Unix{
-		private static final boolean is=osNamer.NAME_LOWER.contains("nix") || osNamer.NAME_LOWER.contains("nux") ||osNamer.NAME_LOWER.contains("aix");
+		private static final boolean is=OsNamer.NAME_LOWER.contains("nix") || OsNamer.NAME_LOWER.contains("nux") ||OsNamer.NAME_LOWER.contains("aix");
 	}
 	
 	
 	private static class Solaris{
-		private static final boolean is=osNamer.NAME_LOWER.contains("sunos");
+		private static final boolean is=OsNamer.NAME_LOWER.contains("sunos") || OsNamer.NAME_LOWER.contains("solaris");
 	}
 	
 	
@@ -337,14 +343,98 @@ public final class Syss {
 	 * @return
 	 */
 	public static boolean browseFileDirectory(File file) {
+
+		if (Objects.isNull(file)) {
+			return false;
+		}
+		
 		Desktop desktop = Desktoper.desktop;
-		if (desktop.isSupported(Desktop.Action.BROWSE_FILE_DIR)) {
-			try {
-				desktop.browseFileDirectory(file);
-			} catch (Exception e) {}
+		try {
+			if (isWindows()) {
+				if (desktop.isSupported(Desktop.Action.BROWSE_FILE_DIR)) {
+					desktop.browseFileDirectory(file);
+				} else {
+					cmdImmediate("explorer.exe", "/select,", file.getAbsolutePath());
+				}
+			} else if (isMac()) {
+				cmdImmediate("open", "-R", file.getAbsolutePath());
+			} else if (isUnix()) {
+				if (cmdSneak("kde-open", file.getParentFile().getAbsolutePath())) {}
+				else if (cmdSneak("gnome-open", file.getParentFile().getAbsolutePath())) {}
+				else {
+					cmdSneak("xdg-open", file.getParentFile().getAbsolutePath());
+				}
+			}
+			return true;
+		} catch (Exception e) {
 		}
 		return false;
 	}
 	
 	
+	/**
+	 * 执行cmd命令，不阻塞当前线程，不报错则返回true。
+	 * @param cmdarray
+	 * @return
+	 */
+	public static boolean cmdSneak(String... cmdarray){
+		try {
+			Runtime.getRuntime().exec(cmdarray);
+			return true;
+		} catch (IOException e) {}
+		return false;
+	}
+	
+	
+	/**
+	 * 执行cmd命令，不阻塞当前线程，直接返回。
+	 * @param cmdarray
+	 * @throws IOException
+	 */
+	public static void cmdImmediate(String... cmdarray) throws IOException{
+		Runtime.getRuntime().exec(cmdarray);
+	}
+	
+	
+	/**
+	 * 执行cmd命令，阻塞当前线程。
+	 * @param cmdarray
+	 * @throws IOException
+	 */
+	public static void cmdBlocking(String... cmdarray) throws IOException {
+		Process process = Runtime.getRuntime().exec(cmdarray);
+		try (InputStream inputStream = process.getInputStream()) {
+			byte[] bytes = new byte[8192];
+			while ((inputStream.read(bytes)) != -1) {
+			}
+		} finally {
+			process.destroy();
+		}
+	}
+	
+	
+	/**
+	 * 执cmd命令，返回标准输出的额文本内容。
+	 * @param cmdarray
+	 * @return
+	 * @throws IOException
+	 */
+	public static String cmd(String... cmdarray) throws IOException {
+		Process process = Runtime.getRuntime().exec(cmdarray);
+		StringBuilder sb = new StringBuilder();
+		Charset charset = isWindows() ? Charsetor.GBK : Charset.defaultCharset();
+		try (
+				InputStream inputStream = process.getInputStream();
+				InputStreamReader isr = new InputStreamReader(inputStream, charset);
+				BufferedReader reader = new BufferedReader(isr)) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + System.lineSeparator());
+			}
+		} finally {
+			process.destroy();
+		}
+		return sb.toString();
+	}
+
 }

@@ -15,7 +15,7 @@ import java.util.Optional;
 import com.zoo.base.Strs;
 
 /**
- * use for Java9
+ * support for JAVA11
  * @author ZOO
  *
  */
@@ -23,7 +23,7 @@ public final class Http2 {
 	
 	private Http2(){}
 	
-	private static final String[] headers= {"accept", "*/*", "connection", "Keep-Alive", "user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)"};
+	private static final String[] headers= {"accept", "*/*", "user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36"};
 	
 	/**
 	 * 发送get请求

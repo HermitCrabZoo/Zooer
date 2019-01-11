@@ -17,16 +17,14 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -35,11 +33,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import org.bytedeco.javacpp.opencv_imgcodecs;
 import org.bytedeco.javacpp.avcodec;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.GpuMat;
 import org.bytedeco.javacpp.opencv_highgui;
+import org.bytedeco.javacpp.opencv_imgcodecs;
 import org.bytedeco.javacpp.opencv_videoio;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
@@ -52,12 +50,6 @@ import org.opencv.videoio.Videoio;
 
 import com.zoo.base.Arrs;
 import com.zoo.base.Chars;
-import com.zoo.mix.Beaner;
-import com.zoo.mix.CvBridge;
-import com.zoo.mix.Cver;
-import com.zoo.mix.Dater;
-import com.zoo.mix.Facer;
-import com.zoo.base.Reflecter;
 import com.zoo.base.Strs;
 import com.zoo.bean.Bun;
 import com.zoo.code.QRCode;
@@ -71,6 +63,7 @@ import com.zoo.mix.Cver;
 import com.zoo.mix.Dater;
 import com.zoo.mix.Facer;
 import com.zoo.mix.Filer;
+import com.zoo.mix.Http2;
 import com.zoo.mix.OCR;
 import com.zoo.mix.Pather;
 import com.zoo.se.Chroma;
@@ -92,35 +85,31 @@ public class TestFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-//		String result=Http2.get("https://www.baidu.com");
-//		System.out.println(result);
-		double v1=Facer.compare("E:\\images\\faces\\2face_2.jpeg", "E:\\images\\faces\\1face_1.jpeg");
-		double v2=Facer.compareHist("E:\\images\\faces\\2face_2.jpeg", "E:\\images\\faces\\1face_1.jpeg");
-		
-		
-		System.out.println(v1);
-		System.out.println(v2);
+		String result=Http2.get("https://www.baidu.com");
+		System.out.println(result);
 		
 		String abc="word分词是一个Java实现的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。 能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。 同时提供了Lucene、Solr、ElasticSearch插件。";
 		long a=clock.millis();
 		
+		long size=0L;
 		try {
-			
-			testFaceRecognition();
-			testFaceRecognitionUseGpuWithJavacv();
-			testCver();
-			testOCR();
-			testBeanCopy();
-			testAvg(1);
-			testImg();
-			testEncode();
-			testCvBridge();
-			cleanRepeatedMusic();
-			testFace();
-			testArrs();
-			testZipCompress();
-			testSplitWord();
-			testNewAPI();
+//			testFaceRecognition();
+//			testFaceRecognitionUseGpuWithJavacv();
+//			testCver();
+//			testOCR();
+//			testBeanCopy();
+//			testAvg(1);
+//			testImg();
+//			testEncode();
+//			testCvBridge();
+//			cleanRepeatedMusic();
+//			testFace();
+//			testArrs();
+//			testZipCompress();
+//			testSplitWord();
+//			testNewAPI();
+//			watchDrivers();
+//			System.out.println(Http2.get("https://www.baidu.com"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -128,9 +117,14 @@ public class TestFrame{
 		
 		long b=clock.millis();
 		System.out.println("used time："+(b-a)+" milliseconds");
-		
 	}
 	
+	
+	public static void watchDrivers() {
+		Stream.of("C:\\Windows","D:\\CNTV","E:\\media","F:\\FFOutput","G:\\火线时刻").map(Paths::get)
+		.forEach(p->System.out.println("Driver:"+p+"->total:"+Filer.total(p)+",unallocated:"+Filer.total(p)+",usable:"+Filer.usable(p)+",used:"+Filer.used(p)));
+		
+	}
 	
 	
 	public static void testCver() throws TesseractException {
@@ -321,9 +315,9 @@ public class TestFrame{
 	
 	
 	public static void testOCR() {
-//		Path path=Paths.get("E:\\images\\shotcut.png");
-		Path path=Paths.get("E:\\QQ20180706180656.png");
-		Mat mat=Cver.of(path.toString()).scale(2)/*.free((m,c) ->Imgproc.resize(m, m, new Size(m.cols()*2,m.rows()*2))).gray().threshold().write("E:\\images\\shotcut1.png")*/.get();
+		Path path=Paths.get("E:\\codonst.png");
+//		Cver.of(path.toString()).threshold(190,255,0).write("E:\\codonst.png");
+		Mat mat=Cver.of(path.toString()).get();
 		BufferedImage image=CvBridge.image(mat);
 		String result=OCR.read(image);
 		System.out.println(result);

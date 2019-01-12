@@ -106,7 +106,7 @@ public class Cver {
 	 * @return
 	 */
 	public static Cver of(String fileName) {
-		return new Cver(Imgcodecs.imread(fileName,Imgcodecs.CV_LOAD_IMAGE_UNCHANGED));
+		return new Cver(Imgcodecs.imread(fileName,Imgcodecs.IMREAD_UNCHANGED));
 	}
 	
 	/**

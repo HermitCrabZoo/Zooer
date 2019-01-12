@@ -85,15 +85,15 @@ public class TestFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		String result=Http2.get("https://www.baidu.com");
-		System.out.println(result);
+//		String result=Http2.get("https://www.baidu.com");
+//		System.out.println(result);
 		
 		String abc="word分词是一个Java实现的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。 能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。 同时提供了Lucene、Solr、ElasticSearch插件。";
 		long a=clock.millis();
 		
 		long size=0L;
 		try {
-//			testFaceRecognition();
+			testFaceRecognition();
 //			testFaceRecognitionUseGpuWithJavacv();
 //			testCver();
 //			testOCR();
@@ -245,7 +245,7 @@ public class TestFrame{
 	}
 	
 	
-	public static void testFaceRecognition() {
+	public static void testFaceRecognition() throws InterruptedException {
 		VideoCapture vc=new VideoCapture(0);
 //		VideoCapture vc=new VideoCapture("E:\\Crysis3.mp4");
 		vc.set(Videoio.CAP_PROP_FRAME_WIDTH, 640);
@@ -262,13 +262,14 @@ public class TestFrame{
 					}
 				});
 		
-		
-		while (booleaner.get()&&vc.retrieve(m)) {
-			m=Cver.of(m).flipY()/*.whiteBalance()*//*.stylizztion()*//*.pencilGray()*//*.pencilColor()*//*.detailEnhance()*//*.edgePreserving()*//*.add(cover)*/.get();
+		while (booleaner.get()&&vc.read(m)) {
+			m = Cver.of(m).flipY()/* .whiteBalance() *//*.stylizztion()*//*.pencilGray()*//*.pencilColor()*//*.detailEnhance()*//*.edgePreserving()*//*.add(cover)*/.get();
 			m=Facer.drawFace(m);
 			gui.imshow(CvBridge.image(m));
 		}
-		vc.release();
+		if(vc.isOpened()) {
+			vc.release();
+		}
 	}
 	
 	
@@ -416,7 +417,7 @@ public class TestFrame{
 
 //		BufferedImage image=ImageIO.read(Paths.get("E:\\images\\videoRotate.png").toFile());
 //		System.out.println(image.getType());
-		Mat mat1=Imgcodecs.imread("E:\\images\\videoRotate.png",Imgcodecs.CV_LOAD_IMAGE_UNCHANGED);
+		Mat mat1=Imgcodecs.imread("E:\\images\\videoRotate.png",Imgcodecs.IMREAD_UNCHANGED);
 //		System.out.println(mat.depth());
 //		System.out.println(mat.type());
 		long s=clock.millis();

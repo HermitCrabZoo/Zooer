@@ -441,8 +441,8 @@ public final class Facer {
      * @return
      */
     public static double compareHist(String finename1,String finename2) {
-    	Mat mat1=Imgcodecs.imread(finename1, Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-    	Mat mat2=Imgcodecs.imread(finename2, Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+    	Mat mat1=Imgcodecs.imread(finename1, Imgcodecs.IMREAD_UNCHANGED);
+    	Mat mat2=Imgcodecs.imread(finename2, Imgcodecs.IMREAD_GRAYSCALE);
     	if (mat1.empty() || mat2.empty()) {
 			return 0.0;
 		}

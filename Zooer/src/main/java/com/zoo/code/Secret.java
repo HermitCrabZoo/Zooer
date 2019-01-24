@@ -5,12 +5,18 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
+
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.zoo.base.Strs;
@@ -397,13 +403,16 @@ public class Secret {
 	
 	/**
 	 * DES加密
-	 * @param src
-	 * @param key
+	 * @param src 待加密的字符串
+	 * @param keyLengthEqual8 密匙长度必须等于8
 	 * @return
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] des(String src,String key) {
-		if (Typer.notNull(src,key)) {
-			return des(src.getBytes(), key.getBytes());
+	public static byte[] des(String src,String keyLengthEqual8) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		if (Typer.notNull(src,keyLengthEqual8)) {
+			return des(src.getBytes(), keyLengthEqual8.getBytes());
 		}
 		return Typer.bytes();
 	}
@@ -411,24 +420,30 @@ public class Secret {
 	
 	/**
 	 * DES加密
-	 * @param src 
-	 * @param key 密匙字节数组,长度必须大于或等于8
+	 * @param src 待加密的字节数组
+	 * @param keyLengthEqual8 密匙字节数组,长度必须等于8
 	 * @return 返回加密后得到字节数组
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] des(byte[] src,byte[] key) {
-		return secretCode(src, key, "DES", Cipher.ENCRYPT_MODE);
+	public static byte[] des(byte[] src,byte[] keyLengthEqual8) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		return secretCode(src, keyLengthEqual8, "DES", Cipher.ENCRYPT_MODE);
 	}
 	
 	
 	
 	/**
 	 * DES解密
-	 * @param secrets
-	 * @param key 密匙字节数组,长度必须大于或等于8
+	 * @param secrets 待加密的字节数组
+	 * @param keyLengthEqual8 密匙字节数组,长度必须等于8
 	 * @return 返回解密后的字节数组
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] unDes(byte[] secrets,byte[] key) {
-		return secretCode(secrets, key, "DES", Cipher.DECRYPT_MODE);
+	public static byte[] unDes(byte[] secrets,byte[] keyLengthEqual8) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		return secretCode(secrets, keyLengthEqual8, "DES", Cipher.DECRYPT_MODE);
 	}
 	
 	
@@ -436,13 +451,16 @@ public class Secret {
 	
 	/**
 	 * TripleDES加密
-	 * @param src
-	 * @param key
+	 * @param src 待加密的字符串
+	 * @param keyLengthEqual24 密匙长度必须等于24
 	 * @return
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] tripleDes(String src,String key) {
-		if (Typer.notNull(src,key)) {
-			return tripleDes(src.getBytes(), key.getBytes());
+	public static byte[] tripleDes(String src,String keyLengthEqual24) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		if (Typer.notNull(src,keyLengthEqual24)) {
+			return tripleDes(src.getBytes(), keyLengthEqual24.getBytes());
 		}
 		return Typer.bytes();
 	}
@@ -450,36 +468,45 @@ public class Secret {
 	
 	/**
 	 * TripleDES加密
-	 * @param src 
-	 * @param key 密匙字节数组,长度必须大于或等于8
+	 * @param src 待加密的字节数组
+	 * @param keyLengthEqual24 密匙字节数组,长度必须等于24
 	 * @return 返回加密后得到字节数组
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] tripleDes(byte[] src,byte[] key) {
-		return secretCode(src, key, "DESede", Cipher.ENCRYPT_MODE);
+	public static byte[] tripleDes(byte[] src,byte[] keyLengthEqual24) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		return secretCode(src, keyLengthEqual24, "DESede", Cipher.ENCRYPT_MODE);
 	}
 	
 	
 	
 	/**
 	 * TripleDES解密
-	 * @param secrets
-	 * @param key 密匙字节数组,长度必须大于或等于8
+	 * @param secrets 待加密的字节数组
+	 * @param keyLengthEqual24 密匙字节数组,长度必须等于24
 	 * @return 返回解密后的字节数组
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] unTripleDes(byte[] secrets,byte[] key) {
-		return secretCode(secrets, key, "DESede",Cipher.DECRYPT_MODE);
+	public static byte[] unTripleDes(byte[] secrets,byte[] keyLengthEqual24) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		return secretCode(secrets, keyLengthEqual24, "DESede",Cipher.DECRYPT_MODE);
 	}
 	
 	
 	/**
 	 * AES加密
-	 * @param src
-	 * @param key
+	 * @param src 待加密的字符串
+	 * @param keyLengthIs16Or24Or32 密匙长度必须在[16,24,32]中
 	 * @return
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] aes(String src,String key) {
-		if (Typer.notNull(src,key)) {
-			return aes(src.getBytes(), key.getBytes());
+	public static byte[] aes(String src,String keyLengthIs16Or24Or32) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		if (Typer.notNull(src,keyLengthIs16Or24Or32)) {
+			return aes(src.getBytes(), keyLengthIs16Or24Or32.getBytes());
 		}
 		return Typer.bytes();
 	}
@@ -487,24 +514,30 @@ public class Secret {
 	
 	/**
 	 * AES加密
-	 * @param src 
-	 * @param key 密匙字节数组,长度必须大于或等于8
+	 * @param src 待加密的字节数组
+	 * @param keyLengthIs16Or24Or32 密匙字节数组,长度必须在[16,24,32]中
 	 * @return 返回加密后得到字节数组
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] aes(byte[] src,byte[] key) {
-		return secretCode(src, key, "AES", Cipher.ENCRYPT_MODE);
+	public static byte[] aes(byte[] src,byte[] keyLengthIs16Or24Or32) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		return secretCode(src, keyLengthIs16Or24Or32, "AES", Cipher.ENCRYPT_MODE);
 	}
 	
 	
 	
 	/**
 	 * AES解密
-	 * @param secrets
-	 * @param key 密匙字节数组,长度必须大于或等于8
+	 * @param secrets 待加密的字节数组
+	 * @param keyLengthIs16Or24Or32 密匙字节数组,长度必须在[16,24,32]中
 	 * @return 返回解密后的字节数组
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 */
-	public static byte[] unAes(byte[] secrets,byte[] key) {
-		return secretCode(secrets, key, "AES", Cipher.DECRYPT_MODE);
+	public static byte[] unAes(byte[] secrets,byte[] keyLengthIs16Or24Or32) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		return secretCode(secrets, keyLengthIs16Or24Or32, "AES", Cipher.DECRYPT_MODE);
 	}
 	
 	
@@ -516,15 +549,18 @@ public class Secret {
 	 * @param algorithm
 	 * @param mode
 	 * @return
+	 * @throws InvalidKeyException 
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
 	 */
-	private static byte[] secretCode(byte[] secrets,byte[] key,String algorithm,int mode) {
+	private static byte[] secretCode(byte[] secrets,byte[] key,String algorithm,int mode) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		try {
 			//生成密匙
 			SecretKeySpec signingKey = new SecretKeySpec(key, algorithm);
 			Cipher cipher = Cipher.getInstance(algorithm);
 			cipher.init(mode, signingKey);
 			return cipher.doFinal(secrets);
-		} catch (Exception e) {}
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {}
 		return Typer.bytes();
 	}
 	

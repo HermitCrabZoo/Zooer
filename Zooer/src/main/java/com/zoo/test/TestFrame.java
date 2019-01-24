@@ -9,10 +9,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.InvalidKeyException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -26,6 +28,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -83,17 +87,21 @@ public class TestFrame{
 	 
 	/**
 	 * Launch the application.
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
+	 * @throws UnsupportedEncodingException 
 	 */
-	public static void main(String[] args) {
-//		String result=Http2.get("https://www.baidu.com");
-//		System.out.println(result);
+	public static void main(String[] args) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
+		String result=Http2.get("https://www.baidu.com");
+		System.out.println(result);
 		
 		String abc="word分词是一个Java实现的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。 能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。 同时提供了Lucene、Solr、ElasticSearch插件。";
 		long a=clock.millis();
 		
 		long size=0L;
 		try {
-			testFaceRecognition();
+//			testFaceRecognition();
 //			testFaceRecognitionUseGpuWithJavacv();
 //			testCver();
 //			testOCR();

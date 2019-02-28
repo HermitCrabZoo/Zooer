@@ -293,10 +293,8 @@ public final class Dater {
 	 * @return
 	 */
 	private static synchronized DateTimeFormatter formatter(String pattern) {
-		DateTimeFormatter dateTimeFormatter=null;
-		if (DFS.containsKey(pattern)) {
-			dateTimeFormatter=DFS.get(pattern);
-		}else {
+		DateTimeFormatter dateTimeFormatter=DFS.get(pattern);
+		if (dateTimeFormatter == null) {
 			dateTimeFormatter=DateTimeFormatter.ofPattern(pattern);
 			DFS.put(pattern, dateTimeFormatter);
 		}

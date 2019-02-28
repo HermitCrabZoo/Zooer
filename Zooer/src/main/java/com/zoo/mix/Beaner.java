@@ -27,10 +27,6 @@ public final class Beaner {
 	 */
 	private static final Map<String, BeanCopier> COPIER_MAP=new HashMap<String, BeanCopier>();
 	
-	/**
-	 * 缓存key
-	 */
-	private static final List<String> KEYS=new ArrayList<String>();
 	
 	/**
 	 * 将多个JavaBean转换到多个Map输出
@@ -192,12 +188,12 @@ public final class Beaner {
 	 */
 	private static synchronized BeanCopier copier(Class<?> f,Class<?> t) {
 		String key=f.getName()+"->"+t.getName();
-		if (KEYS.contains(key)) {
-			return COPIER_MAP.get(key);
+		BeanCopier copier = COPIER_MAP.get(key);
+		if (copier != null) {
+			return copier;
 		}
-		BeanCopier copier=BeanCopier.create(f, t, false);
+		copier=BeanCopier.create(f, t, false);
 		COPIER_MAP.put(key, copier);
-		KEYS.add(key);
 		return copier;
 	}
 	

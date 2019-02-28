@@ -26,12 +26,10 @@ public class Procedure {
 	public <T>Procedure add(String propertyName,Processor<T> proc){
 		lock.writeLock().lock();
 		try {
-			List<Processor> ps=null;
-			if(procs.get(propertyName)==null){
+			List<Processor> ps=procs.get(propertyName);
+			if(ps==null){
 				ps=new ArrayList<Processor>();
 				procs.put(propertyName, ps);
-			}else{
-				ps=procs.get(propertyName);
 			}
 			ps.add(proc);
 			return this;
@@ -88,15 +86,15 @@ public class Procedure {
 	
 	
 	/**
-	 * 将一另一个Procedure的处理器队列合并到当前处理队列中
+	 * 将另一个Procedure的处理器队列合并到当前处理队列中
 	 * @param procedure
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Procedure concat(Procedure procedure){
-		lock.readLock().lock();
-		try {
-			if(procedure!=null && !procedure.procs.isEmpty()){
+		if(procedure != null && procedure != this && !procedure.procs.isEmpty()){
+			lock.writeLock().lock();
+			try {
 				for(String key:procedure.procs.keySet()){
 					List<Processor> ps=procedure.procs.get(key);
 					if(ps!=null){
@@ -105,11 +103,11 @@ public class Procedure {
 						}
 					}
 				}
+			} finally {
+				lock.writeLock().unlock();
 			}
-			return this;
-		} finally {
-			lock.readLock().unlock();
 		}
+		return this;
 	}
 	
 	
@@ -123,17 +121,22 @@ public class Procedure {
 	public <T>T doProcess(String propertyName,T propertyValue){
 		lock.readLock().lock();
 		try {
-			if(procs.get(propertyName)!=null){
+			List<Processor> pros = procs.get(propertyName);
+			if(pros!=null){
 				T t=propertyValue;
-				for(Processor<T> pro:procs.get(propertyName)){
+				for(Processor<T> pro:pros){
 					t=pro.process(t);
 				}
 				return t;
-			}else{
-				return propertyValue;
 			}
+			return propertyValue;
 		} finally {
 			lock.readLock().unlock();
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return procs.toString();
 	}
 }

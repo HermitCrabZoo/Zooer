@@ -3,7 +3,6 @@ package com.zoo.mix;
 import com.zoo.base.Arrs;
 import com.zoo.base.Strs;
 import com.zoo.system.Platform;
-import com.zoo.system.Syss;
 
 public final class Pather {
 	private Pather(){}
@@ -130,7 +129,7 @@ public final class Pather {
 	 */
 	public static String toPath(String path){
 		path=Strs.nullToEmpty(path);
-		return Syss.isWindows() ? path.replace(Platform.SLASH, Platform.BACKSLASH).trim()
+		return Platform.isWindows() ? path.replace(Platform.SLASH, Platform.BACKSLASH).trim()
 				:path.replace(Platform.BACKSLASH, Platform.SLASH).trim();
 	}
 }

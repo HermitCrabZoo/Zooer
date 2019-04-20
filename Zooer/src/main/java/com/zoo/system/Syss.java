@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.zoo.base.Strs;
 import com.zoo.mix.Charsetor;
 
 /**
@@ -148,101 +147,6 @@ public final class Syss {
 	}
 	
 	
-	/**
-	 * 判断当前系统是否是windows平台
-	 * @return
-	 */
-	public static boolean isWindows() {
-		return Windows.is;
-	}
-	
-	
-	/**
-	 * 判断当前系统是否是mac平台
-	 * @return
-	 */
-	public static boolean isMac() {
-		return Mac.is;
-	}
-	
-	
-	/**
-	 * 判断当前系统是否是unix平台
-	 * @return
-	 */
-	public static boolean isUnix() {
-		return Unix.is;
-	}
-	
-	
-	
-	/**
-	 * 判断当前系统是否是solaris平台
-	 * @return
-	 */
-	public static boolean isSolaris() {
-		return Solaris.is;
-	}
-	
-	
-	/**
-	 * 判断当前系统平台是否是64位
-	 * @return
-	 */
-	public static boolean is64() {
-		return Archer.IS64;
-	}
-	
-	/**
-	 * 判断当前系统平台是否是32位
-	 * @return
-	 */
-	public static boolean is32() {
-		return Archer.IS32;
-	}
-	
-	/**
-	 * 获取当前系统的os name.
-	 * @return
-	 */
-	public static String osName(){
-		return OsNamer.NAME;
-	}
-	
-	
-	private static class OsNamer{
-    	private static final String NAME = System.getProperty("os.name",Strs.empty());
-    	private static final String NAME_LOWER = NAME.toLowerCase();
-    }
-	
-	
-	private static class Windows{
-		private static final boolean is=OsNamer.NAME_LOWER.contains("windows");
-	}
-	
-	
-	private static class Mac{
-		private static final boolean is=OsNamer.NAME_LOWER.contains("mac");
-	}
-	
-	
-	private static class Unix{
-		private static final boolean is=OsNamer.NAME_LOWER.contains("nix") || OsNamer.NAME_LOWER.contains("nux") ||OsNamer.NAME_LOWER.contains("aix");
-	}
-	
-	
-	private static class Solaris{
-		private static final boolean is=OsNamer.NAME_LOWER.contains("sunos") || OsNamer.NAME_LOWER.contains("solaris");
-	}
-	
-	
-	private static class Archer{
-    	private static final String ARCH = System.getProperty("sun.arch.data.model",Strs.empty());
-    	private static final boolean IS64=ARCH.equals("64");
-    	private static final boolean IS32=ARCH.equals("32");
-    }
-	
-	
 	private static class Desktoper{
 		private static final Desktop desktop=getDesktop();
 		private static Desktop getDesktop() {
@@ -350,15 +254,15 @@ public final class Syss {
 		
 		Desktop desktop = Desktoper.desktop;
 		try {
-			if (isWindows()) {
+			if (Platform.isWindows()) {
 				if (desktop.isSupported(Desktop.Action.BROWSE_FILE_DIR)) {
 					desktop.browseFileDirectory(file);
 				} else {
 					cmdImmediate("explorer.exe", "/select,", file.getAbsolutePath());
 				}
-			} else if (isMac()) {
+			} else if (Platform.isMac()) {
 				cmdImmediate("open", "-R", file.getAbsolutePath());
-			} else if (isUnix()) {
+			} else if (Platform.isUnix()) {
 				if (cmdSneak("kde-open", file.getParentFile().getAbsolutePath())) {}
 				else if (cmdSneak("gnome-open", file.getParentFile().getAbsolutePath())) {}
 				else {
@@ -422,7 +326,7 @@ public final class Syss {
 	public static String cmd(String... cmdarray) throws IOException {
 		Process process = Runtime.getRuntime().exec(cmdarray);
 		StringBuilder sb = new StringBuilder();
-		Charset charset = isWindows() ? Charsetor.GBK : Charset.defaultCharset();
+		Charset charset = Platform.isWindows() ? Charsetor.GBK : Charset.defaultCharset();
 		try (
 				InputStream inputStream = process.getInputStream();
 				InputStreamReader isr = new InputStreamReader(inputStream, charset);

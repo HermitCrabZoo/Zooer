@@ -20,7 +20,6 @@ public final class Platform {
 	 */
 	public static final String BACKSLASH = "\\";
 	
-	private static final String PLATFORM_SLASH = isWindows() ? BACKSLASH : SLASH;
 	
 	/**
 	 * windows动态链接库的后缀
@@ -31,11 +30,6 @@ public final class Platform {
 	 * linux共享库的后缀
 	 */
 	public static final String SO = ".so";
-	
-	/**
-	 * jni文件后缀
-	 */
-	private static final String JNI_SUFFIX = isWindows() ? DLL : SO;
 	
 	
 	private static boolean IS_WINDOWS = false;
@@ -64,7 +58,7 @@ public final class Platform {
 	 * @return
 	 */
 	public static String slash(){
-		return PLATFORM_SLASH;
+		return isWindows() ? BACKSLASH : SLASH;
 	}
 	
 	/**
@@ -74,7 +68,7 @@ public final class Platform {
 	 * @return
 	 */
 	public static String jniSuffix() {
-		return JNI_SUFFIX;
+		return isWindows() ? DLL : SO;
 	}
 	
 

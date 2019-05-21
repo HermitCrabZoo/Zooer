@@ -5,121 +5,195 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+/**
+ * 命令行操作类，提供执行系统command的能力，并获取输出结果。
+ *
+ */
 public class Cmder {
 
     private static ExecutorService pool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 3L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+    
+    
+    /**
+     * 执行控制台命令，直到结束，或抛异常，并返回{@link Answer}实例，该实例包含命令执行的exit code、stdout、stderr以及异常(若有的话)。
+     * @param command 执行的命令
+     * @return 返回{@link Answer}实例，该实例包含命令执行的exit code、stdout、stderr以及异常(若有的话)。
+     */
+    public static Answer execute(String command) {
+    	return execute(command, Future::get, null);
+    }
+    
+    
+    /**
+     * 执行命令，不指定超时，知道命令执行完成。
+     * @param command 执行的命令
+     * @param charset 指定执行的命令的标准输出流所用的字符集
+     * @return 返回{@link Answer}实例，该实例包含命令执行的exit code、stdout、stderr以及异常(若有的话)。
+     */
+    public static Answer execute(String command, Charset charset) {
+    	return execute(command, Future::get, charset);
+    }
+    
+    
+    /**
+     * 执行控制台命令，直到结束。
+     * @param command 执行的命令
+     * @param timeout 指定超时的时长，若命令执行超时，则会返回的{@link Answer}实例会包含TimeoutException实例。
+     * @param unit timeout参数的单位
+     * @return 返回{@link Answer}实例，该实例包含命令执行的exit code、stdout、stderr以及异常(若有的话)。
+     */
+    public static Answer execute(String command, long timeout, TimeUnit unit) {
+    	return execute(command, t->t.get(timeout, unit), null);
+    }
+    
+    
+    /**
+     * 执行控制台命令，直到结束，或抛异常，并返回{@link Answer}实例，该实例包含命令执行的exit code、stdout、stderr以及异常(若有的话)。
+     * 指定超时，若命令执行超时，则会返回的{@link Answer}实例会包含TimeoutException实例。
+     * @param command 执行的命令
+     * @param timeout 超时时长
+     * @param unit timeout参数的单位
+     * @param charset 指定执行的命令的标准输出流所用的字符集
+     * @return
+     */
+    public static Answer execute(String command, long timeout, TimeUnit unit, Charset charset) {
+    	return execute(command, t->t.get(timeout, unit), charset);
+    }
+    
+    
+    private static Answer execute(String command, Function<Future<Integer>, Integer> getter, Charset charset) {
+    	charset = charset == null ? Charset.defaultCharset() : charset;
+        try(CloseableProcess cp = CloseableProcess.of(command);
+        		InputStream stdout = cp.getProcess().getInputStream();
+        		InputStream stderr = cp.getProcess().getErrorStream();
+        		OutputStream stdin = cp.getProcess().getOutputStream();
+        		StreamGobbler stdoutGobbler = new StreamGobbler(stdout, charset);
+        		StreamGobbler stderrGobbler = new StreamGobbler(stderr, charset);
+        		CloseableFuture<Integer> cf = new CloseableFuture<>(null)) {
+        	
+            final Process p = cp.getProcess();
 
-    public Answer execute(String command, long timeout) {
-        Process process = null;
-        InputStream pIn = null;
-        InputStream pErr = null;
-        StreamGobbler outputGobbler = null;
-        StreamGobbler errorGobbler = null;
-        Future<Integer> executeFuture = null;
-        try {
-            process = Runtime.getRuntime().exec(command);
-            final Process p = process;
-
-            // close process's output stream.
-            p.getOutputStream().close();
-
-            pIn = process.getInputStream();
-            outputGobbler = new StreamGobbler(pIn);
-            outputGobbler.start();
-
-            pErr = process.getErrorStream();
-            errorGobbler = new StreamGobbler(pErr);
-            errorGobbler.start();
+            stdoutGobbler.start();
+            stderrGobbler.start();
 
             // create a Callable for the command's Process which can be called by an Executor
-            Callable<Integer> call = new Callable<Integer>() {
-                public Integer call() throws Exception {
-                    p.waitFor();
-                    return p.exitValue();
-                }
-            };
+//            Callable<Integer> call = new Callable<Integer>() {
+//                public Integer call() throws Exception {
+//                    p.waitFor();
+//                    return p.exitValue();
+//                }
+//            };
 
             // submit the command's call and get the result from a
-            executeFuture = pool.submit(call);
-            int exitCode = executeFuture.get(timeout, TimeUnit.MILLISECONDS);
-            return new Answer(exitCode, outputGobbler.getContent(), null);
-        } catch (IOException ex) {
-            String errorMessage = "The command [" + command + "] execute failed.";
-//            logger.error(errorMessage, ex);
-            return new Answer(-1, null, ex);
-        } catch (TimeoutException ex) {
-            String errorMessage = "The command [" + command + "] timed out.";
-//            logger.error(errorMessage, ex);
-            return new Answer(-1, null, ex);
-        } catch (ExecutionException ex) {
-            String errorMessage = "The command [" + command + "] did not complete due to an execution error.";
-//            logger.error(errorMessage, ex);
-            return new Answer(-1, null, ex);
-        } catch (InterruptedException ex) {
-            String errorMessage = "The command [" + command + "] did not complete due to an interrupted error.";
-//            logger.error(errorMessage, ex);
-            return new Answer(-1, null, ex);
-        } finally {
-            if (executeFuture != null) {
-                try {
-                    executeFuture.cancel(true);
-                } catch (Exception ignore) {
-                    ignore.printStackTrace();
-                }
-            }
-            if (pIn != null) {
-                this.closeQuietly(pIn);
-                if (outputGobbler != null && !outputGobbler.isInterrupted()) {
-                    outputGobbler.interrupt();
-                }
-            }
-            if (pErr != null) {
-                this.closeQuietly(pErr);
-                if (errorGobbler != null && !errorGobbler.isInterrupted()) {
-                    errorGobbler.interrupt();
-                }
-            }
-            if (process != null) {
-                process.destroy();
-            }
+            cf.setFuture(pool.submit(()->p.waitFor()));
+            int exitCode = getter.apply(cf.getFuture());
+            return new Answer(exitCode, stdoutGobbler.getContent(), stderrGobbler.getContent(), null);
+        } catch (Exception e) {
+            return new Answer(-1, null, null, e);
         }
     }
+    
+    
+    @FunctionalInterface
+    private static interface Function<T, R>{
+    	/**
+         * Applies this function to the given argument.
+         *
+         * @param t the function argument
+         * @return the function result
+         */
+        R apply(T t) throws Exception;
+    }
+    
+    
+    /**
+     * 可关闭的Process，实现了Closeable接口，为了兼容Try With Resources.
+     *
+     */
+    static class CloseableProcess implements Closeable{
+    	
+    	public static CloseableProcess of(String command) throws IOException {
+    		return new CloseableProcess(command);
+    	}
+    	
+    	private Process process = null;
+    	
+    	public CloseableProcess(String command) throws IOException {
+    		this.process = Runtime.getRuntime().exec(command);
+    	}
+    	
+		public Process getProcess() {
+			return process;
+		}
 
-    private void closeQuietly(Closeable c) {
-        try {
-            if (c != null) {
-                c.close();
-            }
-        } catch (IOException e) {
-//            logger.error("exception", e);
-        }
+
+		public void setProcess(Process process) {
+			this.process = process;
+		}
+
+		@Override
+		public void close() throws IOException {
+			if (process!=null)
+				process.destroy();
+		}
+    	
     }
     
     
+    /**
+     * 可关闭的Future，实现了Closeable接口，为了兼容Try With Resources.
+     *
+     */
+    static class CloseableFuture<T> implements Closeable{
+    	
+    	private Future<T> future = null;
+    	
+    	public CloseableFuture(Future<T> future){
+    		this.future = future;
+    	}
+
+		public Future<T> getFuture() {
+			return future;
+		}
+
+		public void setFuture(Future<T> future) {
+			this.future = future;
+		}
+
+		@Override
+		public void close() throws IOException {
+			if (future!=null)
+				future.cancel(true);
+		}
+    	
+    }
     
     
-    class StreamGobbler extends Thread {
+    public static class StreamGobbler extends Thread implements Closeable{
         private InputStream inputStream;
-        private StringBuilder buf;
+        private StringBuilder buf = new StringBuilder();
         private volatile boolean isStopped = false;
+        private Charset charset = Charset.defaultCharset();
 
         /**
          * @param inputStream the InputStream to be consumed
          * @param streamType  the stream type (should be OUTPUT or ERROR)
          */
-        public StreamGobbler(final InputStream inputStream) {
+        public StreamGobbler(InputStream inputStream) {
             this.inputStream = inputStream;
-            this.buf = new StringBuilder();
-            this.isStopped = false;
+        }
+        
+        public StreamGobbler(InputStream inputStream, Charset charset) {
+            this.inputStream = inputStream;
+            this.charset = charset;
         }
 
         /**
@@ -128,16 +202,15 @@ public class Cmder {
          */
         @Override
         public void run() {
-            try {
-                // 默认编码为UTF-8，这里设置编码为GBK，因为WIN7的编码为GBK
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "GBK");
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            try (
+            		InputStreamReader isr = new InputStreamReader(inputStream, this.charset);
+            		BufferedReader br = new BufferedReader(isr)){
                 String line = null;
-                while ((line = bufferedReader.readLine()) != null) {
-                    this.buf.append(line + "\n");
+                while ((line = br.readLine()) != null) {
+                    this.buf.append(line).append("\n");
                 }
             } catch (IOException ex) {
-//                logger.trace("Failed to successfully consume and display the input stream of type " + streamType + ".", ex);
+            	ex.printStackTrace();
             } finally {
                 this.isStopped = true;
                 synchronized (this) {
@@ -158,50 +231,69 @@ public class Cmder {
             }
             return this.buf.toString();
         }
+
+		@Override
+		public void close() throws IOException {
+			if (!isInterrupted()) {
+                interrupt();
+            }
+		}
     }
     
     
     
-    
-    static class Answer {
+    /**
+     * 命令行的执行结果。包含结果码、标准输出内容、错误输出内容、异常信息。
+     *
+     */
+    public static class Answer {
         private int code;
-        private String output;
+        private String stdout;
+        private String stderr;
         private Exception exception;
 
-        public Answer(int exitCode, String executeOut, Exception exception) {
+        public Answer(int exitCode, String stdout, String stderr, Exception exception) {
             this.code = exitCode;
-            this.output = executeOut;
+            this.stdout = stdout;
+            this.stderr = stderr;
             this.exception = exception;
         }
-
+        
+        /**
+         * 命令执行的exit code
+         * @return
+         */
 		public int getCode() {
 			return code;
 		}
 
-		public void setCode(int code) {
-			this.code = code;
+		/**
+		 * 标准输出内容
+		 * @return
+		 */
+		public String getStdout() {
+			return stdout;
 		}
 
-		public String getOutput() {
-			return output;
+		/**
+		 * 标准错误输出内容
+		 * @return
+		 */
+		public String getStderr() {
+			return stderr;
 		}
-
-		public void setOutput(String output) {
-			this.output = output;
-		}
-
+		
+		/**
+		 * 异常，可能为null
+		 * @return
+		 */
 		public Exception getException() {
 			return exception;
 		}
 
-		public void setException(Exception exception) {
-			this.exception = exception;
-		}
-        
 		public boolean hasException() {
 			return this.exception != null;
 		}
-		
 		
     }
 }

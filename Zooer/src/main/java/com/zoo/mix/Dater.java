@@ -12,11 +12,11 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.zoo.base.Strs;
+import com.zoo.base.Typer;
 
 /**
  * 日期工具类,该类是多线程安全的
@@ -26,13 +26,13 @@ import com.zoo.base.Strs;
 public final class Dater {
 	private Dater(){}
 	
+	public static final String ALL_MILLIS_FORMAT="yyyy-MM-dd HH:mm:ss.SSS";
+	
 	public static final String ALL_FORMAT="yyyy-MM-dd HH:mm:ss";
 	
 	public static final String YMD_FORMAT="yyyy-MM-dd";
 	
 	public static final String HMS_FORMAT="HH:mm:ss";
-	
-	private static final Clock CLOCK=Clock.systemUTC();
 	
 	/**
 	 * 默认开始日期
@@ -42,8 +42,16 @@ public final class Dater {
 	/**
 	 * 缓存的日期格式编码器
 	 */
-	private static final Map<String, DateTimeFormatter> DFS=new HashMap<String, DateTimeFormatter>();
+	private static final Map<String, DateTimeFormatter> DFS = new ConcurrentHashMap<>();
 	
+	/**
+	 * 由于SimpleDateFormat不是线程安全的，所以需要THREAD_LOCAL来保证线程间的隔离
+	 */
+	private static final ThreadLocal<Map<String, SimpleDateFormat>> THREAD_LOCAL = new ThreadLocal<>() {
+		protected Map<String,SimpleDateFormat> initialValue() {
+			return new ConcurrentHashMap<>();
+		}
+	};
 	
 	/**
 	 * 获取当前日期的"年月日时分秒"字符串(yyyy-MM-dd HH:mm:ss)
@@ -60,7 +68,7 @@ public final class Dater {
 	 * @return
 	 */
 	public static String formatDateTimeMilliSecond() {
-		return dateTime("yyyy-MM-dd HH:mm:ss.SSS");
+		return dateTime(ALL_MILLIS_FORMAT);
 	}
 	
 	/**
@@ -78,7 +86,7 @@ public final class Dater {
 	 * @return
 	 */
 	public static String formatTime() {
-		return dateTime("HH:mm:ss");
+		return dateTime(HMS_FORMAT);
 	}
 	
 	/**
@@ -270,9 +278,7 @@ public final class Dater {
 	 * @return
 	 */
 	public static String format(TemporalAccessor temporal, String pattern) {
-		return Optional.ofNullable(pattern)
-				.flatMap(p -> Optional.ofNullable(temporal).map(t -> formatter(p).format(t)))
-				.orElse(Strs.empty());
+		return Typer.notNull(temporal, pattern) ? formatter(pattern).format(temporal) : Strs.empty();
 	}
 	
 	/**
@@ -282,9 +288,7 @@ public final class Dater {
 	 * @return
 	 */
 	public static String format(Date date, String pattern) {
-		return Optional.ofNullable(pattern)
-				.flatMap(p -> Optional.ofNullable(date).map(t -> new SimpleDateFormat(p).format(t)))
-				.orElse(Strs.empty());
+		return Typer.notNull(date, pattern) ? format(pattern).format(date) : Strs.empty();
 	}
 	
 	/**
@@ -292,13 +296,17 @@ public final class Dater {
 	 * @param pattern
 	 * @return
 	 */
-	private static synchronized DateTimeFormatter formatter(String pattern) {
-		DateTimeFormatter dateTimeFormatter=DFS.get(pattern);
-		if (dateTimeFormatter == null) {
-			dateTimeFormatter=DateTimeFormatter.ofPattern(pattern);
-			DFS.put(pattern, dateTimeFormatter);
-		}
-		return dateTimeFormatter;
+	private static DateTimeFormatter formatter(String pattern) {
+		return DFS.computeIfAbsent(pattern, DateTimeFormatter::ofPattern);
+	}
+	
+	/**
+	 * 缓存并获取SimpleDateFormat类的对象
+	 * @param pattern
+	 * @return
+	 */
+	private static SimpleDateFormat format(String pattern) {
+		return THREAD_LOCAL.get().computeIfAbsent(pattern, SimpleDateFormat::new);
 	}
 	
 	/**
@@ -306,7 +314,8 @@ public final class Dater {
 	 * @return
 	 */
 	public static long millis() {
-		return CLOCK.millis();
+		//本质上还是System.currentTimeMillis()
+		return Clock.systemUTC().millis();
 	}
 	
 	/**

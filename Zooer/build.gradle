@@ -101,7 +101,7 @@ dependencies {
 	//api 'net.sourceforge.jargs:jargs:1.0'
 	api 'net.sourceforge.jchardet:jchardet:1.0'
 	api 'antlr:antlr:2.7.7'
-	
+	compileOnly 'org.projectlombok:lombok:1.18.8'
 	
 }
 tasks.withType(JavaCompile) {  

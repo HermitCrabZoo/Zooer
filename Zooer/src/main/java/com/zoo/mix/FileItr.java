@@ -18,6 +18,10 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
     private T next = null;
     private boolean found = false;
     private boolean skipHead = false;
+    private HeadType headType = HeadType.BEGIN;
+
+    @Getter
+    private String header;
 
     @Getter
     private long num = 0;
@@ -50,7 +54,13 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
             if (!found) {
                 String line;
                 while ((line = br.readLine()) != null) {
+                    if(header == null && headType == HeadType.FIRST){
+                        header = line;
+                    }
                     if (isBegin(line)) {
+                        if(header == null && headType == HeadType.BEGIN){
+                            header = line;
+                        }
                         found = true;
                         if(!skipHead){
                             num++;
@@ -98,6 +108,20 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 
 
     /**
+     * 设置头部识别方式。
+     * @param type see also{@link HeadType}，默认：{@link HeadType#BEGIN}。
+     * @return
+     */
+    public FileItr<T> withHead(HeadType type){
+        if(type==null){
+            throw new NullPointerException("参数'type'不能为null！");
+        }
+        this.headType = type;
+        return this;
+    }
+    
+
+    /**
      * 判断该行是否是起始行
      * @param textLine 文本的行内容
      * @return
@@ -110,4 +134,18 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
      * @return 特定类型的对象
      */
     protected abstract T cast(String textLine);
+
+    /**
+     * 文本头的人定方式
+     */
+    public enum HeadType{
+        /**
+         * 读取到的第一行作为头。
+         */
+        FIRST,
+        /**
+         * 使用{@link #isBegin(String)}方法匹配到的行作为头。
+         */
+        BEGIN;
+    }
 }

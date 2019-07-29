@@ -2,16 +2,20 @@ package com.zoo.mix;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import lombok.Getter;
 
+/**
+ * 文件行迭代器抽象类，默认第一行开始。
+ * @author Devil
+ *
+ * @param <T>
+ */
 public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable {
     private FileReader fr;
     private BufferedReader br;
@@ -19,20 +23,20 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
     private boolean found = false;
     private boolean skipHead = false;
     private HeadType headType = HeadType.BEGIN;
-
+    private String startsWith = "";
+    
+    /**
+     * 匹配到的头，参考{@link HeadType}
+     */
     @Getter
     private String header;
 
+    /**
+     * 从匹配到开始的当前行的行号。
+     */
     @Getter
     private long num = 0;
 
-    public FileItr(Path path) throws FileNotFoundException {
-        this(path.toString());
-    }
-
-    public FileItr(File textFile) throws FileNotFoundException {
-        this(textFile.getPath());
-    }
 
     public FileItr(String filePath) throws FileNotFoundException {
         fr = new FileReader(filePath);
@@ -61,6 +65,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
                         if(header == null && headType == HeadType.BEGIN){
                             header = line;
                         }
+                        onMatched(line, header);
                         found = true;
                         if(!skipHead){
                             num++;
@@ -120,13 +125,44 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
         return this;
     }
     
+    
+    public FileItr<T> withBegin(HeadType type){
+        if(type==null){
+            throw new NullPointerException("参数'type'不能为null！");
+        }
+        this.headType = type;
+        return this;
+    }
 
+    
+    /**
+     * 设置第一行匹配的开始字符串。
+     * @param start 开始字符串，默认空字符串
+     * @return
+     */
+    public FileItr<T> startsWith(String start){
+        if(start==null){
+            throw new NullPointerException("A argument 'startsWith' must be not null!");
+        }
+        this.startsWith = start.toLowerCase();
+        return this;
+    }
+    
+    /**
+     * 在使用{@link #isBegin(String)}方法匹配到行后，会调用该方法。
+     * @param matched 匹配到的行。
+     * @param header 标记为header的那一行，参考{@link HeadType}。
+     */
+    protected void onMatched(String matched, String header) {}
+    
     /**
      * 判断该行是否是起始行
      * @param textLine 文本的行内容
      * @return
      */
-    protected abstract boolean isBegin(String textLine);
+    protected boolean isBegin(String textLine) {
+    	return textLine.toLowerCase().startsWith(startsWith);
+    }
 
     /**
      * 将文本行转换为特定类型的对象输出。
@@ -134,9 +170,10 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
      * @return 特定类型的对象
      */
     protected abstract T cast(String textLine);
+    
 
     /**
-     * 文本头的人定方式
+     * 文本头的认定方式
      */
     public enum HeadType{
         /**
@@ -148,4 +185,5 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
          */
         BEGIN;
     }
+    
 }

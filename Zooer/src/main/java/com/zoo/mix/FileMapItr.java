@@ -1,10 +1,17 @@
 package com.zoo.mix;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 /**
  * 文件行转Map<String,String>迭代器，默认以\t分割。
@@ -14,17 +21,27 @@ public class FileMapItr extends FileItr<Map<String, String>> {
 
 	private String delimiter = "\t";
 	private String[] heads;
+	/**
+	 * 保存了头对应的索引，与heads一一对应。
+	 */
+	private int[] headIndexs;
 	private DuplicateStrategy strategy = DuplicateStrategy.EXCEPTION;
 	private String duplicate = null;
 
 	public FileMapItr(String filePath) throws FileNotFoundException {
 		super(filePath);
 	}
+	
+
+	public FileMapItr(InputStream inputStream) throws FileNotFoundException {
+		super(inputStream);
+	}
 
 	@Override
     protected void onMatched(String matched, String header) {
         heads = header.split(delimiter);
         if(strategy == DuplicateStrategy.EXCEPTION) {
+        	//EXCEPTION策略时判断列是否重复
         	int len = heads.length;
         	Set<String> set = new HashSet<>(len);
         	for(int i=0;i<len;i++) {
@@ -35,6 +52,25 @@ public class FileMapItr extends FileItr<Map<String, String>> {
         		}
         		set.add(h);
         	}
+        	headIndexs = IntStream.range(0, heads.length).toArray();
+        }else{
+        	//FIRST与COVER策略时，分别对重复的列取第一、最后一个的索引
+            List<String> headList = Arrays.asList(heads);
+        	List<String>  list = new ArrayList<>(new HashSet<>(headList));
+        	Comparator<? super String> c;
+        	Function<? super String, ? extends Integer> mapper;
+        	if(strategy == DuplicateStrategy.FIRST) {
+        		c = (one,two)->headList.indexOf(one)-headList.indexOf(two);
+        		mapper = headList::indexOf;
+        	}else {
+        		c = (one,two)->headList.lastIndexOf(one)-headList.lastIndexOf(two);
+        		mapper = headList::lastIndexOf;
+        	}
+        	//字段名按索引升序
+        	list.sort(c);
+        	heads = list.toArray(new String[list.size()]);
+        	//字段索引升序，最终字段名与字段索引一一对应。
+        	headIndexs = list.stream().map(mapper).mapToInt(Integer::intValue).sorted().toArray();
         }
         
     }
@@ -44,29 +80,27 @@ public class FileMapItr extends FileItr<Map<String, String>> {
 		if(duplicate !=null && strategy==DuplicateStrategy.EXCEPTION) {
 			throw new IllegalFileFormatException(String.format("It's not allows duplicate key '%s' under '%s' strategy!", duplicate, strategy));
 		}
+		//FIRST和COVER策略按内容的数量来添加
 		String[] ls = textLine.split(delimiter);
 		String[] heads = this.heads;
-		int hLen = heads.length;
-		int len = Math.min(hLen, ls.length);
+		int[] headIndexs = this.headIndexs;
+		int hLen = headIndexs.length;
+		int minLen = headIndexs[hLen-1]+1;
+		int cLen = ls.length;
 		Map<String, String> map = new HashMap<>(hLen);
-		if(strategy==DuplicateStrategy.FIRST) {
-			//FIRST的情况下不覆盖相同key的值
-			for (int i = 0; i < len; i++) {
-				String h = heads[i];
-				if(!map.containsKey(h)) {
-					map.put(heads[i], ls[i]);
-				}
+		if(cLen>=minLen) {
+			//内容数达到最大索引对应的列数
+			for (int i = 0; i < hLen; i++) {
+				map.put(heads[i], ls[headIndexs[i]]);
 			}
 		}else {
-			//COVER的情况若存在相同key则覆盖旧的值
-			for (int i = 0; i < len; i++) {
+			//内容数量小于要求的最小列数
+			//按内容数量来添加
+			for (int i = 0; i < cLen; i++) {
 				map.put(heads[i], ls[i]);
 			}
-		}
-		//不管是FIRST或COVER，都不覆盖没有值的那些头
-		for (int i = len; i < hLen; i++) {
-			String h = heads[i];
-			if(!map.containsKey(h)) {
+			//剩余没有内容的为空
+			for (int i = cLen; i < hLen; i++) {
 				map.put(heads[i], "");
 			}
 		}
@@ -94,6 +128,9 @@ public class FileMapItr extends FileItr<Map<String, String>> {
 	 * @return
 	 */
 	public FileMapItr withDuplicate(DuplicateStrategy strategy) {
+		if(strategy == null) {
+			throw new NullPointerException("strategy can't be null.");
+		}
 		this.strategy = strategy;
 		return this;
 	}

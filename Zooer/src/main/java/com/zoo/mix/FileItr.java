@@ -5,6 +5,9 @@ import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -17,9 +20,10 @@ import lombok.Getter;
  * @param <T>
  */
 public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable {
-    private FileReader fr;
+    private Reader reader;
     private BufferedReader br;
     private T next = null;
+    private String current = null;
     private boolean found = false;
     private boolean skipHead = false;
     private HeadType headType = HeadType.BEGIN;
@@ -39,8 +43,14 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 
 
     public FileItr(String filePath) throws FileNotFoundException {
-        fr = new FileReader(filePath);
-        br = new BufferedReader(fr);
+    	reader = new FileReader(filePath);
+        br = new BufferedReader(reader);
+    }
+    
+    
+    public FileItr(InputStream inputStream) throws FileNotFoundException {
+    	reader = new InputStreamReader(inputStream);
+    	br = new BufferedReader(reader);
     }
 
 
@@ -69,6 +79,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
                         found = true;
                         if(!skipHead){
                             num++;
+                            this.current = line;
                             return this.next = cast(line);
                         }
                         break;
@@ -80,6 +91,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
                 if ((line = br.readLine()) == null)
                     return null;
                 num++;
+                this.current = line;
                 this.next = cast(line);
             }
         } catch (IOException e) {
@@ -91,7 +103,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
     @Override
     public void close() throws IOException {
         // 关闭资源
-        try (FileReader fileReader = this.fr;
+        try (Reader fileReader = this.reader;
              BufferedReader bufferedReader = this.br) {
         }
     }
@@ -103,7 +115,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 
     /**
      * 设置是否跳过匹配头的那一行(由{@link #isBegin(String)}匹配到返回true的行)，若设置为true，则第一次调用{@link #next()}方法将返回由{@link #isBegin(String)}方法匹配的行。
-     * @param skip 是否跳过
+     * @param skip 是否跳过，默认false。
      * @return
      */
     public FileItr<T> skipHead(boolean skip){
@@ -126,15 +138,6 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
     }
     
     
-    public FileItr<T> withBegin(HeadType type){
-        if(type==null){
-            throw new NullPointerException("参数'type'不能为null！");
-        }
-        this.headType = type;
-        return this;
-    }
-
-    
     /**
      * 设置第一行匹配的开始字符串。
      * @param start 开始字符串，默认空字符串
@@ -146,6 +149,14 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
         }
         this.startsWith = start.toLowerCase();
         return this;
+    }
+    
+    /**
+     * 获取当前行
+     * @return
+     */
+    public String getCurrent() {
+    	return this.current;
     }
     
     /**

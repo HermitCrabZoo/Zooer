@@ -70,7 +70,7 @@ public final class ImgCode {
 	 * @return
 	 */
 	public static BufferedImage imgCode(int width,int height,String surface){
-		return imgCode(width, height, surface, Chroma.lightest, Chroma.heavy,null);
+		return imgCode(width, height, surface, Chroma.LIGHTEST, Chroma.HEAVY,null);
 	}
 	
 	
@@ -81,7 +81,7 @@ public final class ImgCode {
 	 * @return
 	 */
 	public static BufferedImage imgCode(Dimension dimension,String surface){
-		return imgCode(dimension.width,dimension.height, surface, Chroma.lightest, Chroma.heavy,null);
+		return imgCode(dimension.width,dimension.height, surface, Chroma.LIGHTEST, Chroma.HEAVY,null);
 	}
 	/**
 	 * 生成验证码图片,默认超轻色系,背景深色系
@@ -91,7 +91,7 @@ public final class ImgCode {
 	 * @return
 	 */
 	public static BufferedImage imgCode(Dimension dimension,String surface,Font font){
-		return imgCode(dimension.width, dimension.height, surface, Chroma.lightest, Chroma.heavy,font);
+		return imgCode(dimension.width, dimension.height, surface, Chroma.LIGHTEST, Chroma.HEAVY,font);
 	}
 	/**
 	 * 生成验证码图片,默认超轻色系,背景深色系
@@ -102,7 +102,7 @@ public final class ImgCode {
 	 * @return
 	 */
 	public static BufferedImage imgCode(int width,int height,String surface,Font font){
-		return imgCode(width, height, surface, Chroma.lightest, Chroma.heavy,font);
+		return imgCode(width, height, surface, Chroma.LIGHTEST, Chroma.HEAVY,font);
 	}
 	/**
 	 * 生成验证码图片,使用默认字体

@@ -10,31 +10,31 @@ public enum Chroma {
 	/**
 	 * 超深色系
 	 */
-	heaviest(0, 1),
+	HEAVIEST(0, 1),
 	/**
 	 * 较深色系
 	 */
-	heavier(1, 2),
+	HEAVIER(1, 2),
 	/**
 	 * 深色系
 	 */
-	heavy(2, 3),
+	HEAVY(2, 3),
 	/**
 	 * 中等色系
 	 */
-	middle(3, 4),
+	MIDDLE(3, 4),
 	/**
 	 * 轻色系
 	 */
-	light(4, 5),
+	LIGHT(4, 5),
 	/**
 	 * 较轻色系
 	 */
-	lighter(5, 6),
+	LIGHTER(5, 6),
 	/**
 	 * 超轻色系
 	 */
-	lightest(6, 7);
+	LIGHTEST(6, 7);
 	/**
 	 * 颜色系梯度
 	 */

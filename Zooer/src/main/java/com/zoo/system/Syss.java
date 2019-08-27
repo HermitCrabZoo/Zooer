@@ -216,6 +216,7 @@ public final class Syss {
 		if (Objects.nonNull(file) && desktop.isSupported(Desktop.Action.OPEN)) {
 			try {
 				desktop.open(file);
+				return true;
 			} catch (Exception e) {}
 		}
 		return false;

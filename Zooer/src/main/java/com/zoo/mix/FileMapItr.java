@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 public class FileMapItr extends FileItr<Map<String, String>> {
 
 	private String delimiter = "\t";
-	private String[] heads;
+	private String[] heads = {};
 	/**
 	 * 保存了头对应的索引，与heads一一对应。
 	 */
@@ -134,6 +134,19 @@ public class FileMapItr extends FileItr<Map<String, String>> {
 		this.strategy = strategy;
 		return this;
 	}
+	
+	/**
+	 * 获取头部
+	 * @return
+	 */
+	public String[] getHeads() {
+		//若匹配行是null,且流未关闭，则尝试初始化。
+    	if(heads.length == 0 && !inited && !closed) {
+    		hasNext();
+    	}
+		return Arrays.copyOf(heads, heads.length);
+	}
+	
 
 	/**
 	 * 列重复的处理策略

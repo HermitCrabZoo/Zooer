@@ -2,12 +2,12 @@ package com.zoo.mix;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -22,6 +22,7 @@ import lombok.Getter;
  */
 public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable {
 	// Reader对象用于close方法的自动关闭
+	private InputStream is;
 	private Reader reader;
 	private BufferedReader br;
 	/**
@@ -34,7 +35,20 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 	private HeadType headType = HeadType.BEGIN;
 	private String startsWith = "";
 
-	private volatile boolean closed = false;
+	/**
+	 * 表示头部匹配规则的正反向，若为true，表示直到通过{@link #startsWith}匹配到；若为false，表示直到未通过{@link #startsWith}匹配到。
+	 */
+	private boolean until = true;
+
+	/**
+	 * 表示是否已经初始化
+	 */
+	protected boolean inited = false;
+
+	/**
+	 * 表示是否已经关闭
+	 */
+	protected volatile boolean closed = false;
 	private final Object closeLock = new Object();
 
 	/**
@@ -45,7 +59,6 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 	/**
 	 * begin匹配到的行，若{@link #headType}属性为{@link HeadType#BEGIN}，则该属性值与{@link #header}相同。
 	 */
-	@Getter
 	private String beginLine;
 
 	/**
@@ -55,12 +68,13 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 	private long num = 0;
 
 	public FileItr(String filePath) throws FileNotFoundException {
-		reader = new FileReader(filePath);
+		is = new FileInputStream(filePath);
+		reader = new UnicodeReader(is, StandardCharsets.UTF_8.name());
 		br = new BufferedReader(reader);
 	}
 
 	public FileItr(InputStream inputStream) throws FileNotFoundException {
-		reader = new InputStreamReader(inputStream);
+		reader = new UnicodeReader(inputStream, StandardCharsets.UTF_8.name());
 		br = new BufferedReader(reader);
 	}
 
@@ -76,6 +90,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 		}
 		try {
 			if (!found) {
+				inited = true;
 				String line;
 				while ((line = br.readLine()) != null) {
 					if (header == null && headType == HeadType.FIRST) {
@@ -122,12 +137,28 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 		// 关闭资源
 		try (Reader fileReader = this.reader; BufferedReader bufferedReader = this.br) {
 		}
-
+		if (is != null) {
+			try (InputStream inputStream = this.is) {
+			}
+		}
 	}
 
 	@Override
 	public Iterator<T> iterator() {
 		return this;
+	}
+
+	/**
+	 * begin匹配到的行，若{@link #headType}属性为{@link HeadType#BEGIN}，则该属性值与{@link #header}相同。
+	 * 
+	 * @return
+	 */
+	public String getBeginLine() {
+		// 若匹配行是null,且流未关闭，则尝试初始化。
+		if (beginLine == null && !inited && !closed) {
+			hasNext();
+		}
+		return beginLine;
 	}
 
 	/**
@@ -137,7 +168,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 	 */
 	public String getHeader() {
 		// 若头为null,且流未关闭，则尝试初始化。
-		if (header == null && !closed) {
+		if (header == null && !inited && !closed) {
 			hasNext();
 		}
 		return header;
@@ -183,6 +214,17 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 	}
 
 	/**
+	 * 设置开始行的匹配规则的正反向，若为true，表示直到通过{@link #startsWith}匹配到；若为false，表示直到未通过{@link #startsWith}匹配到。
+	 * 
+	 * @param direction 默认true
+	 * @return
+	 */
+	public FileItr<T> until(boolean direction) {
+		this.until = direction;
+		return this;
+	}
+
+	/**
 	 * 获取当前行
 	 * 
 	 * @return
@@ -207,7 +249,10 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 	 * @return
 	 */
 	protected boolean isBegin(String textLine) {
-		return textLine.toLowerCase().startsWith(startsWith);
+		if (until) {
+			return textLine.toLowerCase().startsWith(startsWith);
+		}
+		return !textLine.toLowerCase().startsWith(startsWith);
 	}
 
 	/**

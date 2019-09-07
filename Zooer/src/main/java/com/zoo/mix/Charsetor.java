@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 
 import com.zoo.cons.Charsets;
+import com.zoo.io.Filer;
 
 import info.monitorenter.cpdetector.io.ASCIIDetector;
 import info.monitorenter.cpdetector.io.CodepageDetectorProxy;

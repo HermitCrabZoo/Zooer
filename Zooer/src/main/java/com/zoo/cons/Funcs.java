@@ -3,7 +3,7 @@ package com.zoo.cons;
 import java.nio.file.Path;
 import java.util.function.Predicate;
 
-import com.zoo.mix.Filer;
+import com.zoo.io.Filer;
 
 public final class Funcs {
 	private Funcs() {}

@@ -16,7 +16,7 @@ import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
 import org.bytedeco.javacpp.opencv_face.FisherFaceRecognizer;
 
 import com.zoo.base.Arrs;
-import com.zoo.mix.Pather;
+import com.zoo.io.Pather;
 
 /**
  * I couldn't find any tutorial on how to perform face recognition using OpenCV and Java,

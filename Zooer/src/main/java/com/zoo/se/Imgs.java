@@ -40,9 +40,9 @@ import javax.imageio.stream.ImageOutputStream;
 
 import com.zoo.base.Strs;
 import com.zoo.cons.Images;
+import com.zoo.io.Filer;
+import com.zoo.io.Pather;
 import com.zoo.mix.Eacher;
-import com.zoo.mix.Filer;
-import com.zoo.mix.Pather;
 
 public final class Imgs {
 	

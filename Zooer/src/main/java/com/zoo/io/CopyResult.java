@@ -1,4 +1,4 @@
-package com.zoo.mix;
+package com.zoo.io;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.zoo.mix.Eacher;
 
 public final class CopyResult {
 

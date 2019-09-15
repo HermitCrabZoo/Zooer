@@ -79,17 +79,22 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 	}
 
 	public boolean hasNext() {
-		return next != null || next() != null;
+		return next != null || (next = goNext()) != null;
 	}
 
 	public T next() {
-		if (next != null) {
-			T rt = next;
-			next = null;
-			return rt;
+		if (next == null) {
+			return goNext();
 		}
+		T rt = next;
+		next = null;
+		return rt;
+	}
+	
+	
+	private T goNext() {
 		try {
-			if (!found) {
+			if (!found && !inited) {
 				inited = true;
 				String line;
 				while ((line = br.readLine()) != null) {
@@ -106,7 +111,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 						if (!skipHead) {
 							num++;
 							this.current = line;
-							return this.next = cast(line);
+							return cast(line);
 						}
 						break;
 					}
@@ -118,13 +123,14 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 					return null;
 				num++;
 				this.current = line;
-				this.next = cast(line);
+				return cast(line);
 			}
 		} catch (IOException e) {
 			throw new NoSuchElementException(e.getMessage());
 		}
-		return this.next;
+		return null;
 	}
+	
 
 	@Override
 	public void close() throws IOException {

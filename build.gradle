@@ -9,7 +9,7 @@
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
 apply plugin: 'maven' 
-//JDK1.8
+//JDK11
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
 //版本号  

@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferUShort;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -88,17 +89,12 @@ public final class CvBridge {
 	public static final synchronized boolean loadOpenCv() {
 		if (unload) {
 			String name=Core.NATIVE_LIBRARY_NAME+Platform.jniSuffix();
-			try(
-					InputStream in = Core.class.getClassLoader().getResourceAsStream("lib/"+name);
-					){
+			try{
 				//先将文件抽取到临时目录再加载
 				String nativeTempDir = System.getProperty("java.io.tmpdir");
-				Path extractedLibFile = Paths.get(nativeTempDir,name);
-				
-				Files.copy(in, extractedLibFile, StandardCopyOption.REPLACE_EXISTING);
-				
+				String extractedLibFile = Paths.get(nativeTempDir, name).toString();
+				extractLib(name, nativeTempDir);
 				System.load(extractedLibFile.toString());
-				
 				unload=false;
 				System.out.println("Usage OpenCV "+Core.VERSION);
 			} catch (Throwable e) {
@@ -106,6 +102,21 @@ public final class CvBridge {
 			}
 		}
 		return !unload;
+	}
+	
+	
+	/**
+	 * 抽取库文件到指定目录。
+	 * @param dir
+	 * @return
+	 * @throws IOException
+	 */
+	public static final synchronized void extractLib(String libFilename, String dir) throws IOException {
+		try (InputStream in = Core.class.getClassLoader().getResourceAsStream("lib/" + libFilename);) {
+			// 将文件抽取到指定目录
+			Path extractedLibFile = Paths.get(dir, libFilename);
+			Files.copy(in, extractedLibFile, StandardCopyOption.REPLACE_EXISTING);
+		}
 	}
 	
 	

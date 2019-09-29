@@ -1,58 +1,5 @@
 package com.zoo.test;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Graphics2D;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.security.InvalidKeyException;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import org.bytedeco.javacpp.avcodec;
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.GpuMat;
-import org.bytedeco.javacpp.opencv_highgui;
-import org.bytedeco.javacpp.opencv_imgcodecs;
-import org.bytedeco.javacpp.opencv_videoio;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FFmpegFrameRecorder;
-import org.bytedeco.javacv.Frame;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.Videoio;
-
 import com.zoo.base.Arrs;
 import com.zoo.base.Chars;
 import com.zoo.base.Strs;
@@ -66,18 +13,46 @@ import com.zoo.io.FileItr;
 import com.zoo.io.FileMapItr;
 import com.zoo.io.Filer;
 import com.zoo.io.Pather;
-import com.zoo.mix.Beaner;
-import com.zoo.mix.CvBridge;
-import com.zoo.mix.Cver;
-import com.zoo.mix.Dater;
-import com.zoo.mix.Facer;
-import com.zoo.mix.OCR;
+import com.zoo.mix.*;
 import com.zoo.se.Chroma;
 import com.zoo.se.Colors;
 import com.zoo.se.Imgs;
-
 import net.sf.cglib.beans.BeanCopier;
 import net.sourceforge.tess4j.TesseractException;
+import org.bytedeco.javacpp.*;
+import org.bytedeco.javacpp.opencv_core.GpuMat;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.bytedeco.javacv.Frame;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.videoio.VideoCapture;
+import org.opencv.videoio.Videoio;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.InvalidKeyException;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TestFrame{
 	
@@ -86,7 +61,7 @@ public class TestFrame{
 //		 CvBridge.loadOpenCv();
 //			System.setProperty("java.specification.version", "1.9");//由于jai-imageio-core-1.3.1.jar还未支持jdk1.9所以需要设置此属性，但是jai-imageio-core-1.4.0.jar已经支持jdk1.9了
 	 }
-	 
+
 	/**
 	 * Launch the application.
 	 * @throws BadPaddingException 
@@ -121,6 +96,7 @@ public class TestFrame{
 //			watchDrivers();
 //			System.out.println(Http2.get("https://www.baidu.com"));
 //			testFileItr();
+//			dangerous(List.of("1","2"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -129,7 +105,15 @@ public class TestFrame{
 		long b=clock.millis();
 		System.out.println("used time："+(b-a)+" milliseconds");
 	}
-	
+
+
+	// Mixing generics and varargs can violate type safety!
+	public static void dangerous(List<String>... stringLists) {
+		List<Integer> intList = List.of(42);
+		Object[] objects = stringLists;
+		objects[0] = intList; // Heap pollution
+		String s = stringLists[0].get(0); // ClassCastException
+	}
 	
 	public static void testFileItr() throws FileNotFoundException, IOException {
 		for (int i = 0; i < 10; i++) {

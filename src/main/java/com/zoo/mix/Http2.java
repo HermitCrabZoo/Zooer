@@ -23,13 +23,13 @@ public final class Http2 {
 	
 	private Http2(){}
 	
-	private static final String[] headers= {"accept", "*/*", "user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36"};
+	private static final String[] HEADERS = {"accept", "*/*", "user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36"};
 	
 	/**
 	 * 发送get请求
 	 * @param url 请求地址
 	 * @return 响应结果
-	 * @see #get(String, Map, String)
+	 * @see #get(String, Map, Charset)
 	 */
 	public static String get(String url){
 		return get(url, null,null);
@@ -40,7 +40,7 @@ public final class Http2 {
 	 * @param url 请求地址
 	 * @param param 请求参数(该参数将会被拼接到url的后面)
 	 * @return 响应结果
-	 * @see #get(String, Map, String)
+	 * @see #get(String, Map, Charset)
 	 */
 	public static String get(String url,Map<String, Object> param){
 		return get(url, param,null);
@@ -50,7 +50,7 @@ public final class Http2 {
 	 * 发送post请求
 	 * @param url 请求地址
 	 * @return 响应结果
-	 * @see #post(String, Map, String)
+	 * @see #post(String, Map, Charset)
 	 */
 	public static String post(String url){
 		return post(url, null,null);
@@ -61,7 +61,7 @@ public final class Http2 {
 	 * @param url 请求地址
 	 * @param param 请求参数
 	 * @return 响应结果
-	 * @see #post(String, Map, String)
+	 * @see #post(String, Map, Charset)
 	 */
 	public static String post(String url, Map<String, Object> param){
 		return post(url, param,null);
@@ -81,11 +81,11 @@ public final class Http2 {
 		try {
 			HttpClient client = getClient();
 			HttpRequest request = HttpRequest.newBuilder(URI.create(uri))
-					.headers(headers)
+					.headers(HEADERS)
 					.GET().build();
 			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString(charset));
-			String result=response.body();//响应结果
-			return result;
+			//响应结果
+			return response.body();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -105,12 +105,12 @@ public final class Http2 {
 			HttpClient client = getClient();
 			BodyPublisher body=BodyPublishers.ofString(param(param, charset), charset);
 			HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-					.headers(headers)
+					.headers(HEADERS)
 					.POST(body)
 					.build();
 			HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString(charset));
-			String result=response.body();//响应结果
-			return result;
+			//响应结果
+			return response.body();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -127,7 +127,6 @@ public final class Http2 {
     
     /**
      * 获取HttpClient单例
-     * @return
      */
     private static HttpClient getClient() {
     	return HttpClienter.CLIENT;
@@ -135,8 +134,8 @@ public final class Http2 {
 	
 	/**
      * 将map编成http类型的参数返回(key1=value1&key2=value2)
-     * @param map
-     * @return
+     * @param map 键值对
+     * @return 返回格式：key1=value1&key2=value2
      */
     public static String param(Map<String, Object> map){
     	return param(map, null);
@@ -144,12 +143,12 @@ public final class Http2 {
     
     /**
      * 将map编成http类型的参数返回,有charset则编成对应的url编码字符串
-     * @param map
-     * @param charset
+     * @param map 键值对
+     * @param charset 字符集
      * @return 返回格式：key1=value1&key2=value2
      */
     public static String param(Map<String, Object> map,Charset charset){
-    	StringBuffer sb=new StringBuffer();
+    	StringBuilder sb=new StringBuilder();
     	if(map!=null&&!map.isEmpty()){
     		for(String key:map.keySet()){
     			sb.append(key).append("=").append(map.get(key)).append("&");
@@ -165,8 +164,8 @@ public final class Http2 {
     
     /**
      * 判断端口是否是可用的(未被占用)
-     * @param port
-     * @return
+     * @param port 要检查的端口
+     * @return 若可用，则返回true
      */
 	public static boolean isPortUnused(int port) {
 		boolean ret = false;

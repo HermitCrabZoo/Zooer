@@ -2,6 +2,7 @@ package com.zoo.io;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -50,12 +51,17 @@ public class FileMapItr extends FileItr<Map<String, String>> {
     private boolean stripHead = false;
 
 
+    public FileMapItr(Path filePath) throws FileNotFoundException {
+        super(filePath);
+    }
+
+
     public FileMapItr(String filePath) throws FileNotFoundException {
         super(filePath);
     }
 
 
-    public FileMapItr(InputStream inputStream) throws FileNotFoundException {
+    public FileMapItr(InputStream inputStream) {
         super(inputStream);
     }
 

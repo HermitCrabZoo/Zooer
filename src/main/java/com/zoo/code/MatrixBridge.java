@@ -8,75 +8,92 @@ import com.google.zxing.common.BitMatrix;
 import com.zoo.se.Imgs;
 
 public final class MatrixBridge {
-	private MatrixBridge() {
-	}
+    private MatrixBridge() {
+    }
 
-	private static final int BLACK = 0xFF000000;
-	
-	private static final int WHITE = 0xFFFFFFFF;
+    /**
+     * 矩阵转换为BufferedImage
+     *
+     * @param matrix 位矩阵
+     * @return 位矩阵对应的BufferedImage对象
+     */
+    public static BufferedImage toBufferedImage(BitMatrix matrix) {
+        return toBufferedImage(matrix, Color.BLACK, Color.WHITE);
+    }
 
-	/**
-	 * 矩阵转换为BufferedImage
-	 * @param matrix
-	 * @return
-	 */
-	public static BufferedImage toBufferedImage(BitMatrix matrix) {
-		return toBufferedImage(matrix, Color.BLACK, Color.WHITE);
-	}
-	
-	/**
-	 * 矩阵转换为BufferedImage,并指定前景和背景色
-	 * @param matrix
-	 * @param foreColor 前景色
-	 * @param backColor 背景色
-	 * @return
-	 */
-	public static BufferedImage toBufferedImage(BitMatrix matrix,Color foreColor,Color backColor) {
-		if (Objects.isNull(matrix)) {
-			return null;
-		}
-		int fc=foreColor==null?BLACK:foreColor.getRGB();
-		int bc=backColor==null?WHITE:backColor.getRGB();
-		int width = matrix.getWidth();
-		int height = matrix.getHeight();
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				image.setRGB(x, y, matrix.get(x, y) ? fc : bc);
-			}
-		}
-		return image;
-	}
-	
-	
-	/**
-	 * 矩阵转换为BufferedImage,并指定前景图和背景图
-	 * @param matrix
-	 * @param foreImage 前景图
-	 * @param backImage 背景图
-	 * @return
-	 */
-	public static BufferedImage toBufferedImage(BitMatrix matrix,BufferedImage foreImage,BufferedImage backImage) {
-		if (Objects.isNull(matrix)) {
-			return null;
-		}
-		int width = matrix.getWidth();
-		int height = matrix.getHeight();
-		boolean hasFore=foreImage!=null;
-		boolean hasBack=backImage!=null;
-		//宽高与矩阵不同则调整为相同的
-		if (hasFore && (foreImage.getWidth()!=width || foreImage.getHeight()!=height)) {
-			foreImage=Imgs.of(foreImage).cutLeftTop(width, height).abgr().get();
-		}
-		if (hasBack && (backImage.getWidth()!=width || backImage.getHeight()!=height)) {
-			backImage=Imgs.of(backImage).cutLeftTop(width, height).abgr().get();
-		}
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				image.setRGB(x, y, matrix.get(x, y) ? (hasFore?foreImage.getRGB(x, y):BLACK) : (hasBack?backImage.getRGB(x, y):WHITE));
-			}
-		}
-		return image;
-	}
+    /**
+     * 矩阵转换为BufferedImage,并指定前景和背景色
+     *
+     * @param matrix    位矩阵
+     * @param foreColor 前景色
+     * @param backColor 背景色
+     * @return 位矩阵对应的BufferedImage对象
+     */
+    public static BufferedImage toBufferedImage(BitMatrix matrix, Color foreColor, Color backColor) {
+        Objects.requireNonNull(matrix, "matrix");
+        Objects.requireNonNull(foreColor, "foreColor");
+        Objects.requireNonNull(backColor, "backColor");
+
+        int fc = foreColor.getRGB(), bc = backColor.getRGB();
+        int width = matrix.getWidth(), height = matrix.getHeight();
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                image.setRGB(x, y, matrix.get(x, y) ? fc : bc);
+            }
+        }
+        return image;
+    }
+
+
+    /**
+     * 矩阵转换为BufferedImage,并指定前景图和背景图
+     *
+     * @param matrix    位矩阵
+     * @param foreImage 前景图
+     * @param backImage 背景图
+     * @return 位矩阵对应的BufferedImage对象
+     */
+    public static BufferedImage toBufferedImage(BitMatrix matrix, BufferedImage foreImage, BufferedImage backImage) {
+        Objects.requireNonNull(matrix, "matrix");
+        Objects.requireNonNull(foreImage, "foreImage");
+        Objects.requireNonNull(backImage, "backImage");
+
+        int width = matrix.getWidth(), height = matrix.getHeight();
+        //宽高与矩阵不同则调整为相同的
+        if (foreImage.getWidth() != width || foreImage.getHeight() != height) {
+            foreImage = Imgs.of(foreImage).cutLeftTop(width, height).abgr().get();
+        }
+        if (backImage.getWidth() != width || backImage.getHeight() != height) {
+            backImage = Imgs.of(backImage).cutLeftTop(width, height).abgr().get();
+        }
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                image.setRGB(x, y, matrix.get(x, y) ? foreImage.getRGB(x, y) : backImage.getRGB(x, y));
+            }
+        }
+        return image;
+    }
+
+
+    static class FixedBufferedImage extends BufferedImage {
+
+        static final FixedBufferedImage BACK = new FixedBufferedImage(0xFF000000);
+
+        static final FixedBufferedImage WHITE = new FixedBufferedImage(0xFFFFFFFF);
+
+        private final int color;
+
+        public FixedBufferedImage(int color) {
+            super(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
+            this.color = color;
+        }
+
+
+        @Override
+        public int getRGB(int x, int y) {
+            return color;
+        }
+    }
 }

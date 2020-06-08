@@ -3,15 +3,8 @@ package com.zoo.io;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.*;
+import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 
 /**
@@ -92,19 +85,19 @@ public class FileMapItr extends FileItr<Map<String, String>> {
             List<String> headList = Arrays.asList(heads);
             List<String> list = new ArrayList<>(new HashSet<>(headList));
             Comparator<? super String> c;
-            Function<? super String, ? extends Integer> mapper;
+            ToIntFunction<? super String> mapper;
             if (strategy == DuplicateStrategy.FIRST) {
-                c = Comparator.comparingInt(headList::indexOf);
                 mapper = headList::indexOf;
+                c = Comparator.comparingInt(mapper);
             } else {
-                c = Comparator.comparingInt(headList::lastIndexOf);
                 mapper = headList::lastIndexOf;
+                c = Comparator.comparingInt(headList::lastIndexOf);
             }
             //字段名按索引升序
             list.sort(c);
             heads = list.toArray(String[]::new);
             //字段索引升序，最终字段名与字段索引一一对应。
-            headIndexs = list.stream().map(mapper).mapToInt(Integer::intValue).sorted().toArray();
+            headIndexs = list.stream().mapToInt(mapper).sorted().toArray();
         }
 
     }
@@ -121,7 +114,7 @@ public class FileMapItr extends FileItr<Map<String, String>> {
         int hLen = headIndexs.length;
         int minLen = headIndexs[hLen - 1] + 1;
         int cLen = ls.length;
-        Map<String, String> map = new HashMap<>(hLen);
+        Map<String, String> map = new HashMap<>((int) (hLen / 0.75) + 1);//to avoid resize
         if (cLen >= minLen) {
             //内容数达到最大索引对应的列数
             for (int i = 0; i < hLen; i++) {
@@ -145,7 +138,7 @@ public class FileMapItr extends FileItr<Map<String, String>> {
      * 设置单字段(列)分割符
      *
      * @param delimiter 默认：\t
-     * @return
+     * @return this
      */
     public FileMapItr withDelimiter(String delimiter) {
         if (delimiter == null) {
@@ -159,7 +152,7 @@ public class FileMapItr extends FileItr<Map<String, String>> {
      * 设置重复列的时候的处理策略,参考{@link DuplicateStrategy}
      *
      * @param strategy 处理策略，默认{@link DuplicateStrategy#EXCEPTION}
-     * @return
+     * @return this
      */
     public FileMapItr withDuplicate(DuplicateStrategy strategy) {
         if (strategy == null) {
@@ -174,7 +167,7 @@ public class FileMapItr extends FileItr<Map<String, String>> {
      * 是否去除头部字段前后的空格
      *
      * @param striped 是否去除空格，默认false。
-     * @return
+     * @return this
      */
     public FileMapItr stripHead(boolean striped) {
         this.stripHead = striped;
@@ -185,7 +178,7 @@ public class FileMapItr extends FileItr<Map<String, String>> {
     /**
      * 获取头部
      *
-     * @return
+     * @return 头字段数组
      */
     public String[] getHeads() {
         //若匹配行是null,且流未关闭，则尝试初始化。
@@ -214,7 +207,7 @@ public class FileMapItr extends FileItr<Map<String, String>> {
         COVER
     }
 
-    public class IllegalFileFormatException extends RuntimeException {
+    public static class IllegalFileFormatException extends RuntimeException {
         public IllegalFileFormatException() {
             super();
         }

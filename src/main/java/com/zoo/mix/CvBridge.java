@@ -112,18 +112,15 @@ public final class CvBridge {
      *
 	 * @param filename lib库文件名
 	 * @param output 输出文件路径
-     * @return 成功则true，否则false。
      * @throws IOException 写入到目标文件时
      */
-    public static synchronized boolean extractLib(String filename, String output) throws IOException {
+    public static synchronized void extractLib(String filename, String output) throws IOException {
         try (InputStream in = Core.class.getClassLoader().getResourceAsStream("lib/" + filename)) {
             if (in != null) {
                 // 将文件抽取到指定目录
                 Files.copy(in, Paths.get(output), StandardCopyOption.REPLACE_EXISTING);
-                return true;
             }
         }
-        return false;
     }
 
 

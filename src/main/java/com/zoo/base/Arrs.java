@@ -1072,7 +1072,7 @@ public final class Arrs {
      */
     public static String[] toStrings(Object arrayObj) {
         if (arrayObj == null || !arrayObj.getClass().isArray()) {
-            return Strs.emptys();
+            return Strs.empties();
         }
         int len = Array.getLength(arrayObj);
         String[] strs = new String[len];
@@ -1141,7 +1141,7 @@ public final class Arrs {
      * @return
      */
     public static String[] nullToEmpty(String[] strings) {
-        return Optional.ofNullable(strings).map(ss -> Arrays.stream(ss).parallel().map(Strs::nullToEmpty).toArray(String[]::new)).orElse(Strs.emptys());
+        return Optional.ofNullable(strings).map(ss -> Arrays.stream(ss).parallel().map(Strs::nullToEmpty).toArray(String[]::new)).orElse(Strs.empties());
     }
 
 
@@ -1152,7 +1152,7 @@ public final class Arrs {
      * @return
      */
     public static String[] removeNull(String[] strings) {
-        return Optional.ofNullable(strings).map(ss -> Arrays.stream(ss).parallel().filter(Objects::nonNull).toArray(String[]::new)).orElse(Strs.emptys());
+        return Optional.ofNullable(strings).map(ss -> Arrays.stream(ss).parallel().filter(Objects::nonNull).toArray(String[]::new)).orElse(Strs.empties());
     }
 
 

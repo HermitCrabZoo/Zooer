@@ -24,6 +24,8 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
     private String current = null;
     private boolean found = false;
     private boolean skipHead = false;
+    private boolean skipEmpty = false;
+    private boolean skipBlank = false;
     private HeadType headType = HeadType.BEGIN;
     private String startsWith = "";
 
@@ -118,6 +120,7 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
 
     /**
      * 获取下一行内容。当未找到起始行时
+     *
      * @return 下一行的内容，当没有时，则返回null
      * @throws NoSuchElementException 当IO异常时
      */
@@ -148,7 +151,14 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
             }
             if (found) {
                 String line;
-                if ((line = br.readLine()) == null)
+                while ((line = br.readLine()) != null/*&&line.isEmpty()*/) {//为null时，表示到文件末尾了
+                    boolean pass = !skipEmpty || !line.isEmpty();//可以为空，或者非空
+                    pass &= !skipBlank || !line.trim().isEmpty();//可以空白，或者非空白
+                    if(pass){
+                        break;//通过：该行可用
+                    }
+                }
+                if (line == null)
                     return null;
                 num++;
                 this.current = line;
@@ -236,12 +246,13 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
      *
      * @param start 开始字符串，默认空字符串
      * @return this
+     * @throws NullPointerException 当入参start为null时抛出该异常
      */
     public FileItr<T> startsWith(String start) {
         if (start == null) {
             throw new NullPointerException("A argument 'startsWith' must be not null!");
         }
-        this.startsWith = start.toLowerCase();
+        this.startsWith = start;
         return this;
     }
 
@@ -264,6 +275,30 @@ public abstract class FileItr<T> implements Iterator<T>, Iterable<T>, Closeable 
      */
     public FileItr<T> startsWithCase(boolean sensitive) {
         this.sensitive = sensitive;
+        return this;
+    }
+
+
+    /**
+     * 设置是否跳过空行(长度为0不包含任何字符的行)
+     *
+     * @param skip 默认false
+     * @return this
+     */
+    public FileItr<T> skipEmpty(boolean skip) {
+        this.skipEmpty = skip;
+        return this;
+    }
+
+
+    /**
+     * 设置是否跳过空白行(长度为0不包含任何字符或者只包含不可见字符的行)
+     *
+     * @param skip 默认false
+     * @return this
+     */
+    public FileItr<T> skipBlank(boolean skip) {
+        this.skipBlank = skip;
         return this;
     }
 

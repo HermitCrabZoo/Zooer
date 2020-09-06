@@ -1,11 +1,8 @@
 package com.zoo.mix;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.zoo.base.Serializer;
 import com.zoo.base.Strs;
@@ -25,7 +22,7 @@ public final class Beaner {
 	/**
 	 * 缓存BeanCopier对象
 	 */
-	private static final Map<String, BeanCopier> COPIER_MAP=new HashMap<String, BeanCopier>();
+	private static final Map<CopierKey<?, ?>, BeanCopier> COPIER_MAP = new ConcurrentHashMap<>();
 	
 	
 	/**
@@ -187,14 +184,7 @@ public final class Beaner {
 	 * @return
 	 */
 	private static synchronized BeanCopier copier(Class<?> f,Class<?> t) {
-		String key=f.getName()+"->"+t.getName();
-		BeanCopier copier = COPIER_MAP.get(key);
-		if (copier != null) {
-			return copier;
-		}
-		copier=BeanCopier.create(f, t, false);
-		COPIER_MAP.put(key, copier);
-		return copier;
+		return COPIER_MAP.computeIfAbsent(new CopierKey<>(f, t), k -> BeanCopier.create(f, t, false));
 	}
 	
 	/**
@@ -301,5 +291,28 @@ public final class Beaner {
 		return Optional.empty();
 	}
 	
-	
+
+	private static class CopierKey<F, T>{
+		private final Class<F> from;
+		private final Class<T> to;
+
+		public CopierKey(Class<F> from, Class<T> to) {
+			this.from = from;
+			this.to = to;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			CopierKey<?, ?> copierKey = (CopierKey<?, ?>) o;
+			return from.equals(copierKey.from) &&
+					to.equals(copierKey.to);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(from, to);
+		}
+	}
 }

@@ -8,7 +8,7 @@ import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 
 /**
- * 文件行转Map<String,String>迭代器，默认以\t分割。
+ * 文件行转Map<String,String>迭代器,此Map的key是具有插入顺序的LinkedHashMap实现，默认以\t分割。
  */
 public class FileMapItr extends FileItr<Map<String, String>> {
 
@@ -71,8 +71,7 @@ public class FileMapItr extends FileItr<Map<String, String>> {
             //EXCEPTION策略时判断列是否重复
             int len = heads.length;
             Set<String> set = new HashSet<>(len);
-            for (int i = 0; i < len; i++) {
-                String h = heads[i];
+            for (String h : heads) {
                 if (set.contains(h)) {
                     this.duplicate = h;
                     throw new IllegalFileFormatException(String.format("It's not allows duplicate key '%s' under '%s' strategy!", h, strategy));
@@ -114,7 +113,7 @@ public class FileMapItr extends FileItr<Map<String, String>> {
         int hLen = headIndexs.length;
         int minLen = headIndexs[hLen - 1] + 1;
         int cLen = ls.length;
-        Map<String, String> map = new HashMap<>((int) (hLen / 0.75) + 1);//to avoid resize
+        Map<String, String> map = new LinkedHashMap<>((int) (hLen / 0.75) + 1);//to avoid resize
         if (cLen >= minLen) {
             //内容数达到最大索引对应的列数
             for (int i = 0; i < hLen; i++) {

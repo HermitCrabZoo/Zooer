@@ -19,7 +19,11 @@ version = '1.0'
 repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+	mavenLocal()
+	maven{ url 'https://maven.aliyun.com/repository/public'}
+	maven{ url 'https://maven.aliyun.com/repository/jcenter'}
+	jcenter()
+	mavenCentral()
     // Can use Maven central
     //mavenCentral()
     // Or Maven local central
